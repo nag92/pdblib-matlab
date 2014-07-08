@@ -40,6 +40,7 @@ for i=1:model.nbStates
 end
 
 %GMR
+MuTmp = zeros(nbVarOut,model.nbStates);
 for t=1:nbData
   %Compute activation weight
   for i=1:model.nbStates
@@ -48,13 +49,20 @@ for t=1:nbData
   r.H(:,t) = r.H(:,t)/sum(r.H(:,t));
   %Evaluate the current target 
   currTar = zeros(nbVarOut,1);
-  currSigma = zeros(nbVarOut,nbVarOut); 
-  for i=1:model.nbStates
-    tarTmp = r.Mu(out,i) + r.Sigma(out,in,i)/r.Sigma(in,in,i) * (DataIn(:,t)-r.Mu(in,i)); 
-    SigmaTmp = r.Sigma(out,out,i) - r.Sigma(out,in,i)/r.Sigma(in,in,i) * r.Sigma(in,out,i);
-    currTar = currTar + r.H(i,t) * tarTmp; 
-    currSigma = currSigma + r.H(i,t) * SigmaTmp; %r.H(i,t)^2
-  end
+  currSigma = zeros(nbVarOut,nbVarOut);   
+  %Compute expected conditional means
+	for i=1:model.nbStates
+		MuTmp(:,i) = r.Mu(out,i) + r.Sigma(out,in,i)/r.Sigma(in,in,i) * (DataIn(:,t)-r.Mu(in,i));
+		currTar = currTar + r.H(i,t) * MuTmp(:,i);
+	end
+	%Compute expected conditional covariances
+	for i=1:model.nbStates
+		SigmaTmp = r.Sigma(out,out,i) - r.Sigma(out,in,i)/r.Sigma(in,in,i) * r.Sigma(in,out,i);
+		currSigma = currSigma + r.H(i,t) * (SigmaTmp + MuTmp(:,i)*MuTmp(:,i)');  
+	 	for j=1:model.nbStates
+		 	currSigma = currSigma - r.H(i,t)*r.H(j,t) * (MuTmp(:,i)*MuTmp(:,j)');  
+	 	end
+	end
   r.currTar(:,t) = currTar; 
   r.currSigma(:,:,t) = currSigma;
 end
