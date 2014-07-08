@@ -1,0 +1,90 @@
+function [r,S] = reproduction_LQR_infiniteHorizon(DataIn, model, r, currPos, rFactor)
+% Reproduction with a linear quadratic regulator of infinite horizon 
+%
+% Authors: Sylvain Calinon and Danilo Bruno, 2014
+%          http://programming-by-demonstration.org/SylvainCalinon
+%
+% This source code is given for free! In exchange, we would be grateful if you cite  
+% the following reference in any academic publication that uses this code or part of it: 
+%
+% @inproceedings{Calinon14ICRA,
+%   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
+%   title="A task-parameterized probabilistic model with minimal intervention control",
+%   booktitle="Proc. {IEEE} Intl Conf. on Robotics and Automation ({ICRA})",
+%   year="2014",
+%   month="May-June",
+%   address="Hong Kong, China",
+%   pages="3339--3344"
+% }
+
+nbData = size(DataIn,2);
+nbVarOut = model.nbVar - size(DataIn,1);
+
+%% LQR with cost = sum_t X(t)' Q(t) X(t) + u(t)' R u(t) 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Definition of a double integrator system (DX = A X + B u with X = [x; dx])
+A = kron([0 1; 0 0], eye(nbVarOut));
+B = kron([0; 1], eye(nbVarOut));
+%Initialize Q and R weighting matrices
+Q = zeros(nbVarOut*2,nbVarOut*2);
+R = eye(nbVarOut) * rFactor;
+
+%Variables for feedforward term computation (optional for movements with low dynamics)
+%tar = [r.currTar; gradient(r.currTar,1,2)/model.dt];
+%dtar = gradient(tar,1,2)/model.dt;
+
+tar = [r.currTar; zeros(nbVarOut,nbData)];
+dtar = gradient(tar,1,2)/model.dt;
+
+%tar = [r.currTar; diff([r.currTar(:,1) r.currTar],1,2)/model.dt];
+%dtar = diff([tar tar(:,1)],1,2)/model.dt;
+
+
+  
+%% Reproduction with varying impedance parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+x = currPos;
+dx = zeros(nbVarOut,1);
+for t=1:nbData
+	%Current weighting term
+  Q(1:nbVarOut,1:nbVarOut) = inv(r.currSigma(:,:,t)); 
+  
+  %care() is a function from the Matlab Control Toolbox to solve the algebraic Riccati equation, 
+	%also available with the control toolbox of GNU Octave
+  S = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q 
+  
+  %Alternatively the function below can be used for an implementation based on Schur decomposition.
+  %S = solveAlgebraicRiccati(A, B/R*B', (Q+Q')/2);
+  
+  %Variable for feedforward term computation (optional for movements with low dynamics)
+  d = inv(S*B*(R\B')-A') * (S*dtar(:,t) - S*A*tar(:,t));
+  
+  %Feedback term
+  L = R\B'*S;
+  %Feedforward term
+  M = R\B'*d;
+  
+  %Compute acceleration (with only feedback terms)
+  %ddx =  -L * [x-r.currTar(:,t); dx] + M;
+  
+  %Compute acceleration (with feedback and feedforward terms)
+  ddx =  -L * [x-r.currTar(:,t); dx] + M;
+  r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
+  r.FF(:,t) = M;
+  
+  %ddx =  -L * ([x;dx]-tar(:,t)) + M;
+  %r.FB(:,t) = -L * ([x;dx]-tar(:,t));
+  %r.FF(:,t) = M;
+  
+  %Update velocity and position
+  dx = dx + ddx * model.dt;
+  x = x + dx * model.dt;
+  %Log data
+  r.Data(:,t) = [DataIn(:,t); x]; 
+  r.ddxNorm(t) = norm(ddx);
+  r.kpDet(t) = det(L(:,1:nbVarOut));
+  r.kvDet(t) = det(L(:,nbVarOut+1:end));
+end
+
+
+
