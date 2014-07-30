@@ -63,8 +63,8 @@ dtar = gradient(tar,1,2)/model.dt;
 %Backward integration of the Riccati equation and additional equation
 for t=nbData-1:-1:1
   S(:,:,t) = S(:,:,t+1) + model.dt * (A'*S(:,:,t+1) + S(:,:,t+1)*A - S(:,:,t+1) * B * (R\B') * S(:,:,t+1) + Q(:,:,t+1));  
-	d(:,t) = d(:,t+1) - model.dt * (S(:,:,t+1)*B*(R\B') - A') * d(:,t+1) + model.dt * S(:,:,t+1) * dtar(:,t+1) ...
-		- model.dt * (S(:,:,t+1) * A * tar(:,t+1)); %Optional feedforward term computation
+  %Optional feedforward term computation
+	d(:,t) = d(:,t+1) + model.dt * ((A'-S(:,:,t+1)*B*(R\B'))*d(:,t+1) +  S(:,:,t+1)*dtar(:,t+1) - S(:,:,t+1)*A*tar(:,t+1)); 
 end
 %Computation of the feedback term L in u=-LX+M
 for t=1:nbData

@@ -65,7 +65,7 @@ for t=1:nbData
   M = R\B'*d;
   
   %Compute acceleration (with only feedback terms)
-  %ddx =  -L * [x-r.currTar(:,t); dx] + M;
+  %ddx =  -L * [x-r.currTar(:,t); dx];
   
   %Compute acceleration (with feedback and feedforward terms)
   ddx =  -L * [x-r.currTar(:,t); dx] + M;
