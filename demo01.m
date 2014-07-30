@@ -86,8 +86,8 @@ for n=1:nbSamples
   a(n) = estimateAttractorPath(DataIn, model, s(n));
   
   %Reproduction with one of the selected approach
-  r(n) = reproduction_LQR_finiteHorizon(DataIn, model, a(n), a(n).currTar(:,1), rFactor);
-  %r(n) = reproduction_LQR_infiniteHorizon(DataIn, model, a(n), a(n).currTar(:,1), rFactor);
+  %r(n) = reproduction_LQR_finiteHorizon(DataIn, model, a(n), a(n).currTar(:,1), rFactor);
+  r(n) = reproduction_LQR_infiniteHorizon(DataIn, model, a(n), a(n).currTar(:,1), rFactor);
   %r(n) = reproduction_DS(DataIn, model, a(n), a(n).currTar(:,1)); %This function requires to define model.kP and model.kV (see lines 38-39)
 end
 
@@ -107,8 +107,8 @@ for n=1:nbRepros
   anew(n) = estimateAttractorPath(DataIn, model, rTmp);
   
   %Reproduction with one of the selected approach
-  rnew(n) = reproduction_LQR_finiteHorizon(DataIn, model, anew(n), anew(n).currTar(:,1), rFactor);
-  %rnew(n) = reproduction_LQR_infiniteHorizon(DataIn, model, anew(n), anew(n).currTar(:,1), rFactor);
+  %rnew(n) = reproduction_LQR_finiteHorizon(DataIn, model, anew(n), anew(n).currTar(:,1), rFactor);
+  rnew(n) = reproduction_LQR_infiniteHorizon(DataIn, model, anew(n), anew(n).currTar(:,1), rFactor);
   %rnew(n) = reproduction_DS(DataIn, model, anew(n), anew(n).currTar(:,1)); %The fct requires to define model.kP and model.kV (see lines 38-39)
 end
 

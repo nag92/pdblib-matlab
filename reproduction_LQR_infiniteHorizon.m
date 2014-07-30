@@ -46,10 +46,11 @@ for t=1:nbData
   
   %care() is a function from the Matlab Control Toolbox to solve the algebraic Riccati equation, 
 	%also available with the control toolbox of GNU Octave
-  P = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q 
+  %P = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q 
   
   %Alternatively the function below can be used for an implementation based on Schur decomposition.
-  %P = solveAlgebraicRiccati(A, B/R*B', (Q+Q')/2);
+  %P = solveAlgebraicRiccati_Schur(A, B/R*B', (Q+Q')/2);
+	P = solveAlgebraicRiccati_eig(A, B/R*B', (Q+Q')/2);
   
   %Variable for feedforward term computation (optional for movements with low dynamics)
   d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t));
@@ -64,8 +65,8 @@ for t=1:nbData
   
   %Compute acceleration (with feedback and feedforward terms)
   ddx =  -L * [x-r.currTar(:,t); dx] + M;
-  %r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
-  %r.FF(:,t) = M;
+  r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
+  r.FF(:,t) = M;
   
   %Update velocity and position
   dx = dx + ddx * model.dt;

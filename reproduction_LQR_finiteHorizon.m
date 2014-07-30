@@ -52,10 +52,8 @@ P(:,:,nbData) = Pfinal;
 %Variables for feedforward term computation (optional for movements with low dynamics)
 tar = [r.currTar; zeros(nbVarOut,nbData)];
 dtar = gradient(tar,1,2)/model.dt;
-
 %tar = [r.currTar; gradient(r.currTar,1,2)/model.dt];
 %dtar = gradient(tar,1,2)/model.dt;
-
 %tar = [r.currTar; diff([r.currTar(:,1) r.currTar],1,2)/model.dt];
 %dtar = diff([tar tar(:,1)],1,2)/model.dt;
 
@@ -82,8 +80,8 @@ for t=1:nbData
 
 	%Compute acceleration (with both feedback and feedforward terms)
 	ddx =  -L(:,:,t) * [x-r.currTar(:,t); dx] + M(:,t);
-	%r.FB(:,t) = -L(:,:,t) * [x-r.currTar(:,t); dx];
-	%r.FF(:,t) = M(:,t);
+	r.FB(:,t) = -L(:,:,t) * [x-r.currTar(:,t); dx];
+	r.FF(:,t) = M(:,t);
 
 	%Update velocity and position
 	dx = dx + ddx * model.dt;
