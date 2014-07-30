@@ -1,6 +1,6 @@
 function [idList, Mu] = kmeansClustering(Data, nbStates)
 % Initialization of the model with k-means. 
-% Author:	Sylvain Calinon, Tohid Alizadeh, 2013
+% Authors:	Sylvain Calinon, Tohid Alizadeh, 2013
 %         http://programming-by-demonstration.org/
 
 %Criterion to stop the EM iterative update

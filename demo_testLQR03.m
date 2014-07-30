@@ -44,9 +44,9 @@ for n=1:nbRepros
     r(n) = reproduction_LQR_infiniteHorizon(DataIn, model, a, 0, rFactor);
   else
     %First call to LQR to get an estimate of the final feedback terms 
-    [~,Sfinal] = reproduction_LQR_infiniteHorizon(DataIn(end), model, aFinal, 0, rFactor);
+    [~,Pfinal] = reproduction_LQR_infiniteHorizon(DataIn(end), model, aFinal, 0, rFactor);
     %Second call to LQR with finite horizon 
-    r(n) = reproduction_LQR_finiteHorizon(DataIn, model, a, 0, rFactor, Sfinal);
+    r(n) = reproduction_LQR_finiteHorizon(DataIn, model, a, 0, rFactor, Pfinal);
   end
 end
 for n=1:nbRepros

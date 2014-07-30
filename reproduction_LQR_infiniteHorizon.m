@@ -1,4 +1,4 @@
-function [r,S] = reproduction_LQR_infiniteHorizon(DataIn, model, r, currPos, rFactor)
+function [r,P] = reproduction_LQR_infiniteHorizon(DataIn, model, r, currPos, rFactor)
 % Reproduction with a linear quadratic regulator of infinite horizon 
 %
 % Authors: Sylvain Calinon and Danilo Bruno, 2014
@@ -32,13 +32,8 @@ R = eye(nbVarOut) * rFactor;
 %Variables for feedforward term computation (optional for movements with low dynamics)
 %tar = [r.currTar; gradient(r.currTar,1,2)/model.dt];
 %dtar = gradient(tar,1,2)/model.dt;
-
 tar = [r.currTar; zeros(nbVarOut,nbData)];
 dtar = gradient(tar,1,2)/model.dt;
-
-%tar = [r.currTar; diff([r.currTar(:,1) r.currTar],1,2)/model.dt];
-%dtar = diff([tar tar(:,1)],1,2)/model.dt;
-
 
   
 %% Reproduction with varying impedance parameters
@@ -51,16 +46,16 @@ for t=1:nbData
   
   %care() is a function from the Matlab Control Toolbox to solve the algebraic Riccati equation, 
 	%also available with the control toolbox of GNU Octave
-  S = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q 
+  P = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q 
   
   %Alternatively the function below can be used for an implementation based on Schur decomposition.
-  %S = solveAlgebraicRiccati(A, B/R*B', (Q+Q')/2);
+  %P = solveAlgebraicRiccati(A, B/R*B', (Q+Q')/2);
   
   %Variable for feedforward term computation (optional for movements with low dynamics)
-  d = inv(S*B*(R\B')-A') * (S*dtar(:,t) - S*A*tar(:,t));
+  d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t));
   
   %Feedback term
-  L = R\B'*S;
+  L = R\B'*P;
   %Feedforward term
   M = R\B'*d;
   
@@ -69,11 +64,7 @@ for t=1:nbData
   
   %Compute acceleration (with feedback and feedforward terms)
   ddx =  -L * [x-r.currTar(:,t); dx] + M;
-  r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
-  r.FF(:,t) = M;
-  
-  %ddx =  -L * ([x;dx]-tar(:,t)) + M;
-  %r.FB(:,t) = -L * ([x;dx]-tar(:,t));
+  %r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
   %r.FF(:,t) = M;
   
   %Update velocity and position
