@@ -1,4 +1,4 @@
-function X = solveAlgebraicRiccati(A, G, Q)
+function X = solveAlgebraicRiccati_Schur(A, G, Q)
 %Solves the algebraic Riccati equation of the form A'X+XA'-XGX+Q=0, where X is symmetric.
 %
 %@article{Paige81,

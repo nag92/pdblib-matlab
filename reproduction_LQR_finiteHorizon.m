@@ -2,7 +2,7 @@ function r = reproduction_LQR_finiteHorizon(DataIn, model, r, currPos, rFactor, 
 % Reproduction with a linear quadratic regulator of finite horizon
 %
 % Authors: Sylvain Calinon and Danilo Bruno, 2014
-%          http://programming-by-demonstration.org/SylvainCalinon
+%          http://programming-by-demonstration.org
 %
 % This source code is given for free! In exchange, we would be grateful if you cite  
 % the following reference in any academic publication that uses this code or part of it: 

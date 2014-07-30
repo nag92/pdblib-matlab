@@ -2,7 +2,7 @@ function [r,P] = reproduction_LQR_infiniteHorizon(DataIn, model, r, currPos, rFa
 % Reproduction with a linear quadratic regulator of infinite horizon 
 %
 % Authors: Sylvain Calinon and Danilo Bruno, 2014
-%          http://programming-by-demonstration.org/SylvainCalinon
+%          http://programming-by-demonstration.org
 %
 % This source code is given for free! In exchange, we would be grateful if you cite  
 % the following reference in any academic publication that uses this code or part of it: 
@@ -48,8 +48,10 @@ for t=1:nbData
 	%also available with the control toolbox of GNU Octave
   %P = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q 
   
-  %Alternatively the function below can be used for an implementation based on Schur decomposition.
+  %Alternatively, the function below can be used for an implementation based on Schur decomposition
   %P = solveAlgebraicRiccati_Schur(A, B/R*B', (Q+Q')/2);
+	
+	%Alternatively, the function below can be used for an implementation based on Eigendecomposition
 	P = solveAlgebraicRiccati_eig(A, B/R*B', (Q+Q')/2);
   
   %Variable for feedforward term computation (optional for movements with low dynamics)
