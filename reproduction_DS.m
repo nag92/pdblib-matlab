@@ -35,6 +35,7 @@ for t=1:nbData
   r.Data(:,t) = [DataIn(:,t); x]; 
   r.ddxNorm(t) = norm(ddx);
   r.kpDet(t) = det(L(:,1:nbVarOut));
+  r.kvDet(t) = det(L(:,nbVarOut+1:end));
 end
 
 

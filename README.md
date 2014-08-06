@@ -2,7 +2,7 @@
 
 ### Compatibility
 
-	The codes should be compatible with both Matlab and GNU Octave.
+	The codes have been tested with both Matlab and GNU Octave.
 
 ### Usage
 

@@ -1,12 +1,11 @@
-function [Mu, Sigma] = gaussianProduct(model, p)
-
-% Leonel Rozo, 2014
+function [Mu, Sigma] = productTPGMM(model, p)
+% Sylvain Calinon, Leonel Rozo, 2014
 % 
 % Compute the product of Gaussians for a task-parametrized model where the
 % set of parameters are stored in the variable 'p'. 
 
-% GMM products 
-for i = 1 : model.nbStates
+% TP-GMM products 
+for i = 1:model.nbStates
   % Reallocating  
   SigmaTmp = zeros(model.nbVar);
   MuTmp = zeros(model.nbVar,1);

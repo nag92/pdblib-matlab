@@ -74,9 +74,9 @@ model = init_tensorGMM_timeBased(Data, model); %Initialization
 model = EM_tensorGMM(Data, model);
 
 
-%% Reproduction with LQR for the task parameters used to train the model
+%% Reproduction with DS-GMR for the task parameters used to train the model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('Reproductions with LQR...');
+disp('Reproductions with DS-GMR...');
 DataIn = [1:s(1).nbData] * model.dt;
 for n=1:nbSamples
   %Retrieval of attractor path through task-parameterized GMR
@@ -85,9 +85,9 @@ for n=1:nbSamples
 end
 
 
-%% Reproduction with LQR for new task parameters
+%% Reproduction with DS-GMR for new task parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('New reproductions with LQR...');
+disp('New reproductions with DS-GMR...');
 for n=1:nbRepros 
   for m=1:model.nbFrames
     %Random generation of new task parameters 
@@ -178,15 +178,7 @@ for n=1:nbRepros
 end
 xlabel('t'); ylabel('|Kp|');
 
-%Plot accelerations due to feedback and feedforward terms
-figure; hold on;
-n=1; k=1;
-plot(r(n).FB(k,:),'r-','linewidth',2);
-plot(r(n).FF(k,:),'b-','linewidth',2);
-legend('ddx feedback','ddx feedforward');
-xlabel('t'); ylabel(['ddx_' num2str(k)]);
 
-%print('-dpng','outTest2.png');
 %pause;
 %close all;
 
