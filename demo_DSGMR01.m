@@ -1,14 +1,11 @@
-function demo01
+function demo_DSGMR01
 % Demonstration a task-parameterized probabilistic model encoding movements in the form of virtual spring-damper 
 % systems acting in multiple frames of reference. Each candidate coordinate system observes a set of 
 % demonstrations from its own perspective, by extracting an attractor path whose variations depend on the 
 % relevance of the frame through the task. This information is exploited to generate a new attractor path 
-% corresponding to new situations (new positions and orientation of the frames), while the predicted covariances 
-% are exploited by a linear quadratic regulator (LQR) to estimate the stiffness and damping feedback terms of 
-% the spring-damper systems, resulting in a minimal intervention control strategy.
+% corresponding to new situations (new positions and orientation of the frames).
 %
-% Several reproduction algorithms can be selected by commenting/uncommenting lines 89-91 and 110-112
-% (finite/infinite horizon LQR or dynamical system with constant gains).
+% This demo presents the results for a dynamical system with constant gains.
 %  
 % Author:	Sylvain Calinon, 2014
 %         http://programming-by-demonstration.org/SylvainCalinon
@@ -32,6 +29,8 @@ model.nbStates = 3; %Number of Gaussians in the GMM
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVar = 3; %Dimension of the datapoints in the dataset (here: t,x1,x2)
 model.dt = 0.01; %Time step 
+model.kP = 100; %Stiffness gain (required only if LQR is not used for reproduction)
+model.kV = (2*model.kP)^.5; %Damping gain (required only if LQR is not used for reproduction)
 nbRepros = 8; %Number of reproductions with new situations randomly generated
 rFactor = 1E-1; %Weighting term for the minimization of control commands in LQR
 
@@ -48,26 +47,24 @@ disp('Load 3rd order tensor data...');
 load('data/DataLQR01.mat');
 
 
-% %% Optional recomputation of 'Data' (only required when using reproduction_DS)
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% model.kP = 100; %Stiffness gain (required only if LQR is not used for reproduction)
-% model.kV = (2*model.kP)^.5; %Damping gain (required only if LQR is not used for reproduction)
-% nbD = s(1).nbData;
-% nbVarOut = model.nbVar - 1;
-% %Create transformation matrix to compute [X; DX; DDX]
-% D = (diag(ones(1,nbD-1),-1)-eye(nbD)) / model.dt;
-% D(end,end) = 0;
-% %Create transformation matrix to compute XHAT = X + DX*kV/kP + DDX/kP
-% K1d = [1, model.kV/model.kP, 1/model.kP];
-% K = kron(K1d,eye(nbVarOut));
-% %Create 3rd order tensor data with XHAT instead of X
-% for n=1:nbSamples
-%   DataTmp = s(n).Data0(2:end,:);
-%   DataTmp = [s(n).Data0(1,:); K * [DataTmp; DataTmp*D; DataTmp*D*D]];
-%   for m=1:model.nbFrames
-%     Data(:,m,(n-1)*nbD+1:n*nbD) = s(n).p(m).A \ (DataTmp - repmat(s(n).p(m).b, 1, nbD)); 
-%   end
-% end
+%% Transformation of 'Data' to learn the path of the spring-damper system
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+nbD = s(1).nbData;
+nbVarOut = model.nbVar - 1;
+%Create transformation matrix to compute [X; DX; DDX]
+D = (diag(ones(1,nbD-1),-1)-eye(nbD)) / model.dt;
+D(end,end) = 0;
+%Create transformation matrix to compute XHAT = X + DX*kV/kP + DDX/kP
+K1d = [1, model.kV/model.kP, 1/model.kP];
+K = kron(K1d,eye(nbVarOut));
+%Create 3rd order tensor data with XHAT instead of X
+for n=1:nbSamples
+	DataTmp = s(n).Data0(2:end,:);
+	DataTmp = [s(n).Data0(1,:); K * [DataTmp; DataTmp*D; DataTmp*D*D]];
+	for m=1:model.nbFrames
+		Data(:,m,(n-1)*nbD+1:n*nbD) = s(n).p(m).A \ (DataTmp - repmat(s(n).p(m).b, 1, nbD)); 
+	end
+end
 
 
 %% Tensor GMM learning
@@ -84,11 +81,7 @@ DataIn = [1:s(1).nbData] * model.dt;
 for n=1:nbSamples
   %Retrieval of attractor path through task-parameterized GMR
   a(n) = estimateAttractorPath(DataIn, model, s(n));
-  
-  %Reproduction with one of the selected approach
-  %r(n) = reproduction_LQR_finiteHorizon(DataIn, model, a(n), a(n).currTar(:,1), rFactor);
-  r(n) = reproduction_LQR_infiniteHorizon(DataIn, model, a(n), a(n).currTar(:,1), rFactor);
-  %r(n) = reproduction_DS(DataIn, model, a(n), a(n).currTar(:,1)); %This function requires to define model.kP and model.kV (see lines 38-39)
+  r(n) = reproduction_DS(DataIn, model, a(n), a(n).currTar(:,1)); 
 end
 
 
@@ -105,11 +98,7 @@ for n=1:nbRepros
   end
   %Retrieval of attractor path through task-parameterized GMR
   anew(n) = estimateAttractorPath(DataIn, model, rTmp);
-  
-  %Reproduction with one of the selected approach
-  %rnew(n) = reproduction_LQR_finiteHorizon(DataIn, model, anew(n), anew(n).currTar(:,1), rFactor);
-  rnew(n) = reproduction_LQR_infiniteHorizon(DataIn, model, anew(n), anew(n).currTar(:,1), rFactor);
-  %rnew(n) = reproduction_DS(DataIn, model, anew(n), anew(n).currTar(:,1)); %The fct requires to define model.kP and model.kV (see lines 38-39)
+  rnew(n) = reproduction_DS(DataIn, model, anew(n), anew(n).currTar(:,1)); 
 end
 
 
@@ -137,7 +126,7 @@ end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %REPROS
-subplot(1,3,2); hold on; box on; title('Reproductions with LQR');
+subplot(1,3,2); hold on; box on; title('Reproductions with DS-GMR');
 for n=1:nbSamples
   %Plot frames
   for m=1:model.nbFrames
@@ -155,7 +144,7 @@ end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %NEW REPROS
-subplot(1,3,3); hold on; box on; title('New reproductions with LQR');
+subplot(1,3,3); hold on; box on; title('New reproductions with DS-GMR');
 for n=1:nbRepros
   %Plot frames
   for m=1:model.nbFrames
@@ -172,7 +161,7 @@ for n=1:nbRepros
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
-print('-dpng','outTest1.png');
+%print('-dpng','outTest1.png');
 
 %Plot additional information 
 figure; 
@@ -197,8 +186,7 @@ plot(r(n).FF(k,:),'b-','linewidth',2);
 legend('ddx feedback','ddx feedforward');
 xlabel('t'); ylabel(['ddx_' num2str(k)]);
 
-print('-dpng','outTest2.png');
-
+%print('-dpng','outTest2.png');
 %pause;
 %close all;
 

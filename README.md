@@ -6,8 +6,8 @@
 
 ### Usage
 
-	Unzip the file and run 'demo01' in Matlab. Several reproduction algorithms can be selected by commenting/uncommenting 
-	lines 89-91 and 110-112 in demo01.m (finite/infinite horizon LQR or dynamical system with constant gains). 
+	Unzip the file and run 'demo_TPGMR_LQR01' (finite horizon LQR), 'demo_TPGMR_LQR02' (infinite horizon LQR) or
+	'demo_DSGMR01' (dynamical system with constant gains) in Matlab.  
 	'demo_testLQR01', 'demo_testLQR02' and 'demo_testLQR03' can also be run as additional examples of LQR.
 
 ### Reference  
