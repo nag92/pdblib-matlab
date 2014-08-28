@@ -29,11 +29,9 @@ model.nbStates = 3; %Number of Gaussians in the GMM
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVar = 3; %Dimension of the datapoints in the dataset (here: t,x1,x2)
 model.dt = 0.01; %Time step 
-model.kP = 100; %Stiffness gain (required only if LQR is not used for reproduction)
-model.kV = (2*model.kP)^.5; %Damping gain (required only if LQR is not used for reproduction)
+model.kP = 100; %Stiffness gain 
+model.kV = (2*model.kP)^.5; %Damping gain 
 nbRepros = 8; %Number of reproductions with new situations randomly generated
-rFactor = 1E-1; %Weighting term for the minimization of control commands in LQR
-
 
 %% Load 3rd order tensor data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

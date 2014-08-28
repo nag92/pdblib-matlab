@@ -1,7 +1,6 @@
 function model = init_tensorGMM_timeBased(Data, model)
 % Author:	Sylvain Calinon, 2014
 %         http://programming-by-demonstration.org/SylvainCalinon
-%
 
 diagRegularizationFactor = 1E-4;
 
