@@ -1,4 +1,4 @@
-# Task-parameterized tensor GMM with LQR 
+# pbdlib-matlab
 
 ### Compatibility
 
