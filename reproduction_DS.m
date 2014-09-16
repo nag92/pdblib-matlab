@@ -25,9 +25,9 @@ nbVarOut = model.nbVar - size(DataIn,1);
 x = currPos;
 dx = zeros(nbVarOut,1);
 for t=1:nbData
-  L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV];
+  L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV]; 
   %Compute acceleration
-  ddx =  -L * [x-r.currTar(:,t); dx];
+  ddx =  -L * [x-r.currTar(:,t); dx]; %See Eq. (4.0.1) in doc/TechnicalReport.pdf
   %Update velocity and position
   dx = dx + ddx * model.dt;
   x = x + dx * model.dt;

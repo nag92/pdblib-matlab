@@ -5,6 +5,7 @@ function [Mu, Sigma] = productTPGMM(model, p)
 % set of parameters are stored in the variable 'p'. 
 
 % TP-GMM products 
+%See Eq. (6.0.5), (6.0.6) and (6.0.7) in doc/TechnicalReport.pdf
 for i = 1:model.nbStates
   % Reallocating  
   SigmaTmp = zeros(model.nbVar);

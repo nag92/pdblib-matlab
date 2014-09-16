@@ -24,11 +24,11 @@ out = in(end)+1:model.nbVar;
 %% by using the GMM resulting from the product of linearly transformed Gaussians
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[r.Mu, r.Sigma] = productTPGMM(model, r.p);
+[r.Mu, r.Sigma] = productTPGMM(model, r.p); %See Eq. (6.0.5), (6.0.6) and (6.0.7) in doc/TechnicalReport.pdf
 r.Priors = model.Priors;  
 r.nbStates = model.nbStates;
 
-[r.currTar, r.currSigma] = GMR(r, DataIn, in, out);
+[r.currTar, r.currSigma] = GMR(r, DataIn, in, out); %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
 
 
 
