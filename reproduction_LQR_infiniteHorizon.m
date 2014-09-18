@@ -35,49 +35,49 @@ R = eye(nbVarOut) * rFactor;
 tar = [r.currTar; zeros(nbVarOut,nbData)];
 dtar = gradient(tar,1,2)/model.dt;
 
-  
+	
 %% Reproduction with varying impedance parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 x = currPos;
 dx = zeros(nbVarOut,1);
 for t=1:nbData
 	%Current weighting term
-  Q(1:nbVarOut,1:nbVarOut) = inv(r.currSigma(:,:,t)); 
-  
-  %care() is a function from the Matlab Control Toolbox to solve the algebraic Riccati equation, 
+	Q(1:nbVarOut,1:nbVarOut) = inv(r.currSigma(:,:,t)); 
+	
+	%care() is a function from the Matlab Control Toolbox to solve the algebraic Riccati equation, 
 	%also available with the control toolbox of GNU Octave
-  %P = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q 
-  
-  %Alternatively, the function below can be used for an implementation based on Schur decomposition
-  %P = solveAlgebraicRiccati_Schur(A, B/R*B', (Q+Q')/2);
+	%P = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q 
+	
+	%Alternatively, the function below can be used for an implementation based on Schur decomposition
+	%P = solveAlgebraicRiccati_Schur(A, B/R*B', (Q+Q')/2);
 	
 	%Alternatively, the function below can be used for an implementation based on Eigendecomposition
 	P = solveAlgebraicRiccati_eig(A, B/R*B', (Q+Q')/2); %See Eq. (5.1.27) and Sec. (5.2) in doc/TechnicalReport.pdf
-  
-  %Variable for feedforward term computation (optional for movements with low dynamics)
-  d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t)); %See Eq. (5.1.28) in doc/TechnicalReport.pdf
-  
-  %Feedback term
-  L = R\B'*P; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
-  %Feedforward term
-  M = R\B'*d; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
-  
-  %Compute acceleration (with only feedback terms)
-  %ddx =  -L * [x-r.currTar(:,t); dx];
-  
-  %Compute acceleration (with feedback and feedforward terms)
-  ddx =  -L * [x-r.currTar(:,t); dx] + M; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
-  r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
-  r.FF(:,t) = M;
-  
-  %Update velocity and position
-  dx = dx + ddx * model.dt;
-  x = x + dx * model.dt;
-  %Log data
-  r.Data(:,t) = [DataIn(:,t); x]; 
-  r.ddxNorm(t) = norm(ddx);
-  r.kpDet(t) = det(L(:,1:nbVarOut));
-  r.kvDet(t) = det(L(:,nbVarOut+1:end));
+	
+	%Variable for feedforward term computation (optional for movements with low dynamics)
+	d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t)); %See Eq. (5.1.28) in doc/TechnicalReport.pdf
+	
+	%Feedback term
+	L = R\B'*P; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	%Feedforward term
+	M = R\B'*d; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	
+	%Compute acceleration (with only feedback terms)
+	%ddx =  -L * [x-r.currTar(:,t); dx];
+	
+	%Compute acceleration (with feedback and feedforward terms)
+	ddx =  -L * [x-r.currTar(:,t); dx] + M; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
+	r.FF(:,t) = M;
+	
+	%Update velocity and position
+	dx = dx + ddx * model.dt;
+	x = x + dx * model.dt;
+	%Log data
+	r.Data(:,t) = [DataIn(:,t); x]; 
+	r.ddxNorm(t) = norm(ddx);
+	r.kpDet(t) = det(L(:,1:nbVarOut));
+	r.kvDet(t) = det(L(:,nbVarOut+1:end));
 end
 
 
