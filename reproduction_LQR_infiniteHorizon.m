@@ -23,8 +23,8 @@ nbVarOut = model.nbVar - size(DataIn,1);
 %% LQR with cost = sum_t X(t)' Q(t) X(t) + u(t)' R u(t) 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Definition of a double integrator system (DX = A X + B u with X = [x; dx])
-A = kron([0 1; 0 0], eye(nbVarOut));
-B = kron([0; 1], eye(nbVarOut));
+A = kron([0 1; 0 0], eye(nbVarOut)); %See Eq. (5.1.1) in doc/TechnicalReport.pdf
+B = kron([0; 1], eye(nbVarOut)); %See Eq. (5.1.1) in doc/TechnicalReport.pdf
 %Initialize Q and R weighting matrices
 Q = zeros(nbVarOut*2,nbVarOut*2);
 R = eye(nbVarOut) * rFactor;
@@ -52,21 +52,21 @@ for t=1:nbData
   %P = solveAlgebraicRiccati_Schur(A, B/R*B', (Q+Q')/2);
 	
 	%Alternatively, the function below can be used for an implementation based on Eigendecomposition
-	P = solveAlgebraicRiccati_eig(A, B/R*B', (Q+Q')/2);
+	P = solveAlgebraicRiccati_eig(A, B/R*B', (Q+Q')/2); %See Eq. (5.1.27) and Sec. (5.2) in doc/TechnicalReport.pdf
   
   %Variable for feedforward term computation (optional for movements with low dynamics)
-  d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t));
+  d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t)); %See Eq. (5.1.28) in doc/TechnicalReport.pdf
   
   %Feedback term
-  L = R\B'*P;
+  L = R\B'*P; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
   %Feedforward term
-  M = R\B'*d;
+  M = R\B'*d; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
   
   %Compute acceleration (with only feedback terms)
   %ddx =  -L * [x-r.currTar(:,t); dx];
   
   %Compute acceleration (with feedback and feedforward terms)
-  ddx =  -L * [x-r.currTar(:,t); dx] + M;
+  ddx =  -L * [x-r.currTar(:,t); dx] + M; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
   r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
   r.FF(:,t) = M;
   

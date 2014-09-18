@@ -3,9 +3,9 @@ function X = solveAlgebraicRiccati_eig(A, G, Q)
 %Danilo Bruno, 2014
 
 n = size(A,1);
-Z = [A -G; -Q -A'];
+Z = [A -G; -Q -A']; %See Eq. (5.2.3) in doc/TechnicalReport.pdf
 
-[V,D] = eig(Z);
+[V,D] = eig(Z); %See Eq. (5.2.4) in doc/TechnicalReport.pdf
 U = [];
 for j=1:2*n
 	if real(D(j,j)) < 0 
@@ -13,5 +13,5 @@ for j=1:2*n
 	end
 end
 
-X = U(n+1:end,1:n) / U(1:n,1:n);
+X = U(n+1:end,1:n) / U(1:n,1:n); %See Eq. (5.2.5) in doc/TechnicalReport.pdf
 X = real(X);

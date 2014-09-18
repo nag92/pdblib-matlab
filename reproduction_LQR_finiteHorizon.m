@@ -20,11 +20,11 @@ function r = reproduction_LQR_finiteHorizon(DataIn, model, r, currPos, rFactor, 
 nbData = size(DataIn,2);
 nbVarOut = model.nbVar - size(DataIn,1);
 
-%% LQR with cost = sum_t X(t)' Q(t) X(t) + u(t)' R u(t) 
+%% LQR with cost = sum_t X(t)' Q(t) X(t) + u(t)' R u(t) (See Eq. (5.0.2) in doc/TechnicalReport.pdf)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Definition of a double integrator system (DX = A X + B u with X = [x; dx])
-A = kron([0 1; 0 0], eye(nbVarOut));
-B = kron([0; 1], eye(nbVarOut));
+A = kron([0 1; 0 0], eye(nbVarOut)); %See Eq. (5.1.1) in doc/TechnicalReport.pdf
+B = kron([0; 1], eye(nbVarOut)); %See Eq. (5.1.1) in doc/TechnicalReport.pdf
 %Initialize Q and R weighting matrices
 Q = zeros(nbVarOut*2,nbVarOut*2,nbData);
 for t=1:nbData
@@ -60,14 +60,14 @@ dtar = gradient(tar,1,2)/model.dt;
 
 %Backward integration of the Riccati equation and additional equation
 for t=nbData-1:-1:1
-	P(:,:,t) = P(:,:,t+1) + model.dt * (A'*P(:,:,t+1) + P(:,:,t+1)*A - P(:,:,t+1)*B*(R\B')*P(:,:,t+1) + Q(:,:,t+1));  
+	P(:,:,t) = P(:,:,t+1) + model.dt * (A'*P(:,:,t+1) + P(:,:,t+1)*A - P(:,:,t+1)*B*(R\B')*P(:,:,t+1) + Q(:,:,t+1)); %See Eq. (5.1.11) in doc/TechnicalReport.pdf
 	%Optional feedforward term computation
-	d(:,t) = d(:,t+1) + model.dt * ((A'-P(:,:,t+1)*B*(R\B'))*d(:,t+1) +  P(:,:,t+1)*dtar(:,t+1) - P(:,:,t+1)*A*tar(:,t+1)); 
+	d(:,t) = d(:,t+1) + model.dt * ((A'-P(:,:,t+1)*B*(R\B'))*d(:,t+1) + P(:,:,t+1)*dtar(:,t+1) - P(:,:,t+1)*A*tar(:,t+1)); %See Eq. (5.1.29) in doc/TechnicalReport.pdf
 end
 %Computation of the feedback term L and feedforward term M in u=-LX+M
 for t=1:nbData
-	L(:,:,t) = R\B' * P(:,:,t); 
-	M(:,t) = R\B' * d(:,t); %Optional feedforward term computation
+	L(:,:,t) = R\B' * P(:,:,t); %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	M(:,t) = R\B' * d(:,t); %Optional feedforward term computation (See Eq. (5.1.30) in doc/TechnicalReport.pdf)
 end
 
 %% Reproduction with varying impedance parameters
@@ -79,7 +79,7 @@ for t=1:nbData
 	%ddx =  -L(:,:,t) * [x-r.currTar(:,t); dx];
 
 	%Compute acceleration (with both feedback and feedforward terms)
-	ddx =  -L(:,:,t) * [x-r.currTar(:,t); dx] + M(:,t);
+	ddx =  -L(:,:,t) * [x-r.currTar(:,t); dx] + M(:,t); %See Eq. (5.1.30) in doc/TechnicalReport.pdf
 	r.FB(:,t) = -L(:,:,t) * [x-r.currTar(:,t); dx];
 	r.FF(:,t) = M(:,t);
 
