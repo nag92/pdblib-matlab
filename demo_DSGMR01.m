@@ -77,9 +77,9 @@ model = EM_tensorGMM(Data, model);
 disp('Reproductions with DS-GMR...');
 DataIn = [1:s(1).nbData] * model.dt;
 for n=1:nbSamples
-  %Retrieval of attractor path through task-parameterized GMR
-  a(n) = estimateAttractorPath(DataIn, model, s(n));
-  r(n) = reproduction_DS(DataIn, model, a(n), a(n).currTar(:,1)); 
+	%Retrieval of attractor path through task-parameterized GMR
+	a(n) = estimateAttractorPath(DataIn, model, s(n));
+	r(n) = reproduction_DS(DataIn, model, a(n), a(n).currTar(:,1)); 
 end
 
 
@@ -87,16 +87,16 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('New reproductions with DS-GMR...');
 for n=1:nbRepros 
-  for m=1:model.nbFrames
-    %Random generation of new task parameters 
-    id=ceil(rand(2,1)*nbSamples);
-    w=rand(2); w=w/sum(w);
-    rTmp.p(m).b = s(id(1)).p(m).b * w(1) + s(id(2)).p(m).b * w(2);
-    rTmp.p(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
-  end
-  %Retrieval of attractor path through task-parameterized GMR
-  anew(n) = estimateAttractorPath(DataIn, model, rTmp);
-  rnew(n) = reproduction_DS(DataIn, model, anew(n), anew(n).currTar(:,1)); 
+	for m=1:model.nbFrames
+		%Random generation of new task parameters 
+		id=ceil(rand(2,1)*nbSamples);
+		w=rand(2); w=w/sum(w);
+		rTmp.p(m).b = s(id(1)).p(m).b * w(1) + s(id(2)).p(m).b * w(2);
+		rTmp.p(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
+	end
+	%Retrieval of attractor path through task-parameterized GMR
+	anew(n) = estimateAttractorPath(DataIn, model, rTmp);
+	rnew(n) = reproduction_DS(DataIn, model, anew(n), anew(n).currTar(:,1)); 
 end
 
 
@@ -112,50 +112,50 @@ colPegs = [[.9,.5,.9];[.5,.9,.5]];
 %DEMOS
 subplot(1,3,1); hold on; box on; title('Demonstrations');
 for n=1:nbSamples
-  %Plot frames
-  for m=1:model.nbFrames
-    plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-    plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
-  end
-  %Plot trajectories
-  plot(s(n).Data0(2,1), s(n).Data0(3,1),'.','markersize',12,'color',clrmap(n,:));
-  plot(s(n).Data0(2,:), s(n).Data0(3,:),'-','linewidth',1.5,'color',clrmap(n,:));
+	%Plot frames
+	for m=1:model.nbFrames
+		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+	end
+	%Plot trajectories
+	plot(s(n).Data0(2,1), s(n).Data0(3,1),'.','markersize',12,'color',clrmap(n,:));
+	plot(s(n).Data0(2,:), s(n).Data0(3,:),'-','linewidth',1.5,'color',clrmap(n,:));
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %REPROS
 subplot(1,3,2); hold on; box on; title('Reproductions with DS-GMR');
 for n=1:nbSamples
-  %Plot frames
-  for m=1:model.nbFrames
-    plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-    plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
-  end
-  %Plot Gaussians
-  plotGMM(r(n).Mu(2:3,:,1), r(n).Sigma(2:3,2:3,:,1), [.7 .7 .7]);
+	%Plot frames
+	for m=1:model.nbFrames
+		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+	end
+	%Plot Gaussians
+	plotGMM(r(n).Mu(2:3,:,1), r(n).Sigma(2:3,2:3,:,1), [.7 .7 .7]);
 end
 for n=1:nbSamples
-  %Plot trajectories
-  plot(r(n).Data(2,1), r(n).Data(3,1),'.','markersize',12,'color',clrmap(n,:));
-  plot(r(n).Data(2,:), r(n).Data(3,:),'-','linewidth',1.5,'color',clrmap(n,:));
+	%Plot trajectories
+	plot(r(n).Data(2,1), r(n).Data(3,1),'.','markersize',12,'color',clrmap(n,:));
+	plot(r(n).Data(2,:), r(n).Data(3,:),'-','linewidth',1.5,'color',clrmap(n,:));
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %NEW REPROS
 subplot(1,3,3); hold on; box on; title('New reproductions with DS-GMR');
 for n=1:nbRepros
-  %Plot frames
-  for m=1:model.nbFrames
-    plot([rnew(n).p(m).b(2) rnew(n).p(m).b(2)+rnew(n).p(m).A(2,3)], [rnew(n).p(m).b(3) rnew(n).p(m).b(3)+rnew(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-    plot(rnew(n).p(m).b(2), rnew(n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
-  end
-  %Plot Gaussians
-  plotGMM(rnew(n).Mu(2:3,:,1), rnew(n).Sigma(2:3,2:3,:,1), [.7 .7 .7]);
+	%Plot frames
+	for m=1:model.nbFrames
+		plot([rnew(n).p(m).b(2) rnew(n).p(m).b(2)+rnew(n).p(m).A(2,3)], [rnew(n).p(m).b(3) rnew(n).p(m).b(3)+rnew(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+		plot(rnew(n).p(m).b(2), rnew(n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+	end
+	%Plot Gaussians
+	plotGMM(rnew(n).Mu(2:3,:,1), rnew(n).Sigma(2:3,2:3,:,1), [.7 .7 .7]);
 end
 for n=1:nbRepros
-  %Plot trajectories
-  plot(rnew(n).Data(2,1), rnew(n).Data(3,1),'.','markersize',12,'color',[.2 .2 .2]);
-  plot(rnew(n).Data(2,:), rnew(n).Data(3,:),'-','linewidth',1.5,'color',[.2 .2 .2]);
+	%Plot trajectories
+	plot(rnew(n).Data(2,1), rnew(n).Data(3,1),'.','markersize',12,'color',[.2 .2 .2]);
+	plot(rnew(n).Data(2,:), rnew(n).Data(3,:),'-','linewidth',1.5,'color',[.2 .2 .2]);
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
@@ -166,13 +166,13 @@ figure;
 %Plot norm of control commands
 subplot(1,2,1); hold on;
 for n=1:nbRepros
-  plot(DataIn, rnew(n).ddxNorm, 'k-', 'linewidth', 2);
+	plot(DataIn, rnew(n).ddxNorm, 'k-', 'linewidth', 2);
 end
 xlabel('t'); ylabel('|ddx|');
 %Plot strength of the stiffness term
 subplot(1,2,2); hold on;
 for n=1:nbRepros
-  plot(DataIn, rnew(n).kpDet, 'k-', 'linewidth', 2);
+	plot(DataIn, rnew(n).kpDet, 'k-', 'linewidth', 2);
 end
 xlabel('t'); ylabel('|Kp|');
 
