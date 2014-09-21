@@ -1,17 +1,17 @@
 function demo_DSGMR01
-% Demonstration a task-parameterized probabilistic model encoding movements in the form of virtual spring-damper 
-% systems acting in multiple frames of reference. Each candidate coordinate system observes a set of 
-% demonstrations from its own perspective, by extracting an attractor path whose variations depend on the 
-% relevance of the frame through the task. This information is exploited to generate a new attractor path 
+% Demonstration a task-parameterized probabilistic model encoding movements in the form of virtual spring-damper
+% systems acting in multiple frames of reference. Each candidate coordinate system observes a set of
+% demonstrations from its own perspective, by extracting an attractor path whose variations depend on the
+% relevance of the frame through the task. This information is exploited to generate a new attractor path
 % corresponding to new situations (new positions and orientation of the frames).
 %
 % This demo presents the results for a dynamical system with constant gains.
-%  
+%
 % Author:	Sylvain Calinon, 2014
 %         http://programming-by-demonstration.org/SylvainCalinon
 %
-% This source code is given for free! In exchange, I would be grateful if you cite  
-% the following reference in any academic publication that uses this code or part of it: 
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
 %
 % @inproceedings{Calinon14ICRA,
 %   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
@@ -28,18 +28,18 @@ function demo_DSGMR01
 model.nbStates = 3; %Number of Gaussians in the GMM
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVar = 3; %Dimension of the datapoints in the dataset (here: t,x1,x2)
-model.dt = 0.01; %Time step 
-model.kP = 100; %Stiffness gain 
-model.kV = (2*model.kP)^.5; %Damping gain 
+model.dt = 0.01; %Time step
+model.kP = 100; %Stiffness gain
+model.kV = (2*model.kP)^.5; %Damping gain
 nbRepros = 8; %Number of reproductions with new situations randomly generated
 
 %% Load 3rd order tensor data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('Load 3rd order tensor data...');
-% The MAT file contains a structure 's' with the multiple demonstrations. 's(n).Data' is a matrix data for 
-% sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and 
-% orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations 
-% in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a 
+% The MAT file contains a structure 's' with the multiple demonstrations. 's(n).Data' is a matrix data for
+% sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
+% orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
+% in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a
 % datapoint, P=2 the number of candidate frames, and N=200x4 the number of datapoints in a trajectory (200)
 % multiplied by the number of demonstrations (5).
 load('data/DataLQR01.mat');
@@ -60,7 +60,7 @@ for n=1:nbSamples
 	DataTmp = s(n).Data0(2:end,:);
 	DataTmp = [s(n).Data0(1,:); K * [DataTmp; DataTmp*D; DataTmp*D*D]];
 	for m=1:model.nbFrames
-		Data(:,m,(n-1)*nbD+1:n*nbD) = s(n).p(m).A \ (DataTmp - repmat(s(n).p(m).b, 1, nbD)); 
+		Data(:,m,(n-1)*nbD+1:n*nbD) = s(n).p(m).A \ (DataTmp - repmat(s(n).p(m).b, 1, nbD));
 	end
 end
 
@@ -68,7 +68,7 @@ end
 %% Tensor GMM learning
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fprintf('Parameters estimation of tensor GMM with EM:');
-model = init_tensorGMM_timeBased(Data, model); %Initialization 
+model = init_tensorGMM_timeBased(Data, model); %Initialization
 model = EM_tensorGMM(Data, model);
 
 
@@ -79,16 +79,16 @@ DataIn = [1:s(1).nbData] * model.dt;
 for n=1:nbSamples
 	%Retrieval of attractor path through task-parameterized GMR
 	a(n) = estimateAttractorPath(DataIn, model, s(n));
-	r(n) = reproduction_DS(DataIn, model, a(n), a(n).currTar(:,1)); 
+	r(n) = reproduction_DS(DataIn, model, a(n), a(n).currTar(:,1));
 end
 
 
 %% Reproduction with DS-GMR for new task parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('New reproductions with DS-GMR...');
-for n=1:nbRepros 
+for n=1:nbRepros
 	for m=1:model.nbFrames
-		%Random generation of new task parameters 
+		%Random generation of new task parameters
 		id=ceil(rand(2,1)*nbSamples);
 		w=rand(2); w=w/sum(w);
 		rTmp.p(m).b = s(id(1)).p(m).b * w(1) + s(id(2)).p(m).b * w(2);
@@ -96,7 +96,7 @@ for n=1:nbRepros
 	end
 	%Retrieval of attractor path through task-parameterized GMR
 	anew(n) = estimateAttractorPath(DataIn, model, rTmp);
-	rnew(n) = reproduction_DS(DataIn, model, anew(n), anew(n).currTar(:,1)); 
+	rnew(n) = reproduction_DS(DataIn, model, anew(n), anew(n).currTar(:,1));
 end
 
 
@@ -161,8 +161,8 @@ axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %print('-dpng','outTest1.png');
 
-%Plot additional information 
-figure; 
+%Plot additional information
+figure;
 %Plot norm of control commands
 subplot(1,2,1); hold on;
 for n=1:nbRepros
