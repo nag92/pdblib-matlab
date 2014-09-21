@@ -15,8 +15,8 @@ t = linspace(-pi, pi, nbDrawingSeg);
 
 h=[];
 for i=1:nbStates
-  R = real(sqrtm(1.0.*Sigma(:,:,i)));
-  X = R * [cos(t); sin(t)] + repmat(Mu(:,i), 1, nbDrawingSeg);
-  h = [h patch(X(1,:), X(2,:), lightcolor, 'lineWidth', 1, 'EdgeColor', color)];
-  h = [h plot(Mu(1,:), Mu(2,:), 'x', 'lineWidth', 2, 'markersize', 6, 'color', color)];
+	R = real(sqrtm(1.0.*Sigma(:,:,i)));
+	X = R * [cos(t); sin(t)] + repmat(Mu(:,i), 1, nbDrawingSeg);
+	h = [h patch(X(1,:), X(2,:), lightcolor, 'lineWidth', 1, 'EdgeColor', color)];
+	h = [h plot(Mu(1,:), Mu(2,:), 'x', 'lineWidth', 2, 'markersize', 6, 'color', color)];
 end

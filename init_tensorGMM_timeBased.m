@@ -10,18 +10,18 @@ TimingSep = linspace(min(DataAll(1,:)), max(DataAll(1,:)), model.nbStates+1);
 Mu = zeros(model.nbFrames*model.nbVar, model.nbStates);
 Sigma = zeros(model.nbFrames*model.nbVar, model.nbFrames*model.nbVar, model.nbStates);
 for i=1:model.nbStates
-  idtmp = find( DataAll(1,:)>=TimingSep(i) & DataAll(1,:)<TimingSep(i+1));
-  Mu(:,i) = mean(DataAll(:,idtmp),2);
-  Sigma(:,:,i) = cov(DataAll(:,idtmp)') + eye(size(DataAll,1))*diagRegularizationFactor;
-  model.Priors(i) = length(idtmp);
+	idtmp = find( DataAll(1,:)>=TimingSep(i) & DataAll(1,:)<TimingSep(i+1));
+	Mu(:,i) = mean(DataAll(:,idtmp),2);
+	Sigma(:,:,i) = cov(DataAll(:,idtmp)') + eye(size(DataAll,1))*diagRegularizationFactor;
+	model.Priors(i) = length(idtmp);
 end
 model.Priors = model.Priors / sum(model.Priors);
 
 %Reshape GMM parameters into a tensor 
 for m=1:model.nbFrames
-  for i=1:model.nbStates
-    model.Mu(:,m,i) = Mu((m-1)*model.nbVar+1:m*model.nbVar,i); 
-    model.Sigma(:,:,m,i) = Sigma((m-1)*model.nbVar+1:m*model.nbVar,(m-1)*model.nbVar+1:m*model.nbVar,i); 
-  end
+	for i=1:model.nbStates
+		model.Mu(:,m,i) = Mu((m-1)*model.nbVar+1:m*model.nbVar,i); 
+		model.Sigma(:,:,m,i) = Sigma((m-1)*model.nbVar+1:m*model.nbVar,(m-1)*model.nbVar+1:m*model.nbVar,i); 
+	end
 end
 
