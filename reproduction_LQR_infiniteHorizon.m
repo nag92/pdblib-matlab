@@ -1,11 +1,11 @@
 function [r,P] = reproduction_LQR_infiniteHorizon(DataIn, model, r, currPos, rFactor)
-% Reproduction with a linear quadratic regulator of infinite horizon 
+% Reproduction with a linear quadratic regulator of infinite horizon
 %
 % Authors: Sylvain Calinon and Danilo Bruno, 2014
 %          http://programming-by-demonstration.org
 %
-% This source code is given for free! In exchange, we would be grateful if you cite  
-% the following reference in any academic publication that uses this code or part of it: 
+% This source code is given for free! In exchange, we would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
 %
 % @inproceedings{Calinon14ICRA,
 %   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
@@ -20,7 +20,7 @@ function [r,P] = reproduction_LQR_infiniteHorizon(DataIn, model, r, currPos, rFa
 nbData = size(DataIn,2);
 nbVarOut = model.nbVar - size(DataIn,1);
 
-%% LQR with cost = sum_t X(t)' Q(t) X(t) + u(t)' R u(t) 
+%% LQR with cost = sum_t X(t)' Q(t) X(t) + u(t)' R u(t)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Definition of a double integrator system (DX = A X + B u with X = [x; dx])
 A = kron([0 1; 0 0], eye(nbVarOut)); %See Eq. (5.1.1) in doc/TechnicalReport.pdf
@@ -35,18 +35,18 @@ R = eye(nbVarOut) * rFactor;
 tar = [r.currTar; zeros(nbVarOut,nbData)];
 dtar = gradient(tar,1,2)/model.dt;
 
-	
+
 %% Reproduction with varying impedance parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 x = currPos;
 dx = zeros(nbVarOut,1);
 for t=1:nbData
 	%Current weighting term
-	Q(1:nbVarOut,1:nbVarOut) = inv(r.currSigma(:,:,t)); 
+	Q(1:nbVarOut,1:nbVarOut) = inv(r.currSigma(:,:,t));
 	
-	%care() is a function from the Matlab Control Toolbox to solve the algebraic Riccati equation, 
+	%care() is a function from the Matlab Control Toolbox to solve the algebraic Riccati equation,
 	%also available with the control toolbox of GNU Octave
-	%P = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q 
+	%P = care(A, B, (Q+Q')/2, R); %(Q+Q')/2 is used instead of Q to avoid warnings for the symmetry of Q
 	
 	%Alternatively, the function below can be used for an implementation based on Schur decomposition
 	%P = solveAlgebraicRiccati_Schur(A, B/R*B', (Q+Q')/2);
@@ -74,7 +74,7 @@ for t=1:nbData
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;
 	%Log data
-	r.Data(:,t) = [DataIn(:,t); x]; 
+	r.Data(:,t) = [DataIn(:,t); x];
 	r.ddxNorm(t) = norm(ddx);
 	r.kpDet(t) = det(L(:,1:nbVarOut));
 	r.kvDet(t) = det(L(:,nbVarOut+1:end));

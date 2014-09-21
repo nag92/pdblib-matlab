@@ -1,5 +1,5 @@
 function [idList, Mu] = kmeansClustering(Data, nbStates)
-% Initialization of the model with k-means. 
+% Initialization of the model with k-means.
 % Authors:	Sylvain Calinon, Tohid Alizadeh, 2013
 %         http://programming-by-demonstration.org/
 
@@ -35,12 +35,12 @@ while 1
 	end
 	cumdist_old = cumdist;
 	nbStep = nbStep+1;
-%   if nbStep>maxIter
-%     disp(['Maximum number of iterations, ' num2str(maxIter) 'is reached']);
-%     break;
-%   end
+	%   if nbStep>maxIter
+	%     disp(['Maximum number of iterations, ' num2str(maxIter) 'is reached']);
+	%     break;
+	%   end
 end
 
-%disp(['Kmeans stopped after ' num2str(nbStep) ' steps.']); 
+%disp(['Kmeans stopped after ' num2str(nbStep) ' steps.']);
 
 

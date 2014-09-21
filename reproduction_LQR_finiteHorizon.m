@@ -4,8 +4,8 @@ function r = reproduction_LQR_finiteHorizon(DataIn, model, r, currPos, rFactor, 
 % Authors: Sylvain Calinon and Danilo Bruno, 2014
 %          http://programming-by-demonstration.org
 %
-% This source code is given for free! In exchange, we would be grateful if you cite  
-% the following reference in any academic publication that uses this code or part of it: 
+% This source code is given for free! In exchange, we would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
 %
 % @inproceedings{Calinon14ICRA,
 %   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
@@ -28,7 +28,7 @@ B = kron([0; 1], eye(nbVarOut)); %See Eq. (5.1.1) in doc/TechnicalReport.pdf
 %Initialize Q and R weighting matrices
 Q = zeros(nbVarOut*2,nbVarOut*2,nbData);
 for t=1:nbData
-	Q(1:nbVarOut,1:nbVarOut,t) = inv(r.currSigma(:,:,t)); 
+	Q(1:nbVarOut,1:nbVarOut,t) = inv(r.currSigma(:,:,t));
 end
 R = eye(nbVarOut) * rFactor;
 
@@ -43,8 +43,8 @@ d = zeros(nbVarOut*2, nbData); %For optional feedforward term computation
 
 %Feedback term
 L = zeros(nbVarOut, nbVarOut*2, nbData);
-%Compute P_T from the desired final feedback gains L_T,  
-P(:,:,nbData) = Pfinal; 
+%Compute P_T from the desired final feedback gains L_T,
+P(:,:,nbData) = Pfinal;
 
 %Compute derivative of target path
 %dTar = diff(r.currTar, 1, 2); %For optional feedforward term computation
@@ -77,17 +77,17 @@ dx = zeros(nbVarOut,1);
 for t=1:nbData
 	%Compute acceleration (with only feedback term)
 	%ddx =  -L(:,:,t) * [x-r.currTar(:,t); dx];
-
+	
 	%Compute acceleration (with both feedback and feedforward terms)
 	ddx =  -L(:,:,t) * [x-r.currTar(:,t); dx] + M(:,t); %See Eq. (5.1.30) in doc/TechnicalReport.pdf
 	r.FB(:,t) = -L(:,:,t) * [x-r.currTar(:,t); dx];
 	r.FF(:,t) = M(:,t);
-
+	
 	%Update velocity and position
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;
 	%Log data
-	r.Data(:,t) = [DataIn(:,t); x]; 
+	r.Data(:,t) = [DataIn(:,t); x];
 	r.ddxNorm(t) = norm(ddx);
 	r.kpDet(t) = det(L(:,1:nbVarOut,t));
 	r.kvDet(t) = det(L(:,nbVarOut+1:end,t));

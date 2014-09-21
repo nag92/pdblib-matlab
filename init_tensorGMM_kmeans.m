@@ -1,5 +1,5 @@
 function model = init_tensorGMM_kmeans(Data, model)
-% Initialization of the model with k-means. 
+% Initialization of the model with k-means.
 % Authors:	Sylvain Calinon, Tohid Alizadeh, 2013
 %         http://programming-by-demonstration.org/
 

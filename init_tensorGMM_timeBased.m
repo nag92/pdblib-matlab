@@ -17,11 +17,11 @@ for i=1:model.nbStates
 end
 model.Priors = model.Priors / sum(model.Priors);
 
-%Reshape GMM parameters into a tensor 
+%Reshape GMM parameters into a tensor
 for m=1:model.nbFrames
 	for i=1:model.nbStates
-		model.Mu(:,m,i) = Mu((m-1)*model.nbVar+1:m*model.nbVar,i); 
-		model.Sigma(:,:,m,i) = Sigma((m-1)*model.nbVar+1:m*model.nbVar,(m-1)*model.nbVar+1:m*model.nbVar,i); 
+		model.Mu(:,m,i) = Mu((m-1)*model.nbVar+1:m*model.nbVar,i);
+		model.Sigma(:,:,m,i) = Sigma((m-1)*model.nbVar+1:m*model.nbVar,(m-1)*model.nbVar+1:m*model.nbVar,i);
 	end
 end
 

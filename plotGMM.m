@@ -3,7 +3,7 @@ function h = plotGMM(Mu, Sigma, color)
 % Inputs -----------------------------------------------------------------
 %   o Mu:           D x K array representing the centers of K Gaussians.
 %   o Sigma:        D x D x K array representing the covariance matrices of K Gaussians.
-%   o color:        3 x 1 array representing the RGB color to use for the display. 
+%   o color:        3 x 1 array representing the RGB color to use for the display.
 %
 % Author:	Sylvain Calinon, 2014
 %         http://programming-by-demonstration.org/SylvainCalinon
