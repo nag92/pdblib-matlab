@@ -78,7 +78,7 @@ for t=1:nbData
 	r.ddxNorm(t) = norm(ddx);
 	r.kpDet(t) = det(L(:,1:nbVarOut));
 	r.kvDet(t) = det(L(:,nbVarOut+1:end));
+	%Note that if [V,D] = eigs(L(:,1:nbVarOut)), we have L(:,nbVarOut+1:end) = V * (2*D).^.5 * V'
 end
-
 
 

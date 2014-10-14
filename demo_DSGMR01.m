@@ -30,7 +30,7 @@ model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVar = 3; %Dimension of the datapoints in the dataset (here: t,x1,x2)
 model.dt = 0.01; %Time step
 model.kP = 100; %Stiffness gain
-model.kV = (2*model.kP)^.5; %Damping gain
+model.kV = (2*model.kP)^.5; %Damping gain (with ideal underdamped damping ratio)
 nbRepros = 8; %Number of reproductions with new situations randomly generated
 
 %% Load 3rd order tensor data

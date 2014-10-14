@@ -30,7 +30,7 @@ rFactor = 1E-1; %Weighting term for the minimization of control commands in LQR
 disp('Reproductions with LQR...');
 DataIn = [1:nbData] * model.dt;
 a.currTar = ones(1,nbData);
-a.currSigma = ones(1,1,nbData)/rFactor; %-> LQR with cost X'X + u'u
+a.currSigma = ones(1,1,nbData); %/rFactor; %-> LQR with cost X'X + u'u
 for n=1:nbRepros
 	%r(n) = reproduction_LQR_finiteHorizon(DataIn, model, a, 0, rFactor);
 	r(n) = reproduction_LQR_infiniteHorizon(DataIn, model, a, 0, rFactor);
@@ -64,11 +64,12 @@ xlabel('t'); ylabel('kp');
 %Plot stiffness/damping ratio (equals to optimal control ratio 1/2^.5)
 subplot(1,3,3); hold on;
 for n=1:nbRepros
-	plot(DataIn, r(n).kpDet./r(n).kvDet, 'k-', 'linewidth', 2);
+	%Ideal damping ratio of 1/2^.5 = 0.7071, corresponding to r(n).kvDet(1) = (2*r(n).kpDet(1))^.5
+	dampingRatio = r(n).kvDet(:) ./ (2*r(n).kpDet(:).^.5);
+	plot(DataIn, dampingRatio, 'k-', 'linewidth', 2);
 end
-xlabel('t'); ylabel('kp/kv');
+xlabel('t'); ylabel('kv / 2 kp^{0.5}');
 
-r(n).kpDet(1)/r(n).kvDet(1) %equals to optimal control ratio 1/2^.5 = 0.7071
+pause;
+close all;
 
-%pause;
-%close all;
