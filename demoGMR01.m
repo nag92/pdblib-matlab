@@ -37,6 +37,7 @@ end
 
 %% Learning and reproduction
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%model = init_GMM_kmeans(Data, model);
 model = init_GMM_timeBased(Data, model);
 model = EM_GMM(Data, model);
 DataOut = GMR(model, 1:nbData, 1, [2,3]);
