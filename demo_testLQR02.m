@@ -17,6 +17,8 @@ function demo_testLQR02
 %   pages="3339--3344"
 % }
 
+addpath('./m_fcts/');
+
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model.nbVar = 2; %Dimension of the datapoints in the dataset (here: t,x1)

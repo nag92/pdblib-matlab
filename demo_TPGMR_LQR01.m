@@ -25,6 +25,8 @@ function demo_TPGMR_LQR01
 %   pages="3339--3344"
 % }
 
+addpath('./m_fcts/');
+
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model.nbStates = 3; %Number of Gaussians in the GMM
