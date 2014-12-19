@@ -20,18 +20,18 @@ function [expData, expSigma, H] = GMR(model, DataIn, in, out)
 nbData = size(DataIn,2);
 nbVarOut = length(out);
 
+diagRegularizationFactor = 1E-8;
+
 MuTmp = zeros(nbVarOut,model.nbStates);
 expData = zeros(nbVarOut,nbData);
 expSigma = zeros(nbVarOut,nbVarOut,nbData);
-expSigma2 = zeros(nbVarOut,nbVarOut,nbData);
-expSigma3 = zeros(nbVarOut,nbVarOut,nbData);
 for t=1:nbData
 	%Compute activation weight
 	%See Eq. (3.0.5) in doc/TechnicalReport.pdf
 	for i=1:model.nbStates
 		H(i,t) = model.Priors(i) * gaussPDF(DataIn(:,t), model.Mu(in,i), model.Sigma(in,in,i));
 	end
-	H(:,t) = H(:,t)/sum(H(:,t));
+	H(:,t) = H(:,t)/sum(H(:,t)+realmin);
 	%Compute expected conditional means
 	%See Eq. (3.0.8) in doc/TechnicalReport.pdf
 	for i=1:model.nbStates
@@ -44,6 +44,6 @@ for t=1:nbData
 		SigmaTmp = model.Sigma(out,out,i) - model.Sigma(out,in,i)/model.Sigma(in,in,i) * model.Sigma(in,out,i);
 		expSigma(:,:,t) = expSigma(:,:,t) + H(i,t) * (SigmaTmp + MuTmp(:,i)*MuTmp(:,i)');
 	end
-	expSigma(:,:,t) = expSigma(:,:,t) - expData(:,t)*expData(:,t)'; 
+	expSigma(:,:,t) = expSigma(:,:,t) - expData(:,t)*expData(:,t)' + eye(nbVarOut) * diagRegularizationFactor; 
 end
 

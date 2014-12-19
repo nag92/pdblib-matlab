@@ -59,7 +59,7 @@ function [L, GAMMA] = computeGamma(Data, model)
   for i=1:model.nbStates
 		L(i,:) = model.Priors(i) * gaussPDF(Data, model.Mu(:,i), model.Sigma(:,:,i));
 	end
-	GAMMA = L ./ repmat(sum(L,1),model.nbStates,1);
+	GAMMA = L ./ repmat(sum(L,1)+realmin,model.nbStates,1);
 end
 
 
