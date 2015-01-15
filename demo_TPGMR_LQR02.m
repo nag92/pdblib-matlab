@@ -158,13 +158,15 @@ for n=1:nbRepros
 end
 xlabel('t'); ylabel('|Kp|');
 
-%Plot accelerations due to feedback and feedforward terms
-figure; hold on;
-n=1; k=1;
-plot(r(n).FB(k,:),'r-','linewidth',2);
-plot(r(n).FF(k,:),'b-','linewidth',2);
-legend('ddx feedback','ddx feedforward');
-xlabel('t'); ylabel(['ddx_' num2str(k)]);
+
+% %Plot accelerations due to feedback and feedforward terms
+% figure; hold on;
+% n=1; k=1;
+% plot(r(n).FB(k,:),'r-','linewidth',2);
+% plot(r(n).FF(k,:),'b-','linewidth',2);
+% legend('ddx feedback','ddx feedforward');
+% xlabel('t'); ylabel(['ddx_' num2str(k)]);
+
 
 %pause;
 %close all;

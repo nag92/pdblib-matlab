@@ -67,15 +67,18 @@ for t=1:nbData
 	
 	%Compute acceleration (with feedback and feedforward terms)
 	ddx =  -L * [x-r.currTar(:,t); dx] + M; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
-	r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
-	r.FF(:,t) = M;
 	
 	%Update velocity and position
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;
-	%Log data
+	
+	%Log data (with additional variables collected for analysis purpose)
 	r.Data(:,t) = [DataIn(:,t); x];
 	r.ddxNorm(t) = norm(ddx);
+	%r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
+	%r.FF(:,t) = M;
+	%r.Kp(:,:,t) = L(:,1:nbVarOut);
+	%r.Kv(:,:,t) = L(:,nbVarOut+1:end);
 	r.kpDet(t) = det(L(:,1:nbVarOut));
 	r.kvDet(t) = det(L(:,nbVarOut+1:end));
 	%Note that if [V,D] = eigs(L(:,1:nbVarOut)), we have L(:,nbVarOut+1:end) = V * (2*D).^.5 * V'
