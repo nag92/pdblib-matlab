@@ -58,7 +58,7 @@ model = EM_tensorGMM(Data, model);
 
 %% Reproduction with LQR for the task parameters used to train the model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('Reproductions with LQR...');
+disp('Reproductions with infinite-horizon LQR...');
 DataIn = [1:s(1).nbData] * model.dt;
 for n=1:nbSamples
 	%Retrieval of attractor path through task-parameterized GMR
@@ -69,7 +69,7 @@ end
 
 %% Reproduction with LQR for new task parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('New reproductions with LQR...');
+disp('New reproductions with infinite-horizon LQR...');
 for n=1:nbRepros
 	for m=1:model.nbFrames
 		%Random generation of new task parameters
@@ -143,8 +143,6 @@ for n=1:nbRepros
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
-%print('-dpng','outTest1.png');
-
 %Plot additional information
 figure;
 %Plot norm of control commands
@@ -168,6 +166,5 @@ plot(r(n).FF(k,:),'b-','linewidth',2);
 legend('ddx feedback','ddx feedforward');
 xlabel('t'); ylabel(['ddx_' num2str(k)]);
 
-%print('-dpng','outTest2.png');
 %pause;
 %close all;
