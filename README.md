@@ -7,7 +7,7 @@
 ### Usage
 
 	Unzip the file and run 'demo_TPGMR_LQR01' (finite horizon LQR), 'demo_TPGMR_LQR02' (infinite horizon LQR) or
-	'demo_DSGMR01' (dynamical system with constant gains) in Matlab.  
+	'demo_TPGMR_DS01' (dynamical system with constant gains) in Matlab.  
 	'demo_testLQR01', 'demo_testLQR02' and 'demo_testLQR03' can also be run as additional examples of LQR.
 
 ### Reference  
