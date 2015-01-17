@@ -1,4 +1,4 @@
-function demo_DSGMR01
+function demo_TPGMR_DS01
 % Demonstration a task-parameterized probabilistic model encoding movements in the form of virtual spring-damper
 % systems acting in multiple frames of reference. Each candidate coordinate system observes a set of
 % demonstrations from its own perspective, by extracting an attractor path whose variations depend on the
@@ -163,7 +163,8 @@ axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %print('-dpng','outTest1.png');
 
-%Plot additional information
+%% Plot additional information
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure;
 %Plot norm of control commands
 subplot(1,2,1); hold on;
