@@ -1,5 +1,5 @@
 function demo_testLQR01
-% Test of the linear quadratic regulation
+% Test of the linear quadratic regulation with different variance in the data
 %
 % Author:	Sylvain Calinon, 2014
 %         http://programming-by-demonstration.org/SylvainCalinon

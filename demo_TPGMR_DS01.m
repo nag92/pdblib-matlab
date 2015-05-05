@@ -67,9 +67,9 @@ for n=1:nbSamples
 end
 
 
-%% Tensor GMM learning
+%% TP-GMM learning
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fprintf('Parameters estimation of tensor GMM with EM:');
+fprintf('Parameters estimation of TP-GMM with EM:');
 model = init_tensorGMM_timeBased(Data, model); %Initialization
 model = EM_tensorGMM(Data, model);
 
@@ -133,13 +133,15 @@ for n=1:nbSamples
 		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
 		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
 	end
-	%Plot Gaussians
-	plotGMM(r(n).Mu(2:3,:,1), r(n).Sigma(2:3,2:3,:,1), [.7 .7 .7]);
 end
 for n=1:nbSamples
 	%Plot trajectories
 	plot(r(n).Data(2,1), r(n).Data(3,1),'.','markersize',12,'color',clrmap(n,:));
 	plot(r(n).Data(2,:), r(n).Data(3,:),'-','linewidth',1.5,'color',clrmap(n,:));
+end
+for n=1:nbSamples
+	%Plot Gaussians
+	plotGMM(r(n).Mu(2:3,:,1), r(n).Sigma(2:3,2:3,:,1), [.5 .5 .5],.8);
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
@@ -151,17 +153,20 @@ for n=1:nbRepros
 		plot([rnew(n).p(m).b(2) rnew(n).p(m).b(2)+rnew(n).p(m).A(2,3)], [rnew(n).p(m).b(3) rnew(n).p(m).b(3)+rnew(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
 		plot(rnew(n).p(m).b(2), rnew(n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
 	end
-	%Plot Gaussians
-	plotGMM(rnew(n).Mu(2:3,:,1), rnew(n).Sigma(2:3,2:3,:,1), [.7 .7 .7]);
 end
 for n=1:nbRepros
 	%Plot trajectories
 	plot(rnew(n).Data(2,1), rnew(n).Data(3,1),'.','markersize',12,'color',[.2 .2 .2]);
 	plot(rnew(n).Data(2,:), rnew(n).Data(3,:),'-','linewidth',1.5,'color',[.2 .2 .2]);
 end
+for n=1:nbRepros
+	%Plot Gaussians
+	plotGMM(rnew(n).Mu(2:3,:,1), rnew(n).Sigma(2:3,2:3,:,1), [.5 .5 .5],.8);
+end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
-%print('-dpng','outTest1.png');
+%print('-dpng','graphs/demo_TPGMR_DS01.png');
+
 
 %% Plot additional information
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +183,6 @@ for n=1:nbRepros
 	plot(DataIn, rnew(n).kpDet, 'k-', 'linewidth', 2);
 end
 xlabel('t'); ylabel('|Kp|');
-
 
 %pause;
 %close all;

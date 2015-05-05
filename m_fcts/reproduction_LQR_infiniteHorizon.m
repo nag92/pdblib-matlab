@@ -52,13 +52,15 @@ for t=1:nbData
 	%P = solveAlgebraicRiccati_Schur(A, B/R*B', (Q+Q')/2);
 	
 	%Alternatively, the function below can be used for an implementation based on Eigendecomposition
+	%-> the only operator is eig([A -B/R*B'; -Q -A'])
 	P = solveAlgebraicRiccati_eig(A, B/R*B', (Q+Q')/2); %See Eq. (5.1.27) and Sec. (5.2) in doc/TechnicalReport.pdf
 	
 	%Variable for feedforward term computation (optional for movements with low dynamics)
-	d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t)); %See Eq. (5.1.28) in doc/TechnicalReport.pdf
+	d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t)); %See Eq. (5.1.28) with d_dot=0 in doc/TechnicalReport.pdf
 	
 	%Feedback term
 	L = R\B'*P; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	
 	%Feedforward term
 	M = R\B'*d; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
 	

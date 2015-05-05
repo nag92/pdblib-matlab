@@ -70,8 +70,8 @@ for n=1:nbRepros
 	dampingRatio = r(n).kvDet(:) ./ (2*r(n).kpDet(:).^.5);
 	plot(DataIn, dampingRatio, 'k-', 'linewidth', 2);
 end
-xlabel('t'); ylabel('kv / 2 kp^{0.5}');
+xlabel('t'); ylabel('Damping ratio');
 
-pause;
-close all;
+%pause;
+%close all;
 

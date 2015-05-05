@@ -18,7 +18,7 @@ function r = reproduction_DS(DataIn, model, r, currPos)
 % }
 
 nbData = size(DataIn,2);
-nbVarOut = model.nbVar - size(DataIn,1);
+nbVarOut = length(currPos);
 
 %% Reproduction with constant impedance parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

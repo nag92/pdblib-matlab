@@ -34,7 +34,7 @@ model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVar = 3; %Dimension of the datapoints in the dataset (here: t,x1,x2)
 model.dt = 0.01; %Time step
 nbRepros = 8; %Number of reproductions with new situations randomly generated
-rFactor = 1E-1; %Weighting term for the minimization of control commands in LQR
+rFactor = 1E-2; %Weighting term for the minimization of control commands in LQR
 
 
 %% Load 3rd order tensor data
@@ -49,9 +49,9 @@ disp('Load 3rd order tensor data...');
 load('data/DataLQR01.mat');
 
 
-%% Tensor GMM learning
+%% TP-GMM learning
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fprintf('Parameters estimation of tensor GMM with EM:');
+fprintf('Parameters estimation of TP-GMM with EM:');
 model = init_tensorGMM_timeBased(Data, model); %Initialization
 model = EM_tensorGMM(Data, model);
 
@@ -108,42 +108,50 @@ end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %REPROS
-subplot(1,3,2); hold on; box on; title('Reproductions with infinite horizon LQR');
+subplot(1,3,2); hold on; box on; title('Repros with infinite horizon LQR');
 for n=1:nbSamples
 	%Plot frames
 	for m=1:model.nbFrames
 		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
 		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
 	end
-	%Plot Gaussians
-	plotGMM(r(n).Mu(2:3,:,1), r(n).Sigma(2:3,2:3,:,1), [.7 .7 .7]);
 end
 for n=1:nbSamples
 	%Plot trajectories
 	plot(r(n).Data(2,1), r(n).Data(3,1),'.','markersize',12,'color',clrmap(n,:));
 	plot(r(n).Data(2,:), r(n).Data(3,:),'-','linewidth',1.5,'color',clrmap(n,:));
 end
+for n=1:nbSamples
+	%Plot Gaussians
+	plotGMM(r(n).Mu(2:3,:,1), r(n).Sigma(2:3,2:3,:,1), [.5 .5 .5],.8);
+end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %NEW REPROS
-subplot(1,3,3); hold on; box on; title('New reproductions with infinite horizon LQR');
+subplot(1,3,3); hold on; box on; title('New repros with infinite horizon LQR');
 for n=1:nbRepros
 	%Plot frames
 	for m=1:model.nbFrames
 		plot([rnew(n).p(m).b(2) rnew(n).p(m).b(2)+rnew(n).p(m).A(2,3)], [rnew(n).p(m).b(3) rnew(n).p(m).b(3)+rnew(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
 		plot(rnew(n).p(m).b(2), rnew(n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
 	end
-	%Plot Gaussians
-	plotGMM(rnew(n).Mu(2:3,:,1), rnew(n).Sigma(2:3,2:3,:,1), [.7 .7 .7]);
 end
 for n=1:nbRepros
 	%Plot trajectories
 	plot(rnew(n).Data(2,1), rnew(n).Data(3,1),'.','markersize',12,'color',[.2 .2 .2]);
 	plot(rnew(n).Data(2,:), rnew(n).Data(3,:),'-','linewidth',1.5,'color',[.2 .2 .2]);
 end
+for n=1:nbRepros
+	%Plot Gaussians
+	plotGMM(rnew(n).Mu(2:3,:,1), rnew(n).Sigma(2:3,2:3,:,1), [.5 .5 .5],.8);
+end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
-%Plot additional information
+%print('-dpng','graphs/demo_TPGMR_LQR02.png');
+
+
+%% Plot additional information
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure;
 %Plot norm of control commands
 subplot(1,2,1); hold on;
@@ -158,7 +166,6 @@ for n=1:nbRepros
 end
 xlabel('t'); ylabel('|Kp|');
 
-
 % %Plot accelerations due to feedback and feedforward terms
 % figure; hold on;
 % n=1; k=1;
@@ -166,7 +173,6 @@ xlabel('t'); ylabel('|Kp|');
 % plot(r(n).FF(k,:),'b-','linewidth',2);
 % legend('ddx feedback','ddx feedforward');
 % xlabel('t'); ylabel(['ddx_' num2str(k)]);
-
 
 %pause;
 %close all;

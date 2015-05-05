@@ -1,5 +1,5 @@
 function demo_testLQR03
-% Comaprison of linear quadratic regulators with finite and infinite time horizons
+% Comparison of linear quadratic regulators with finite and infinite time horizons
 %
 % Author:	Sylvain Calinon, 2014
 %         http://programming-by-demonstration.org/SylvainCalinon
