@@ -25,6 +25,12 @@
 	estimate the stiffness and damping feedback terms of the spring-damper systems, resulting in a minimal intervention 
 	control strategy.
 
+### Datasets
+	
+	The folder "data" contains a dataset of 2D handwriting movements from LASA-EPFL (http://lasa.epfl.ch), collected within 
+	the context of the AMARSI European Project. Reference: S.M. Khansari-Zadeh and A. Billard, "Learning Stable Non-Linear 
+	Dynamical Systems with Gaussian Mixture Models", IEEE Transaction on Robotics, 2011.
+
 ### Contact
 
 	Sylvain Calinon
