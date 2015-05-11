@@ -41,7 +41,7 @@ if nargout>1
 % 		SigmaOut(:,:,t) = eye(size(yd,1)) * S(t,t); 
 % 	end
 
-	%Evaluate Sigma (as in GMR)
+	%Evaluate Sigma
 	%nbSamples = size(y,2) / size(yd,2);
 	%yd = repmat(yd,1,nbSamples);
 	for t=1:size(yd,2)
