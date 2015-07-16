@@ -1,8 +1,20 @@
 function demo_TPGMM01
-%Example of task-parameterized Gaussian mixture model (TP-GMM)
-%Sylvain Calinon, 2015
+% Task-parameterized Gaussian mixture model (TP-GMM) encoding
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -18,8 +30,8 @@ disp('Load 3rd order tensor data...');
 % sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=2 the dimension of a
-% datapoint, P=2 the number of candidate frames, and N=200x4 the number of datapoints in a trajectory (200)
-% multiplied by the number of demonstrations (nbSamples=5).
+% datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
+% multiplied by the number of demonstrations (M=5).
 load('data/Data01.mat');
 
 
@@ -71,6 +83,30 @@ for m=1:model.nbFrames
 	plotGMM(squeeze(model.Mu(:,m,:)), squeeze(model.Sigma(:,:,m,:)), [.5 .5 .5],.8);
 	axis square; set(gca,'xtick',[0],'ytick',[0]);
 end
+
+
+% %% Saving of data for C++ version of pbdlib
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %Save model parameters
+% for m=1:model.nbFrames
+% 	M = [];
+% 	N = [];
+% 	for i=1:model.nbStates
+% 		M = [M model.Sigma(:,:,m,i)];
+% 		N = [N model.Mu(:,m,i)];
+% 	end
+% 	save(['data/Sigma' num2str(m) '.txt'], 'M', '-ascii');
+% 	save(['data/Mu' num2str(m) '.txt'], 'N', '-ascii');
+% end
+% save(['data/Priors.txt'], 'model.Priors', '-ascii');
+% TPGMMparams = [model.nbVar; model.nbFrames; model.nbStates; model.dt];
+% save(['data/Tpgmm.txt'], 'TPGMMparams', '-ascii');
+% %Save task parameters
+% for m=1:model.nbFrames
+% 	Ab = [r(1).p(m).b'; r(1).p(m).A];
+% 	save(['data/Params' num2str(m) '.txt'], 'Ab', '-ascii');
+% end
+
 
 %print('-dpng','graphs/demo_TPGMM01.png');
 %pause;

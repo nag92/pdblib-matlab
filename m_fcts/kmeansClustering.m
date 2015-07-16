@@ -8,7 +8,7 @@ cumdist_threshold = 1e-10;
 maxIter = 100;
 
 %Initialization of the parameters
-[nbVar, nbData] = size(Data);
+[~, nbData] = size(Data);
 cumdist_old = -realmax;
 nbStep = 0;
 
@@ -35,10 +35,10 @@ while 1
 	end
 	cumdist_old = cumdist;
 	nbStep = nbStep+1;
-	%   if nbStep>maxIter
-	%     disp(['Maximum number of iterations, ' num2str(maxIter) 'is reached']);
-	%     break;
-	%   end
+	if nbStep>maxIter
+		disp(['Maximum number of kmeans iterations, ' num2str(maxIter) 'is reached']);
+		break;
+	end
 end
 
 %disp(['Kmeans stopped after ' num2str(nbStep) ' steps.']);

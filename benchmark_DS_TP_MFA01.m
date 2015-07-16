@@ -1,8 +1,20 @@
 function benchmark_DS_TP_MFA01
-%Benchmark of task-parameterized mixture of factor analyzers (TP-MFA), with DS-GMR used for reproduction
-%Sylvain Calinon, 2015
+% Benchmark of task-parameterized mixture of factor analyzers (TP-MFA), with DS-GMR used for reproduction
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,9 +110,10 @@ for n=1:nbSamples
 	plotGMM(r(n).Mu(2:3,:),r(n).Sigma(2:3,2:3,:), [0 0 0], .04);
 end
 axis equal; axis(limAxes);
-print('-dpng','-r600','graphs/benchmark_DS_TP_MFA01.png');
+%print('-dpng','-r600','graphs/benchmark_DS_TP_MFA01.png');
 
 %Plot reproductions in new situations
+disp('[Press enter to see next reproduction attempt]');
 h=[];
 for n=1:nbRepros
 	delete(h);
@@ -111,8 +124,8 @@ for n=1:nbRepros
 		[1 1 1],'linewidth',1.5,'edgecolor',[0 0 0],'facealpha',0,'edgealpha',0.4)];
 	h = [h plot(rnew(n).Data(2,1), rnew(n).Data(3,1),'.','markersize',12,'color',[0 0 0])];
 	axis equal; axis(limAxes);
-	print('-dpng','-r600',['graphs/benchmark_DS_TP_MFA' num2str(n+1,'%.2d') '.png']);
-	%pause
+	%print('-dpng','-r600',['graphs/benchmark_DS_TP_MFA' num2str(n+1,'%.2d') '.png']);
+	pause;
 end
 
 pause;

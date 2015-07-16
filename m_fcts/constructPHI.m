@@ -1,4 +1,4 @@
-function [PHI,PHI1,T,T1] = constructPHI(model,nbD,nbSamples)
+function [PHI,PHI1,PHI0,T,T1] = constructPHI(model,nbD,nbSamples)
 %Construct PHI operator (big sparse matrix) used in trajectory-GMM, see Eq. (2.4.5) in doc/TechnicalReport.pdf
 %Sylvain Calinon, 2015
 

@@ -1,9 +1,22 @@
 function demoIK_nullspace_TPGMM01
-%IK with nullspace treated with task-parameterized GMM (bimanual tracking task, version with 4 frames)
-%First run 'startup_rvc' from the robotics toolbox
-%Sylvain Calinon, 2015
+% Inverse kinematics with nullspace treated with task-parameterized GMM (bimanual tracking task, version with 4 frames).
+%
+% This example requires Peter Corke's robotics toolbox (run 'startup_rvc' from the robotics toolbox).
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,11 +35,13 @@ pinvDampCoeff = 1e-8; %Coefficient for damped pseudoinverse
 
 needsModel = 1;
 
+
 %% Create robot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 armLength = .5;
 L1 = Link('d', 0, 'a', armLength, 'alpha', 0);
 arm = SerialLink(repmat(L1,3,1));
+
 
 %% Generate demonstrations 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,6 +61,9 @@ for n=1:nbSamples
 			%Objects moving on a line
 			s(n).lxh = [linspace(s(n).lx(1,1),s(n).lx(1,1)-.6*armLength,nbData); linspace(s(n).lx(2,1),s(n).lx(2,1)+2*armLength,nbData)];
 			s(n).rxh = [linspace(s(n).rx(1,1),s(n).rx(1,1)+.6*armLength,nbData); linspace(s(n).rx(2,1),s(n).rx(2,1)+2*armLength,nbData)];
+% 			%Objects moving on a curve
+% 			s(n).lxh = [-sin(linspace(0,pi,nbData))*0.4+s(n).lx(1,1); linspace(s(n).lx(2,1),s(n).lx(2,1)+2*armLength,nbData)];
+% 			s(n).rxh = [sin(linspace(0,pi,nbData))*0.4+s(n).rx(1,1); linspace(s(n).rx(2,1),s(n).rx(2,1)+2*armLength,nbData)];
 		end
 		%Build Jacobians
 		lJ = arm.jacob0(q(1:3),'trans');
@@ -116,7 +134,7 @@ model = init_TPGMM_timeBased(Data, model); %Initialization
 %model = init_TPGMM_kmeans(Data, model); %Initialization
 model = EM_TPGMM(Data, model);
 
-model.nbVar = model.nbQ; %Update nbVar to use productTPGMM()
+model.nbVar = model.nbQ; %Update of nbVar to later use productTPGMM()
 
 
 %% Reproduction 
@@ -137,6 +155,9 @@ for n=1:nbRepros
 			%Objects moving on a line
 			r(n).lxh = [linspace(r(n).lx(1,1),r(n).lx(1,1)-.6*armLength,nbData); linspace(r(n).lx(2,1),r(n).lx(2,1)+2*armLength,nbData)];
 			r(n).rxh = [linspace(r(n).rx(1,1),r(n).rx(1,1)+.6*armLength,nbData); linspace(r(n).rx(2,1),r(n).rx(2,1)+2*armLength,nbData)];
+% 			%Objects moving on a curve
+% 			r(n).lxh = [-sin(linspace(0,pi,nbData))*0.3+r(n).lx(1,1); linspace(r(n).lx(2,1),r(n).lx(2,1)+2*armLength,nbData)];
+% 			r(n).rxh = [sin(linspace(0,pi,nbData))*0.3+r(n).rx(1,1); linspace(r(n).rx(2,1),r(n).rx(2,1)+2*armLength,nbData)];
 		end
 		%IK controller
 		ldx = (r(n).lxh(:,t) - r(n).lx(:,t)) / model.dt;
@@ -197,6 +218,7 @@ end
 save('data/TPGMMtmp.mat','s','r','model');
 end %needsModel
 load('data/TPGMMtmp.mat');
+
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

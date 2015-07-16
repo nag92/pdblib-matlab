@@ -1,8 +1,20 @@
 function benchmark_DS_PGMM01
-%Benchmark of task-parameterized model based on parametric Gaussian mixture model, and DS-GMR used for reproduction
-%Sylvain Calinon, 2015
+% Benchmark of task-parameterized model based on parametric Gaussian mixture model, and DS-GMR used for reproduction
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -13,8 +25,8 @@ model.dt = 0.01; %Time step
 model.kP = 100; %Stiffness gain
 model.kV = (2*model.kP)^.5; %Damping gain (with ideal underdamped damping ratio)
 nbRepros = 4; %Number of reproductions with new situations randomly generated
-nbVarOut = model.nbVar - 1;
-L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV];
+nbVarOut = model.nbVar-1; %(here, x1,x2)
+L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV]; %Feedback gains
 
 
 %% Load 3rd order tensor data
@@ -24,8 +36,8 @@ disp('Load 3rd order tensor data...');
 % sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a
-% datapoint, P=2 the number of candidate frames, and N=200x4 the number of datapoints in a trajectory (200)
-% multiplied by the number of demonstrations (5).
+% datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
+% multiplied by the number of demonstrations (M=5).
 load('data/DataLQR01.mat');
 
 
@@ -38,7 +50,7 @@ D(end,end) = 0;
 %Create transformation matrix to compute XHAT = X + DX*kV/kP + DDX/kP
 K1d = [1, model.kV/model.kP, 1/model.kP];
 K = kron(K1d,eye(nbVarOut));
-%Create 3rd order tensor data with XHAT instead of X, see Eq. (4.0.2) in doc/TechnicalReport.pdf
+%Compute derivatives
 Data = [];
 for n=1:nbSamples
 	DataTmp = s(n).Data0(2:end,:);
@@ -51,9 +63,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fprintf('Parameters estimation of PGMM with EM:');
 for n=1:nbSamples	
-% 	%Task parameters rearranged as a vector (position and orientation), see Eq. (7.1.4) in doc/TechnicalReport.pdf
+% 	%Task parameters rearranged as a vector (position and orientation), see Eq. (48) 
 % 	s(n).OmegaMu = [s(n).p(1).b(2:3); s(n).p(1).A(2:3,3); s(n).p(2).b(2:3); s(n).p(2).A(2:3,3); 1];
-	%Task parameters rearranged as a vector (position only), see Eq. (7.1.4) in doc/TechnicalReport.pdf
+
+	%Task parameters rearranged as a vector (position only), see Eq. (48) 
 	s(n).OmegaMu = [s(n).p(1).b(2:3); s(n).p(2).b(2:3); 1];
 end
 
@@ -61,10 +74,12 @@ end
 % %model = init_GMM_kmeans(Data, model);
 % model = init_GMM_timeBased(Data, model);
 % model = EM_GMM(Data, model);
+
 for i=1:model.nbStates
 % 	%Initialization of parameters based on standard GMM
 % 	model.ZMu(:,:,i) = zeros(model.nbVar, size(s(1).OmegaMu,1));
 % 	model.ZMu(:,end,i) = model.Mu(:,i);
+
 		%Random initialization of parameters
 		model.ZMu(:,:,i) = rand(model.nbVar,size(s(1).OmegaMu,1));
 		model.Sigma(:,:,i) = eye(model.nbVar);
@@ -83,17 +98,18 @@ nbVarOut = model.nbVar-1;
 for n=1:nbSamples
 	%Computation of the resulting Gaussians (for display purpose)
 	for i=1:model.nbStates
-		model.Mu(:,i) = model.ZMu(:,:,i) * s(n).OmegaMu; %Temporary Mu variable, see Eq. (7.1.4) in doc/TechnicalReport.pdf
+		model.Mu(:,i) = model.ZMu(:,:,i) * s(n).OmegaMu; %Temporary Mu variable, see Eq. (48) 
 	end
 	r(n).Mu = model.Mu;
+	
 % 	%Retrieval of attractor path through GMR
-% 	currTar = GMR(model, DataIn, 1, [2:model.nbVar]); %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+% 	currTar = GMR(model, DataIn, 1, [2:model.nbVar]); %See Eq. (17)-(19)
 % 	%Motion retrieval with spring-damper system
 % 	x = s(n).p(1).b(2:model.nbVar);
 % 	dx = zeros(nbVarOut,1);
 % 	for t=1:s(n).nbData
 % 		%Compute acceleration, velocity and position
-% 		ddx =  -L * [x-currTar(:,t); dx]; %See Eq. (4.0.1) in doc/TechnicalReport.pdf
+% 		ddx =  -L * [x-currTar(:,t); dx]; 
 % 		dx = dx + ddx * model.dt;
 % 		x = x + dx * model.dt;
 % 		r(n).Data(:,t) = x;
@@ -110,6 +126,7 @@ for n=1:nbRepros
 	
 % 	%Task parameters re-arranged as a vector (position and orientation), see Eq. (7.1.4) in doc/TechnicalReport.pdf
 % 	rnew(n).OmegaMu = [rnew(n).p(1).b(2:3); rnew(n).p(1).A(2:3,3); rnew(n).p(2).b(2:3); rnew(n).p(2).A(2:3,3); 1];
+
 	%Task parameters re-arranged as a vector (position only), see Eq. (7.1.4) in doc/TechnicalReport.pdf
 	rnew(n).OmegaMu = [rnew(n).p(1).b(2:3); rnew(n).p(2).b(2:3); 1];
 	
@@ -152,9 +169,10 @@ for n=1:nbSamples
 	plotGMM(r(n).Mu(2:3,:),model.Sigma(2:3,2:3,:), [0 0 0], .04);
 end
 axis equal; axis(limAxes);
-print('-dpng','-r600','graphs/benchmark_DS_PGMM01.png');
+%print('-dpng','-r600','graphs/benchmark_DS_PGMM01.png');
 
 %Plot reproductions in new situations
+disp('[Press enter to see next reproduction attempt]');
 h=[];
 for n=1:nbRepros
 	delete(h);
@@ -165,8 +183,8 @@ for n=1:nbRepros
 		[1 1 1],'linewidth',1.5,'edgecolor',[0 0 0],'facealpha',0,'edgealpha',0.4)];
 	h = [h plot(rnew(n).Data(1,1), rnew(n).Data(2,1),'.','markersize',12,'color',[0 0 0])];
 	axis equal; axis(limAxes);
-	print('-dpng','-r600',['graphs/benchmark_DS_PGMM' num2str(n+1,'%.2d') '.png']);
-	%pause
+	%print('-dpng','-r600',['graphs/benchmark_DS_PGMM' num2str(n+1,'%.2d') '.png']);
+	pause;
 end
 
 pause;

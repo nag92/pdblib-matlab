@@ -1,8 +1,20 @@
 function benchmark_DS_TP_trajGMM01
-%Benchmark of task-parameterized Gaussian mixture model (TP-GMM), with DS-GMR used for reproduction
-%Sylvain Calinon, 2015
+% Benchmark of task-parameterized Gaussian mixture model (TP-GMM), with DS used for reproduction
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10,11 +22,11 @@ model.nbStates = 3; %Number of Gaussians in the GMM
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVarPos = 2; %Dimension of position data (here: x1,x2)
 model.nbDeriv = 3; %Number of static&dynamic features (D=2 for [x,dx], D=3 for [x,dx,ddx], etc.)
-model.dt = .1; %Time step
+model.dt = 0.1; %Time step
 model.kP = 10; %Stiffness gain
 model.kV = (2*model.kP)^.5; %Damping gain (with ideal underdamped damping ratio)
 nbRepros = 4; %Number of reproductions with new situations randomly generated
-L = [eye(model.nbVarPos)*model.kP, eye(model.nbVarPos)*model.kV];
+L = [eye(model.nbVarPos)*model.kP, eye(model.nbVarPos)*model.kV]; %Feedback gains
 
 
 %% Load 3rd order tensor data
@@ -24,8 +36,8 @@ disp('Load 3rd order tensor data...');
 % sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a
-% datapoint, P=2 the number of candidate frames, and N=200x4 the number of datapoints in a trajectory (200)
-% multiplied by the number of demonstrations (5).
+% datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
+% multiplied by the number of demonstrations (M=5).
 load('data/DataLQR01.mat');
 
 
@@ -43,10 +55,6 @@ for n=1:nbSamples
 	DataTmp = s(n).Data0(2:end,:);
 	s(n).Data = [s(n).Data0(1,:); K * [DataTmp; DataTmp*D; DataTmp*D*D]];
 end
-
-% for n=1:nbSamples
-% 	s(n).Data = s(n).Data0;
-% end
 
 
 %% Compute derivatives
@@ -215,9 +223,10 @@ for n=1:nbSamples
 	plotGMM(r(n).Mu(1:2,:),r(n).Sigma(1:2,1:2,:), [0 0 0], .04);
 end
 axis equal; axis(limAxes);
-print('-dpng','-r600','graphs/benchmark_DS_TP_trajGMM01.png');
+%print('-dpng','-r600','graphs/benchmark_DS_TP_trajGMM01.png');
 
 %Plot reproductions in new situations
+disp('[Press enter to see next reproduction attempt]');
 h=[];
 for n=1:nbRepros
 	delete(h);
@@ -228,8 +237,8 @@ for n=1:nbRepros
 		[1 1 1],'linewidth',1.5,'edgecolor',[0 0 0],'facealpha',0,'edgealpha',0.4)];
 	h = [h plot(rnew(n).Data(1,1), rnew(n).Data(2,1),'.','markersize',12,'color',[0 0 0])];
 	axis equal; axis(limAxes);
-	print('-dpng','-r600',['graphs/benchmark_DS_TP_trajGMM' num2str(n+1,'%.2d') '.png']);
-	%pause
+	%print('-dpng','-r600',['graphs/benchmark_DS_TP_trajGMM' num2str(n+1,'%.2d') '.png']);
+	pause;
 end
 
 pause;

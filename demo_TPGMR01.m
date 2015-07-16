@@ -1,8 +1,20 @@
 function demo_TPGMR01
-%Example of task-parameterized Gaussian mixture model (TP-GMM), with GMR used for reproduction 
-%Sylvain Calinon, 2015
+% Task-parameterized Gaussian mixture model (TP-GMM), with time-based GMR used for reproduction 
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,8 +31,8 @@ disp('Load 3rd order tensor data...');
 % sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a
-% datapoint, P=2 the number of candidate frames, and N=200x4 the number of datapoints in a trajectory (200)
-% multiplied by the number of demonstrations (nbSamples=5).
+% datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
+% multiplied by the number of demonstrations (M=5).
 load('data/Data02.mat');
 
 
@@ -37,10 +49,10 @@ model = EM_tensorGMM(Data, model);
 disp('Reproductions with GMR...');
 DataIn = s(1).Data(1,:);
 for n=1:nbSamples
-	[r(n).Mu, r(n).Sigma] = productTPGMM0(model, s(n).p); %See Eq. (6.0.5), (6.0.6) and (6.0.7) in doc/TechnicalReport.pdf
+	[r(n).Mu, r(n).Sigma] = productTPGMM0(model, s(n).p); %See Eq. (6)
 	r(n).Priors = model.Priors;
 	r(n).nbStates = model.nbStates;
-	r(n).Data = [DataIn; GMR(r(n), DataIn, 1, 2:model.nbVar)]; %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+	r(n).Data = [DataIn; GMR(r(n), DataIn, 1, 2:model.nbVar)]; %See Eq. (17)-(19)
 end
 
 
@@ -56,10 +68,10 @@ for n=1:nbRepros
 		rnew(n).p(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
 	end
 	%Retrieval of attractor path through task-parameterized GMR
-	[rnew(n).Mu, rnew(n).Sigma] = productTPGMM0(model, rnew(n).p); %See Eq. (6.0.5), (6.0.6) and (6.0.7) in doc/TechnicalReport.pdf
+	[rnew(n).Mu, rnew(n).Sigma] = productTPGMM0(model, rnew(n).p); %See Eq. (6)
 	rnew(n).Priors = model.Priors;
 	rnew(n).nbStates = model.nbStates;
-	rnew(n).Data = [DataIn; GMR(rnew(n), DataIn, 1, 2:model.nbVar)]; %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+	rnew(n).Data = [DataIn; GMR(rnew(n), DataIn, 1, 2:model.nbVar)]; %See Eq. (17)-(19)
 end
 
 

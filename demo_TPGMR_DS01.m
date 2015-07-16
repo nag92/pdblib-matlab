@@ -5,10 +5,11 @@ function demo_TPGMR_DS01
 % relevance of the frame through the task. This information is exploited to generate a new attractor path
 % corresponding to new situations (new positions and orientation of the frames).
 %
-% This demo presents the results for a dynamical system with constant gains.
+% This example presents the results for a time-based GMR reference retrieval process combined with a tracking system 
+% with constant gains.
 %
-% Author:	Sylvain Calinon, 2014
-%         http://programming-by-demonstration.org/SylvainCalinon
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
 %
 % This source code is given for free! In exchange, I would be grateful if you cite
 % the following reference in any academic publication that uses this code or part of it:
@@ -25,6 +26,7 @@ function demo_TPGMR_DS01
 
 addpath('./m_fcts/');
 
+
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model.nbStates = 3; %Number of Gaussians in the GMM
@@ -35,6 +37,7 @@ model.kP = 100; %Stiffness gain
 model.kV = (2*model.kP)^.5; %Damping gain (with ideal underdamped damping ratio)
 nbRepros = 8; %Number of reproductions with new situations randomly generated
 
+
 %% Load 3rd order tensor data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('Load 3rd order tensor data...');
@@ -42,8 +45,8 @@ disp('Load 3rd order tensor data...');
 % sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a
-% datapoint, P=2 the number of candidate frames, and N=200x4 the number of datapoints in a trajectory (200)
-% multiplied by the number of demonstrations (5).
+% datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
+% multiplied by the number of demonstrations (M=5).
 load('data/DataLQR01.mat');
 
 

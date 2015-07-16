@@ -19,6 +19,7 @@ function demo_testLQR03
 
 addpath('./m_fcts/');
 
+
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model.nbVar = 2; %Dimension of the datapoints in the dataset (here: t,x1)
@@ -26,6 +27,7 @@ model.dt = 0.01; %Time step
 nbData = 400; %Number of datapoints
 nbRepros = 2; %Number of reproductions with new situations randomly generated
 rFactor = 1E-1; %Weighting term for the minimization of control commands in LQR
+
 
 %% Reproduction with LQR
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -43,12 +45,14 @@ aFinal.currSigma = a.currSigma(:,:,end);
 
 for n=1:nbRepros
 	if n==1
-		r(n) = reproduction_LQR_infiniteHorizon(DataIn, model, a, 0, rFactor);
+		r(n) = reproduction_LQR_infiniteHorizon(model, a, 0, rFactor);
+		r(n).Data = [DataIn; r(n).Data];
 	else
 		%First call to LQR to get an estimate of the final feedback terms
-		[~,Pfinal] = reproduction_LQR_infiniteHorizon(DataIn(end), model, aFinal, 0, rFactor);
+		[~,Pfinal] = reproduction_LQR_infiniteHorizon(model, aFinal, 0, rFactor);
 		%Second call to LQR with finite horizon
-		r(n) = reproduction_LQR_finiteHorizon(DataIn, model, a, 0, rFactor, Pfinal);
+		r(n) = reproduction_LQR_finiteHorizon(model, a, 0, rFactor, Pfinal);
+		r(n).Data = [DataIn; r(n).Data];
 	end
 end
 for n=1:nbRepros
@@ -57,6 +61,7 @@ for n=1:nbRepros
 		r(n).detSigma(t) = det(a.currSigma(:,:,t));
 	end
 end
+
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,5 +101,6 @@ for n=1:nbRepros
 end
 xlabel('t'); ylabel('kv');
 
+%print('-dpng','graphs/demo_testLQR03.png');
 %pause;
 %close all;

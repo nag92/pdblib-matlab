@@ -1,9 +1,21 @@
 function benchmark_DS_GP_GMM01
-%Benchmark of task-parameterized model based on Gaussian process regression, 
-%with trajectory model (Gaussian mixture model encoding), and DS-GMR used for reproduction
-%Sylvain Calinon, 2015
+% Benchmark of task-parameterized model based on Gaussian process regression, 
+% with trajectory model (Gaussian mixture model encoding), and DS-GMR used for reproduction
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -14,8 +26,8 @@ model.dt = 0.01; %Time step
 model.kP = 100; %Stiffness gain
 model.kV = (2*model.kP)^.5; %Damping gain (with ideal underdamped damping ratio)
 nbRepros = 4; %Number of reproductions with new situations randomly generated
-nbVarOut = model.nbVar-1;
-L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV];
+nbVarOut = model.nbVar-1; %(here: x1,x2)
+L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV]; %Feedback gains
 
 
 %% Load 3rd order tensor data
@@ -25,8 +37,8 @@ disp('Load 3rd order tensor data...');
 % sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a
-% datapoint, P=2 the number of candidate frames, and N=200x4 the number of datapoints in a trajectory (200)
-% multiplied by the number of demonstrations (5).
+% datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
+% multiplied by the number of demonstrations (M=5).
 load('data/DataLQR01.mat');
 
 
@@ -40,7 +52,7 @@ D(end,end) = 0;
 %Create transformation matrix to compute XHAT = X + DX*kV/kP + DDX/kP
 K1d = [1, model.kV/model.kP, 1/model.kP];
 K = kron(K1d,eye(nbVarOut));
-%Create 3rd order tensor data with XHAT instead of X, see Eq. (4.0.2) in doc/TechnicalReport.pdf
+%Compute data with derivatives
 %Data = zeros(model.nbVar, model.nbFrames, nbD*nbSamples);
 Data = s(1).Data0(1,:);
 for n=1:nbSamples
@@ -102,14 +114,14 @@ for n=1:nbSamples
 	end
 	
 % 	%Retrieval of attractor path through GMR
-% 	currTar = GMR(r(n), DataIn, 1, [2:model.nbVar]); %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+% 	currTar = GMR(r(n), DataIn, 1, [2:model.nbVar]); %See Eq. (17)-(19)
 % 	
 % 	%Motion retrieval with spring-damper system
 % 	x = s(n).p(1).b(2:model.nbVar);
 % 	dx = zeros(nbVarOut,1);
 % 	for t=1:s(n).nbData
 % 		%Compute acceleration, velocity and position
-% 		ddx =  -L * [x-currTar(:,t); dx]; %See Eq. (4.0.1) in doc/TechnicalReport.pdf
+% 		ddx =  -L * [x-currTar(:,t); dx]; 
 % 		dx = dx + ddx * model.dt;
 % 		x = x + dx * model.dt;
 % 		r(n).Data(:,t) = x;
@@ -146,14 +158,14 @@ for n=1:nbRepros
 	end
 	
 	%Retrieval of attractor path through GMR
-	[rnew(n).currTar, rnew(n).currSigma] = GMR(rnew(n), DataIn, 1, [2:model.nbVar]); %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+	[rnew(n).currTar, rnew(n).currSigma] = GMR(rnew(n), DataIn, 1, [2:model.nbVar]); %See Eq. (17)-(19)
 	
 	%Motion retrieval with spring-damper system
 	x = rnew(n).p(1).b(2:model.nbVar);
 	dx = zeros(nbVarOut,1);
 	for t=1:nbD
 		%Compute acceleration, velocity and position
-		ddx =  -L * [x-rnew(n).currTar(:,t); dx]; %See Eq. (4.0.1) in doc/TechnicalReport.pdf 
+		ddx =  -L * [x-rnew(n).currTar(:,t); dx]; 
 		dx = dx + ddx * model.dt;
 		x = x + dx * model.dt;
 		rnew(n).Data(:,t) = x;
@@ -180,9 +192,10 @@ for n=1:nbSamples
 	plotGMM(r(n).Mu(2:3,:),r(n).Sigma(2:3,2:3,:), [0 0 0], .04);
 end
 axis equal; axis(limAxes);
-print('-dpng','-r600','graphs/benchmark_DS_GP_GMM01.png');
+%print('-dpng','-r600','graphs/benchmark_DS_GP_GMM01.png');
 
 %Plot reproductions in new situations
+disp('[Press enter to see next reproduction attempt]');
 h=[];
 for n=1:nbRepros
 	delete(h);
@@ -193,8 +206,8 @@ for n=1:nbRepros
 		[1 1 1],'linewidth',1.5,'edgecolor',[0 0 0],'facealpha',0,'edgealpha',0.4)];
 	h = [h plot(rnew(n).Data(1,1), rnew(n).Data(2,1),'.','markersize',12,'color',[0 0 0])];
 	axis equal; axis(limAxes);
-	print('-dpng','-r600',['graphs/benchmark_DS_GP_GMM' num2str(n+1,'%.2d') '.png']);
-	%pause
+	%print('-dpng','-r600',['graphs/benchmark_DS_GP_GMM' num2str(n+1,'%.2d') '.png']);
+	pause
 end
 
 pause;

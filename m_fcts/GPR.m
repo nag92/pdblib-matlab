@@ -33,7 +33,7 @@ yd = (Kd * invK * y')'; % + repmat(ymean,1,size(qd,2));
 if nargout>1
 	SigmaOut = zeros(size(yd,1), size(yd,1), size(yd,2));
 	
-% 	%Evaluate Sigma (as in Rasmussen 2006)
+% 	%Evaluate Sigma (as in Rasmussen, 2006)
 % 	Mdd = pdist2(qd',qd');
 % 	Kdd = exp(-Mdd.^2);
 % 	S = Kdd - Kd * invK * Kd';
@@ -41,7 +41,7 @@ if nargout>1
 % 		SigmaOut(:,:,t) = eye(size(yd,1)) * S(t,t); 
 % 	end
 
-	%Evaluate Sigma
+	%Evaluate Sigma (as in GMR)
 	%nbSamples = size(y,2) / size(yd,2);
 	%yd = repmat(yd,1,nbSamples);
 	for t=1:size(yd,2)

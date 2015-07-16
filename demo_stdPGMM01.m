@@ -1,9 +1,21 @@
 function demo_stdPGMM01
-%Example of parametric Gaussian mixture model (PGMM) used as a task-parameterized model,
-%with DS-GMR employed to retrieve continuous movements
-%Sylvain Calinon, 2015
+% Example of parametric Gaussian mixture model (PGMM) used for task adaptation,
+% with DS-GMR employed to retrieve continuous movements
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,8 +35,8 @@ disp('Load motion data...');
 % sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a
-% datapoint, P=2 the number of candidate frames, and N=200x4 the number of datapoints in a trajectory (200)
-% multiplied by the number of demonstrations (nbSamples=5).
+% datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
+% multiplied by the number of demonstrations (M=5).
 load('data/DataLQR01.mat');
 
 
@@ -38,7 +50,7 @@ D(end,end) = 0;
 %Create transformation matrix to compute XHAT = X + DX*kV/kP + DDX/kP
 K1d = [1, model.kV/model.kP, 1/model.kP];
 K = kron(K1d,eye(nbVarOut)); 
-%Create data with XHAT instead of X, see Eq. (4.0.2) in doc/TechnicalReport.pdf
+%Compute derivatives
 Data = [];
 for n=1:nbSamples
 	DataTmp = s(n).Data0(2:end,:);
@@ -51,9 +63,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fprintf('Parameters estimation of PGMM with EM:');
 for n=1:nbSamples	
-	%Task parameters rearranged as a vector (position and orientation), see Eq. (7.1.4) in doc/TechnicalReport.pdf
+	%Task parameters rearranged as a vector (position and orientation), see Eq. (48)
 	s(n).OmegaMu = [s(n).p(1).b(2:3); s(n).p(1).A(2:3,3); s(n).p(2).b(2:3); s(n).p(2).A(2:3,3); 1];
-% 	%Task parameters rearranged as a vector (position only), see Eq. (7.1.4) in doc/TechnicalReport.pdf
+	
+% 	%Task parameters rearranged as a vector (position only), see Eq. (48)
 % 	s(n).OmegaMu = [s(n).p(1).b(2:3); s(n).p(2).b(2:3); 1];
 end
 
@@ -64,6 +77,7 @@ for i=1:model.nbStates
 	%Initialization of parameters based on standard GMM
 	model.ZMu(:,:,i) = zeros(model.nbVar, size(s(1).OmegaMu,1));
 	model.ZMu(:,end,i) = model.Mu(:,i);
+	
 	% 	%Random initialization of parameters
 	% 	model.ZMu(:,:,i) = rand(model.nbVar,size(s(1).OmegaMu,1));
 	% 	model.Sigma(:,:,i) = eye(model.nbVar);
@@ -83,17 +97,17 @@ L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV];
 for n=1:nbSamples
 	%Computation of the resulting Gaussians (for display purpose)
 	for i=1:model.nbStates
-		model.Mu(:,i) = model.ZMu(:,:,i) * s(n).OmegaMu; %Temporary Mu variable, see Eq. (7.1.4) in doc/TechnicalReport.pdf
+		model.Mu(:,i) = model.ZMu(:,:,i) * s(n).OmegaMu; %Temporary Mu variable, see Eq. (48)
 	end
 	r(n).Mu = model.Mu;
-	%Retrieval of attractor path through GMR
-	currTar = GMR(model, DataIn, 1, [2:model.nbVar]); %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+	%Retrieval of attractor path through GMR, see Eq. (17)-(19)
+	currTar = GMR(model, DataIn, 1, [2:model.nbVar]); 
 	%Motion retrieval with spring-damper system
 	x = s(n).p(1).b(2:model.nbVar);
 	dx = zeros(nbVarOut,1);
 	for t=1:s(n).nbData
 		%Compute acceleration, velocity and position
-		ddx =  -L * [x-currTar(:,t); dx]; %See Eq. (4.0.1) in doc/TechnicalReport.pdf
+		ddx =  -L * [x-currTar(:,t); dx]; 
 		dx = dx + ddx * model.dt;
 		x = x + dx * model.dt;
 		r(n).Data(:,t) = x;
@@ -113,18 +127,19 @@ for n=1:nbRepros
 		rnew(n).p(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
 	end
 	
-	%Task parameters re-arranged as a vector (position and orientation), see Eq. (7.1.4) in doc/TechnicalReport.pdf
+	%Task parameters re-arranged as a vector (position and orientation), see Eq. (48) 
 	rnew(n).OmegaMu = [rnew(n).p(1).b(2:3); rnew(n).p(1).A(2:3,3); rnew(n).p(2).b(2:3); rnew(n).p(2).A(2:3,3); 1];
-% 	%Task parameters re-arranged as a vector (position only), see Eq. (7.1.4) in doc/TechnicalReport.pdf
+	
+% 	%Task parameters re-arranged as a vector (position only), see Eq. (48) 
 % 	rnew(n).OmegaMu = [rnew(n).p(1).b(2:3); rnew(n).p(2).b(2:3); 1];
 	
 	%Computation of the resulting Gaussians (for display purpose)
 	for i=1:model.nbStates
-		model.Mu(:,i) = model.ZMu(:,:,i) * rnew(n).OmegaMu; %Temporary Mu variable, see Eq. (7.1.4) in doc/TechnicalReport.pdf
+		model.Mu(:,i) = model.ZMu(:,:,i) * rnew(n).OmegaMu; %Temporary Mu variable, see Eq. (48)
 	end
 	rnew(n).Mu = model.Mu;
-	%Retrieval of attractor path through GMR
-	currTar = GMR(model, DataIn, 1, [2:model.nbVar]); %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+	%Retrieval of attractor path through GMR, see Eq. (17)-(19)
+	currTar = GMR(model, DataIn, 1, [2:model.nbVar]); 
 	%Motion retrieval with spring-damper system
 	x = rnew(n).p(1).b(2:model.nbVar);
 	dx = zeros(nbVarOut,1);

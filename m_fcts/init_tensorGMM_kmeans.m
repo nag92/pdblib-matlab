@@ -5,6 +5,7 @@ function model = init_tensorGMM_kmeans(Data, model)
 
 diagRegularizationFactor = 1E-4;
 
+nbVar = size(Data,1);
 DataAll = reshape(Data, size(Data,1)*size(Data,2), size(Data,3)); %Matricization/flattening of tensor
 
 %k-means clustering
@@ -20,8 +21,8 @@ model.Priors = model.Priors / sum(model.Priors);
 %Reshape GMM parameters into a tensor
 for m=1:model.nbFrames
 	for i=1:model.nbStates
-		model.Mu(:,m,i) = Mu((m-1)*model.nbVar+1:m*model.nbVar,i);
-		model.Sigma(:,:,m,i) = Sigma((m-1)*model.nbVar+1:m*model.nbVar,(m-1)*model.nbVar+1:m*model.nbVar,i);
+		model.Mu(:,m,i) = Mu((m-1)*nbVar+1:m*nbVar,i);
+		model.Sigma(:,:,m,i) = Sigma((m-1)*nbVar+1:m*nbVar,(m-1)*nbVar+1:m*nbVar,i);
 	end
 end
 

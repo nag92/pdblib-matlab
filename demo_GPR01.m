@@ -1,9 +1,20 @@
 function demo_GPR01
-%Example of Gaussian processs regression (GPR) used as a task-parameterized model,
-%with DS-GMR employed to retrieve continuous movements
-%Sylvain Calinon, 2015
+% Gaussian processs regression (GPR) used for task adaptation, with DS-GMR employed to retrieve continuous movements
+% 
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +91,7 @@ DataIn = [1:s(1).nbData] * model.dt;
 nbVarOut = model.nbVar-1;
 L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV];
 for n=1:nbSamples
-	%Rebuild model parameters with GPR
+	%Rebuild model parameters with GPR, see Eq. (46)
 	vOut = GPR(model.DataIn, model.DataOut, s(n).DataIn);
 	
 	%Re-arrange GPR output as GMM parameters
@@ -95,15 +106,15 @@ for n=1:nbSamples
 		r(n).Sigma(:,:,i) = V * max(D,5E-4) * V';
 	end
 	
-	%Retrieval of attractor path through GMR
-	currTar = GMR(r(n), DataIn, 1, [2:model.nbVar]); %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+	%Retrieval of attractor path through GMR, see Eq. (17)-(19)
+	currTar = GMR(r(n), DataIn, 1, [2:model.nbVar]); 
 	
 	%Motion retrieval with spring-damper system
 	x = s(n).p(1).b(2:model.nbVar);
 	dx = zeros(nbVarOut,1);
 	for t=1:s(n).nbData
 		%Compute acceleration, velocity and position
-		ddx =  -L * [x-currTar(:,t); dx]; %See Eq. (4.0.1) in doc/TechnicalReport.pdf
+		ddx =  -L * [x-currTar(:,t); dx]; 
 		dx = dx + ddx * model.dt;
 		x = x + dx * model.dt;
 		r(n).Data(:,t) = x;
@@ -140,15 +151,15 @@ for n=1:nbRepros
 		rnew(n).Sigma(:,:,i) = V * max(D,1E-3) * V';
 	end
 	
-	%Retrieval of attractor path through GMR
-	currTar = GMR(rnew(n), DataIn, 1, [2:model.nbVar]); %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+	%Retrieval of attractor path through GMR, see Eq. (17)-(19)
+	currTar = GMR(rnew(n), DataIn, 1, [2:model.nbVar]); 
 	
 	%Motion retrieval with spring-damper system
 	x = rnew(n).p(1).b(2:model.nbVar);
 	dx = zeros(nbVarOut,1);
 	for t=1:nbD
 		%Compute acceleration, velocity and position
-		ddx =  -L * [x-currTar(:,t); dx]; %See Eq. (4.0.1) in doc/TechnicalReport.pdf 
+		ddx =  -L * [x-currTar(:,t); dx]; 
 		dx = dx + ddx * model.dt;
 		x = x + dx * model.dt;
 		rnew(n).Data(:,t) = x;

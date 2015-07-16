@@ -22,7 +22,8 @@ function model = init_GMM_timeBased(Data, model)
 %               Switzerland, http://lasa.epfl.ch
 
 [nbVar, nbData] = size(Data);
-diagRegularizationFactor = 1E-2;
+%diagRegularizationFactor = 1E-2;
+diagRegularizationFactor = 1E-8;
 
 TimingSep = linspace(min(Data(1,:)), max(Data(1,:)), model.nbStates+1);
 

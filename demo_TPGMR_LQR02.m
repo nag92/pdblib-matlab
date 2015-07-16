@@ -7,10 +7,10 @@ function demo_TPGMR_LQR02
 % are exploited by a linear quadratic regulator (LQR) to estimate the stiffness and damping feedback terms of
 % the spring-damper systems, resulting in a minimal intervention control strategy.
 %
-% This demo presents the results for an infinite horizon LQR.
+% This example presents the results for a time-based GMR reference retrieval process combined with an infinite horizon LQR.
 %
-% Author:	Sylvain Calinon, 2014
-%         http://programming-by-demonstration.org/SylvainCalinon
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
 %
 % This source code is given for free! In exchange, I would be grateful if you cite
 % the following reference in any academic publication that uses this code or part of it:
@@ -26,6 +26,7 @@ function demo_TPGMR_LQR02
 % }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,7 +64,8 @@ DataIn = [1:s(1).nbData] * model.dt;
 for n=1:nbSamples
 	%Retrieval of attractor path through task-parameterized GMR
 	a(n) = estimateAttractorPath(DataIn, model, s(n));
-	r(n) = reproduction_LQR_infiniteHorizon(DataIn, model, a(n), a(n).currTar(:,1), rFactor);
+	r(n) = reproduction_LQR_infiniteHorizon(model, a(n), a(n).currTar(:,1), rFactor);
+	r(n).Data = [DataIn; r(n).Data];
 end
 
 
@@ -80,7 +82,8 @@ for n=1:nbRepros
 	end
 	%Retrieval of attractor path through task-parameterized GMR
 	anew(n) = estimateAttractorPath(DataIn, model, rTmp);
-	rnew(n) = reproduction_LQR_infiniteHorizon(DataIn, model, anew(n), anew(n).currTar(:,1), rFactor);
+	rnew(n) = reproduction_LQR_infiniteHorizon(model, anew(n), anew(n).currTar(:,1), rFactor);
+	rnew(n).Data = [DataIn; rnew(n).Data];
 end
 
 

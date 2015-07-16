@@ -1,4 +1,4 @@
-function [r,P] = reproduction_LQR_infiniteHorizon(DataIn, model, r, currPos, rFactor)
+function [r,P] = reproduction_LQR_infiniteHorizon(model, r, currPos, rFactor)
 % Reproduction with a linear quadratic regulator of infinite horizon
 %
 % Authors: Sylvain Calinon and Danilo Bruno, 2014
@@ -17,8 +17,7 @@ function [r,P] = reproduction_LQR_infiniteHorizon(DataIn, model, r, currPos, rFa
 %   pages="3339--3344"
 % }
 
-nbData = size(DataIn,2);
-nbVarOut = model.nbVar - size(DataIn,1);
+[nbVarOut,nbData] = size(r.currTar);
 
 %% LQR with cost = sum_t X(t)' Q(t) X(t) + u(t)' R u(t)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,17 +64,17 @@ for t=1:nbData
 	M = R\B'*d; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
 	
 	%Compute acceleration (with only feedback terms)
-	%ddx =  -L * [x-r.currTar(:,t); dx];
+	ddx =  -L * [x-r.currTar(:,t); dx];
 	
 	%Compute acceleration (with feedback and feedforward terms)
-	ddx =  -L * [x-r.currTar(:,t); dx] + M; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	%ddx =  -L * [x-r.currTar(:,t); dx] + M; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
 	
 	%Update velocity and position
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;
 	
 	%Log data (with additional variables collected for analysis purpose)
-	r.Data(:,t) = [DataIn(:,t); x];
+	r.Data(:,t) = x;
 	r.ddxNorm(t) = norm(ddx);
 	%r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
 	%r.FF(:,t) = M;

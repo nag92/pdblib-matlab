@@ -30,7 +30,7 @@ for nbIter=1:nbMaxSteps
 		
 		%Update Sigma, see Eq. (2.0.8) in doc/TechnicalReport.pdf (regularization term is optional, see Eq. (2.1.2))
 		DataTmp = Data - repmat(model.Mu(:,i),1,nbData);
-		model.Sigma(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(model.nbVar) * diagRegularizationFactor;
+		model.Sigma(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(size(Data,1)) * diagRegularizationFactor;
 	end
 	
 	%Compute average log-likelihood

@@ -1,4 +1,4 @@
-function r = reproduction_LQR_finiteHorizon(DataIn, model, r, currPos, rFactor, Pfinal)
+function r = reproduction_LQR_finiteHorizon(model, r, currPos, rFactor, Pfinal)
 % Reproduction with a linear quadratic regulator of finite horizon
 %
 % Authors: Sylvain Calinon and Danilo Bruno, 2014
@@ -17,8 +17,7 @@ function r = reproduction_LQR_finiteHorizon(DataIn, model, r, currPos, rFactor, 
 %   pages="3339--3344"
 % }
 
-nbData = size(DataIn,2);
-nbVarOut = model.nbVar - size(DataIn,1);
+[nbVarOut,nbData] = size(r.currTar);
 
 %% LQR with cost = sum_t X(t)' Q(t) X(t) + u(t)' R u(t) (See Eq. (5.0.2) in doc/TechnicalReport.pdf)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,17 +45,10 @@ L = zeros(nbVarOut, nbVarOut*2, nbData);
 %Compute P_T from the desired final feedback gains L_T,
 P(:,:,nbData) = Pfinal;
 
-%Compute derivative of target path
-%dTar = diff(r.currTar, 1, 2); %For optional feedforward term computation
-
 %Variables for feedforward term computation (optional for movements with low dynamics)
+%tar = [r.currTar; gradient(r.currTar,1,2)/model.dt];
 tar = [r.currTar; zeros(nbVarOut,nbData)];
 dtar = gradient(tar,1,2)/model.dt;
-%tar = [r.currTar; gradient(r.currTar,1,2)/model.dt];
-%dtar = gradient(tar,1,2)/model.dt;
-%tar = [r.currTar; diff([r.currTar(:,1) r.currTar],1,2)/model.dt];
-%dtar = diff([tar tar(:,1)],1,2)/model.dt;
-
 
 %Backward integration of the Riccati equation and additional equation
 for t=nbData-1:-1:1
@@ -74,19 +66,20 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 x = currPos;
 dx = zeros(nbVarOut,1);
+
 for t=1:nbData
 	%Compute acceleration (with only feedback term)
-	%ddx =  -L(:,:,t) * [x-r.currTar(:,t); dx];
+	%ddx = -L(:,:,t) * [x-r.currTar(:,t); dx];
 	
 	%Compute acceleration (with both feedback and feedforward terms)
-	ddx =  -L(:,:,t) * [x-r.currTar(:,t); dx] + M(:,t); %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	ddx = -L(:,:,t) * [x-r.currTar(:,t); dx] + M(:,t); %See Eq. (5.1.30) in doc/TechnicalReport.pdf
 	
 	%Update velocity and position
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;
 
 	%Log data (with additional variables collected for analysis purpose)
-	r.Data(:,t) = [DataIn(:,t); x];
+	r.Data(:,t) = x;
 	r.ddxNorm(t) = norm(ddx);
 	%r.FB(:,t) = -L(:,:,t) * [x-r.currTar(:,t); dx];
 	%r.FF(:,t) = M(:,t);
@@ -96,6 +89,4 @@ for t=1:nbData
 	r.kvDet(t) = det(L(:,nbVarOut+1:end,t));
 	%Note that if [V,D] = eigs(L(:,1:nbVarOut)), we have L(:,nbVarOut+1:end) = V * (2*D).^.5 * V'
 end
-
-
 

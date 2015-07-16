@@ -1,23 +1,20 @@
 function demo_testLQR02
 % Test of the linear quadratic regulation (evaluation of the damping ratio found by the system)
 %
-% Author:	Sylvain Calinon, 2014
-%         http://programming-by-demonstration.org/SylvainCalinon
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
 %
 % This source code is given for free! In exchange, I would be grateful if you cite
 % the following reference in any academic publication that uses this code or part of it:
 %
-% @inproceedings{Calinon14ICRA,
-%   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
-%   title="A task-parameterized probabilistic model with minimal intervention control",
-%   booktitle="Proc. {IEEE} Intl Conf. on Robotics and Automation ({ICRA})",
-%   year="2014",
-%   month="May-June",
-%   address="Hong Kong, China",
-%   pages="3339--3344"
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
 % }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -27,6 +24,7 @@ nbData = 1000; %Number of datapoints
 nbRepros = 1; %Number of reproductions with new situations randomly generated
 rFactor = 1E-1; %Weighting term for the minimization of control commands in LQR
 
+
 %% Reproduction with LQR
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('Reproductions with LQR...');
@@ -34,9 +32,11 @@ DataIn = [1:nbData] * model.dt;
 a.currTar = ones(1,nbData);
 a.currSigma = ones(1,1,nbData); %-> LQR with cost X'X + u'u
 for n=1:nbRepros
-	%r(n) = reproduction_LQR_finiteHorizon(DataIn, model, a, 0, rFactor);
-	r(n) = reproduction_LQR_infiniteHorizon(DataIn, model, a, 0, rFactor);
+	%r(n) = reproduction_LQR_finiteHorizon(model, a, 0, rFactor);
+	r(n) = reproduction_LQR_infiniteHorizon(model, a, 0, rFactor);
+	r(n).Data = [DataIn; r(n).Data];
 end
+
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,6 +72,7 @@ for n=1:nbRepros
 end
 xlabel('t'); ylabel('Damping ratio');
 
+%print('-dpng','graphs/demo_testLQR02.png');
 %pause;
 %close all;
 

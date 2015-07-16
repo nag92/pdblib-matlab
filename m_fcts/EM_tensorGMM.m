@@ -1,4 +1,4 @@
-function [model, GAMMA0] = EM_tensorGMM(Data, model)
+function [model, GAMMA0, GAMMA2] = EM_tensorGMM(Data, model)
 % Training of a task-parameterized Gaussian mixture model (GMM) with an expectation-maximization (EM) algorithm.
 % The approach allows the modulation of the centers and covariance matrices of the Gaussians with respect to
 % external parameters represented in the form of candidate coordinate systems.
@@ -51,7 +51,7 @@ for nbIter=1:nbMaxSteps
 			
 			%Update Sigma (regularization term is optional), see Eq. (6.0.4) in doc/TechnicalReport.pdf
 			DataTmp = DataMat - repmat(model.Mu(:,m,i),1,nbData);
-			model.Sigma(:,:,m,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(model.nbVar) * diagRegularizationFactor;
+			model.Sigma(:,:,m,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(size(DataTmp,1)) * diagRegularizationFactor;
 		end
 	end
 	

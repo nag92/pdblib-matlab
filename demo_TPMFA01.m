@@ -1,8 +1,20 @@
 function demo_TPMFA01
-%Example of task-parameterized mixture of factor analyzers (TP-MFA)
-%Sylvain Calinon, 2015
+% Task-parameterized mixture of factor analyzers (TP-MFA)
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,8 +31,8 @@ disp('Load 3rd order tensor data...');
 % sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=2 the dimension of a
-% datapoint, P=2 the number of candidate frames, and N=200x4 the number of datapoints in a trajectory (200)
-% multiplied by the number of demonstrations (nbSamples=5).
+% datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
+% multiplied by the number of demonstrations (M=5).
 load('data/Data01.mat');
 
 
@@ -32,8 +44,9 @@ model = EM_tensorMFA(Data, model);
 
 %Reconstruct GMM for each demonstration
 for n=1:nbSamples
-	[s(n).Mu, s(n).Sigma] = productTPGMM0(model, s(n).p);
+	[s(n).Mu, s(n).Sigma] = productTPGMM0(model, s(n).p); %See Eq. (6)
 end
+
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

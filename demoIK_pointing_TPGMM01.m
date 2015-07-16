@@ -1,11 +1,24 @@
-function demoIK_pointing_nullspace_TPGMM01
-%Example of task-parameterized GMM to encode pointing direction by considering nullspace constraint (4 frames) 
-%(example with two objects and robot frame, starting from the same initial pose (nullspace constraint), 
-%by using a single Euler orientation angle and 3 DOFs robot)
-%This example requires 'startup_rvc' to be run from the Robotics Toolbox.
-%Sylvain Calinon, 2015
+function demoIK_pointing_TPGMM01
+% Task-parameterized GMM to encode pointing direction by considering nullspace constraint (4 frames) 
+% (example with two objects and robot frame, starting from the same initial pose (nullspace constraint), 
+% by using a single Euler orientation angle and 3 DOFs robot)
+%
+% This example requires Peter Corke's Robotics Toolbox (run 'startup_rvc' from the Robotics Toolbox).
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,9 +37,10 @@ eMax = 1; %Maximum error norm for stable Jacobian computation
 Kp = 0.15; %Amplification gain for error computation 
 KpQ = 0.15; %Amplification gain for joint angle error computation 
 
-needsData = 0;
-needsModel = 0;
-needsRepro = 0;
+needsData = 1;
+needsModel = 1;
+needsRepro = 1;
+
 
 %% Create robot (requires the Robotics Toolbox)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -317,7 +331,7 @@ for n=1:nbRepros
 	end
 end
 
-%print('-dpng','graphs/demoIK_pointing_nullspace_TPGMM01.png');
+%print('-dpng','graphs/demoIK_pointing_TPGMM01.png');
 %pause;
 %close all;
 

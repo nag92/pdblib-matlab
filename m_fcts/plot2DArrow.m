@@ -2,7 +2,7 @@ function h = plot2DArrow(pos,dir,col)
 %Sylvain Calinon, 2015
 
 h(1) = plot([pos(1) pos(1)+dir(1)], [pos(2) pos(2)+dir(2)], '-','linewidth',2,'color',col);
-sz = 8E-2;
+sz = 1E-1;
 pos = pos+dir;
 if norm(dir)>sz
   dir = dir/norm(dir);

@@ -1,8 +1,20 @@
 function demo_MFA01
-%Example of mixture of factor analysers (MFA) 
-%Sylvain Calinon, 2015
+% Mixture of factor analysers (MFA) encoding
+%
+% Sylvain Calinon, 2015
+% http://programming-by-demonstration.org/lib/
+%
+% This source code is given for free! In exchange, I would be grateful if you cite
+% the following reference in any academic publication that uses this code or part of it:
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A tutorial on task-parameterized movement learning and retrieval",
+%   year="2015",
+% }
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -13,7 +25,7 @@ nbData = 200; %Length of each trajectory
 nbSamples = 5; %Number of demonstrations
 
 
-%% Load AMARSI data
+%% Load AMARSI handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
 load('data/AMARSI/GShape.mat'); %Load x1,x2 variables
@@ -33,7 +45,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model = init_GMM_kmeans(Data, model);
 model0 = EM_GMM(Data, model); %for comparison
-model = EM_MFA(Data, model);
+model = EM_MFA(Data, model); 
 
 
 %% Plots
