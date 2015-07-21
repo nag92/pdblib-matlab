@@ -55,6 +55,7 @@ All the examples are located in the main folder, and the functions are located i
 | benchmark_DS_TP_LWR01 | Benchmark of task-parameterized locally weighted regression (nonparametric task-parameterized method) |
 | benchmark_DS_TP_MFA01 | Benchmark of task-parameterized mixture of factor analyzers (TP-MFA), with DS-GMR used for reproduction |
 | benchmark_DS_TP_trajGMM01 | Benchmark of task-parameterized Gaussian mixture model (TP-GMM), with DS-GMR used for reproduction |
+| demo_affineTransform01 | Miscellaneous affine transformations of raw data as pre-processing step to train a task-parameterized model |
 | demo_batchLQR01 | Controller retrieval through a batch solution of linear quadratic optimal control (unconstrained linear MPC), by relying on a Gaussian mixture model (GMM) encoding of position and velocity data (see also demo_iterativeLQR01) |
 | demo_DSGMR01 | Gaussian mixture model (GMM), with Gaussian mixture regression(GMR) and dynamical systems used for reproduction, with decay variable used as input (as in DMP) |
 | demo_DTW01 | Trajectory realignment through dynamic time warping (DTW) |
