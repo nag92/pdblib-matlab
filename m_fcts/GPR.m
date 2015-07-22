@@ -1,4 +1,4 @@
-function [yd, SigmaOut] = GPR(q, y, qd, p)
+function [yd, SigmaOut] = GPR(q, y, qd, p, covopt)
 %Gaussian process regression (GPR), see Eq. (7.1.2) in doc/TechnicalReport.pdf
 %Sylvain Calinon, 2015
 
@@ -8,6 +8,11 @@ if nargin<4
 	p(1)=1; p(2)=1E-1; p(3)=1E-3;
 end
 
+%Covariance computation
+if nargin<5
+	covopt = 1;
+end
+	
 diagRegularizationFactor = 1E-4; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
 
 % %Linear least-squares regression
@@ -32,23 +37,24 @@ yd = (Kd * invK * y')'; % + repmat(ymean,1,size(qd,2));
 
 if nargout>1
 	SigmaOut = zeros(size(yd,1), size(yd,1), size(yd,2));
-	
-% 	%Evaluate Sigma (as in Rasmussen, 2006)
-% 	Mdd = pdist2(qd',qd');
-% 	Kdd = exp(-Mdd.^2);
-% 	S = Kdd - Kd * invK * Kd';
-% 	for t=1:size(yd,2)
-% 		SigmaOut(:,:,t) = eye(size(yd,1)) * S(t,t); 
-% 	end
-
-	%Evaluate Sigma (as in GMR)
-	%nbSamples = size(y,2) / size(yd,2);
-	%yd = repmat(yd,1,nbSamples);
-	for t=1:size(yd,2)
-		W = diag(K(t,:) * invK);
-		ym = repmat(yd(:,t), 1, size(y,2));
-		%SigmaOut(:,:,t) = (y-yd) * W * (y-yd)' + eye(size(vOut,1))*diagRegularizationFactor;  
-		SigmaOut(:,:,t) = (y-ym) * W * (y-ym)' + eye(size(yd,1))*diagRegularizationFactor; 
+	if covopt==0
+		%Evaluate Sigma as in Rasmussen, 2006
+		Mdd = pdist2(qd',qd');
+		Kdd = exp(-Mdd.^2);
+		S = Kdd - Kd * invK * Kd';
+		for t=1:size(yd,2)
+			SigmaOut(:,:,t) = eye(size(yd,1)) * S(t,t); 
+		end
+	else
+		%Evaluate Sigma as in GMR
+		%nbSamples = size(y,2) / size(yd,2);
+		%yd = repmat(yd,1,nbSamples);
+		for t=1:size(yd,2)
+			W = diag(K(t,:) * invK);
+			ym = repmat(yd(:,t), 1, size(y,2));
+			%SigmaOut(:,:,t) = (y-yd) * W * (y-yd)' + eye(size(vOut,1))*diagRegularizationFactor;  
+			SigmaOut(:,:,t) = (y-ym) * W * (y-ym)' + eye(size(yd,1))*diagRegularizationFactor; 
+		end
 	end
 end
 
