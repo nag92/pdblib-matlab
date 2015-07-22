@@ -70,6 +70,7 @@ All the examples are located in the main folder, and the functions are located i
 | demo_testLQR01 | Test of the linear quadratic regulation with different variance in the data |
 | demo_testLQR02 | Test of the linear quadratic regulation (LQR) with evaluation of the damping ratio found by the system |
 | demo_testLQR03 | Comparison of linear quadratic regulators (LQR) with finite and infinite time horizons |
+| demo_testLQR04 | Demonstration of the coordination capability of linear quadratic optimal control (unconstrained linear MPC) when combined with full precision matrices |
 | demo_TPbatchLQR01 | Task-parameterized GMM encoding position and velocity data, combined with a batch solution of linear quadratic optimal control (unconstrained linear MPC) |
 | demo_TPbatchLQR02 | Batch solution of a linear quadratic optimal control (unconstrained linear MPC) acting in multiple frames, which is equivalent to TP-GMM combined with LQR |
 | demo_TPGMM01 | Task-parameterized Gaussian mixture model (TP-GMM) encoding |
