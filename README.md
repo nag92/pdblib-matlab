@@ -1,8 +1,8 @@
 # pbdlib-matlab
 
-PbDLib is a set of tools combining statistical learning, dynamical systems and optimal control approaches for programming-by-demonstration applications.
+PbDLib is a set of tools combining statistical learning, dynamical systems and optimal control approaches for programming-by-demonstration applications. The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute, http://idiap.ch/~scalinon/, http://calinon.ch.
 
-The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute, http://idiap.ch/~scalinon/, http://calinon.ch.
+A C++ version of the library (with currently fewer functionalities) is available at https://gitlab.idiap.ch/rli/pbdlib
 
 ### Compatibility
 
