@@ -2,13 +2,11 @@
 
 PbDLib is a set of tools combining statistical learning, dynamical systems and optimal control approaches for programming-by-demonstration applications.
 
-The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, http://calinon.ch.
-
-More information can be found on: http://programming-by-demonstration.org/lib/
+The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute, http://idiap.ch/~scalinon/, http://calinon.ch.
 
 ### Compatibility
 
-The codes are compatible with both Matlab or GNU Octave.
+The codes are compatible with both Matlab and GNU Octave.
 
 ### Usage
 
