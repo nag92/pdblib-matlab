@@ -1,7 +1,36 @@
 function [model, GAMMA2] = EM_MFA(Data, model)
-%EM for Mixture of factor analysis
-%Implementation inspired by "Parsimonious Gaussian Mixture Models" by McNicholas and Murphy, Appendix 8, p.17 (UUU version)
-%Sylvain Calinon, 2015
+% EM for Mixture of factor analysis (implementation based on "Parsimonious Gaussian 
+% Mixture Models" by McNicholas and Murphy, Appendix 8, p.17, UUU version).
+%
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+%
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 %Parameters of the EM iterations
 nbMinSteps = 5; %Minimum number of iterations allowed
@@ -9,7 +38,7 @@ nbMaxSteps = 100; %Maximum number of iterations allowed
 maxDiffLL = 1E-4; %Likelihood increase threshold to stop the algorithm
 nbData = size(Data,2);
 
-diagRegularizationFactor = 1E-6; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
+diagRegularizationFactor = 1E-6; %Optional regularization term
 
 % %Circular initialization of the MFA parameters
 % Itmp = eye(model.nbVar)*1E-2;
@@ -22,7 +51,7 @@ for i=1:model.nbStates
 	[V,D] = eig(model.Sigma(:,:,i)-model.P(:,:,i)); 
 	[~,id] = sort(diag(D),'descend');
 	V = V(:,id)*D(id,id).^.5;
-	model.L(:,:,i) = V(:,1:model.nbFA); %->Sigma=LL'+P
+	model.L(:,:,i) = V(:,1:model.nbFA); %-> Sigma=LL'+P
 end
 for nbIter=1:nbMaxSteps
 	for i=1:model.nbStates
@@ -41,26 +70,26 @@ for nbIter=1:nbMaxSteps
 	GAMMA2 = GAMMA ./ repmat(sum(GAMMA,2),1,nbData);
 	
 	%M-step
-	%Update Priors, see Eq. (2.2.10) in doc/TechnicalReport.pdf
+	%Update Priors
 	model.Priors = sum(GAMMA,2) / nbData;
 	
-	%Update Mu, see Eq. (2.2.11) in doc/TechnicalReport.pdf
+	%Update Mu
 	model.Mu = Data * GAMMA2';
 	
 	%Update factor analysers parameters
 	for i=1:model.nbStates
-		%Compute covariance, see Eq. (2.2.15) in doc/TechnicalReport.pdf
+		%Compute covariance
 		DataTmp = Data - repmat(model.Mu(:,i),1,nbData);
 		S(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(model.nbVar) * diagRegularizationFactor;
 
-		%Update B, see Eq. (2.2.16) in doc/TechnicalReport.pdf
+		%Update B
 		B(:,:,i) = model.L(:,:,i)' / (model.L(:,:,i) * model.L(:,:,i)' + model.P(:,:,i));
-		%Update Lambda, see Eq. (2.2.12) in doc/TechnicalReport.pdf
+		%Update Lambda
 		model.L(:,:,i) = S(:,:,i) * B(:,:,i)' / (eye(model.nbFA) - B(:,:,i) * model.L(:,:,i) + B(:,:,i) * S(:,:,i) * B(:,:,i)');
-		%Update Psi, see Eq. (2.2.13) in doc/TechnicalReport.pdf
+		%Update Psi
 		model.P(:,:,i) = diag(diag(S(:,:,i) - model.L(:,:,i) * B(:,:,i) * S(:,:,i))) + eye(model.nbVar) * diagRegularizationFactor;
 
-		%Reconstruct Sigma, see Eq. (2.2.4) in doc/TechnicalReport.pdf
+		%Reconstruct Sigma
 		model.Sigma(:,:,i) = model.L(:,:,i) * model.L(:,:,i)' + model.P(:,:,i);
 	end
 	%Compute average log-likelihood
@@ -76,9 +105,9 @@ end
 disp(['The maximum number of ' num2str(nbMaxSteps) ' EM iterations has been reached.']);
 end
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [Lik, GAMMA] = computeGamma(Data, model)
-%See Eq. (2.2.9) in doc/TechnicalReport.pdf
 Lik = zeros(model.nbStates,size(Data,2));
 for i=1:model.nbStates
 	Lik(i,:) = model.Priors(i) * gaussPDF(Data, model.Mu(:,i), model.Sigma(:,:,i));

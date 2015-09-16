@@ -1,11 +1,10 @@
 function [r,P] = reproduction_LQR_infiniteHorizon(model, r, currPos, rFactor)
-% Reproduction with a linear quadratic regulator of infinite horizon
+% Reproduction with a linear quadratic regulator of infinite horizon (continuous version).
 %
-% Authors: Sylvain Calinon and Danilo Bruno, 2014
-%          http://programming-by-demonstration.org
-%
-% This source code is given for free! In exchange, we would be grateful if you cite
-% the following reference in any academic publication that uses this code or part of it:
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
 %
 % @inproceedings{Calinon14ICRA,
 %   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
@@ -16,14 +15,39 @@ function [r,P] = reproduction_LQR_infiniteHorizon(model, r, currPos, rFactor)
 %   address="Hong Kong, China",
 %   pages="3339--3344"
 % }
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+%
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon (http://calinon.ch/), Danilo Bruno (danilo.bruno@iit.it)
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 [nbVarOut,nbData] = size(r.currTar);
 
 %% LQR with cost = sum_t X(t)' Q(t) X(t) + u(t)' R u(t)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Definition of a double integrator system (DX = A X + B u with X = [x; dx])
-A = kron([0 1; 0 0], eye(nbVarOut)); %See Eq. (5.1.1) in doc/TechnicalReport.pdf
-B = kron([0; 1], eye(nbVarOut)); %See Eq. (5.1.1) in doc/TechnicalReport.pdf
+A = kron([0 1; 0 0], eye(nbVarOut)); 
+B = kron([0; 1], eye(nbVarOut)); 
 %Initialize Q and R weighting matrices
 Q = zeros(nbVarOut*2,nbVarOut*2);
 R = eye(nbVarOut) * rFactor;
@@ -58,16 +82,16 @@ for t=1:nbData
 	d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t)); %See Eq. (5.1.28) with d_dot=0 in doc/TechnicalReport.pdf
 	
 	%Feedback term
-	L = R\B'*P; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	L = R\B'*P; 
 	
 	%Feedforward term
-	M = R\B'*d; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	M = R\B'*d; 
 	
 	%Compute acceleration (with only feedback terms)
 	ddx =  -L * [x-r.currTar(:,t); dx];
 	
 	%Compute acceleration (with feedback and feedforward terms)
-	%ddx =  -L * [x-r.currTar(:,t); dx] + M; %See Eq. (5.1.30) in doc/TechnicalReport.pdf
+	%ddx =  -L * [x-r.currTar(:,t); dx] + M; 
 	
 	%Update velocity and position
 	dx = dx + ddx * model.dt;
@@ -84,5 +108,3 @@ for t=1:nbData
 	r.kvDet(t) = det(L(:,nbVarOut+1:end));
 	%Note that if [V,D] = eigs(L(:,1:nbVarOut)), we have L(:,nbVarOut+1:end) = V * (2*D).^.5 * V'
 end
-
-

@@ -1,22 +1,20 @@
 function [model, s, LL] = EM_stdPGMM(s, model)
 % Training of a parametric Gaussian mixture model (PGMM) with expectation-maximization (EM).
-% The implementation follows the approach described by Wilson and Bobick (1999) "Parametric Hidden Markov
-% Models for Gesture Recognition", IEEE Trans. on Pattern Analysis and Machine Intelligence, with an
-% implementation applied to the special case of Gaussian mixture models (GMM).
+% The approach is inspired by Wilson and Bobick (1999), with an implementation applied to 
+% the special case of Gaussian mixture models (GMM).
 %
-% Author:	Sylvain Calinon, 2013
-%         http://programming-by-demonstration.org/SylvainCalinon
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
 %
-% This source code is given for free! In exchange, I would be grateful if you cite
-% the following references in any academic publication that uses this code or part of it:
-%
-% @inproceedings{Calinon12Hum,
-%   author="Calinon, S. and Li, Z. and Alizadeh, T. and Tsagarakis, N. G. and Caldwell, D. G.",
-%   title="Statistical dynamical systems for skills acquisition in humanoids",
-%   booktitle="Proc. {IEEE} Intl Conf. on Humanoid Robots ({H}umanoids)",
-%   year="2012",
-%   address="Osaka, Japan"
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
 % }
+%
 % @article{Wilson99,
 %   author="Wilson, A. D. and Bobick, A. F.",
 %   title="Parametric Hidden {M}arkov Models for Gesture Recognition",
@@ -27,8 +25,23 @@ function [model, s, LL] = EM_stdPGMM(s, model)
 %   pages="884--900"
 % }
 %
-% The first reference presents an implementation of the approach described in the second reference, and
-% applies it to the special case of Gaussian mixture model (GMM).
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 %Parameters of the EM algorithm
 nbMinSteps = 10; %Minimum number of iterations allowed
@@ -54,19 +67,19 @@ for nbIter=1:nbMaxSteps
 	%M-STEP
 	for i=1:model.nbStates
 		
-		%Update Priors, see Eq. (7.1.5) in doc/TechnicalReport.pdf
+		%Update Priors
 		model.Priors(i) = sum(GAMMA(i,:))/nbData;
 		
-		%Update Zmu, see Eq. (7.1.6) in doc/TechnicalReport.pdf
+		%Update Zmu
 		model.ZMu(:,:,i) = zeros(model.nbVar,nbVarParams);
 		sumTmp = zeros(nbVarParams,nbVarParams);
 		for n=1:nbSamples
 			model.ZMu(:,:,i) = model.ZMu(:,:,i) + (s(n).Data * diag(s(n).GAMMA(i,:)) * repmat(s(n).OmegaMu',s(n).nbData,1));
 			sumTmp = sumTmp + (s(n).OmegaMu*s(n).OmegaMu') * (sum(s(n).GAMMA(i,:)));
 		end
-		model.ZMu(:,:,i) = model.ZMu(:,:,i) * pinv(sumTmp + eye(nbVarParams)*diagRegularizationFactor); %Eq. (6) Wilson and Bobick
+		model.ZMu(:,:,i) = model.ZMu(:,:,i) * pinv(sumTmp + eye(nbVarParams)*diagRegularizationFactor); 
 		
-		%Update Sigma, see Eq. (7.1.7) in doc/TechnicalReport.pdf
+		%Update Sigma
 		model.Sigma(:,:,i) = zeros(model.nbVar);
 		sumTmp = 0;
 		for n=1:nbSamples
@@ -95,7 +108,6 @@ for nbIter=1:nbMaxSteps
 	end
 end
 disp(['The maximum number of ' num2str(nbMaxSteps) ' EM iterations has been reached.']);
-
 end
 
 
@@ -121,7 +133,3 @@ for n=1:nbSamples
 	nTmp = nTmp+size(s(n).GAMMA,2);
 end
 end
-
-
-
-

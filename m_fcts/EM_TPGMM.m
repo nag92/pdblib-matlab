@@ -3,21 +3,35 @@ function model = EM_TPGMM(Data, model)
 % The approach allows the modulation of the centers and covariance matrices of the Gaussians with respect to
 % external parameters represented in the form of candidate coordinate systems.
 %
-% Author:	Sylvain Calinon, 2014
-%         http://programming-by-demonstration.org/SylvainCalinon
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
 %
-% This source code is given for free! In exchange, I would be grateful if you cite
-% the following reference in any academic publication that uses this code or part of it:
-%
-% @inproceedings{Calinon14ICRA,
-%   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
-%   title="A task-parameterized probabilistic model with minimal intervention control",
-%   booktitle="Proc. {IEEE} Intl Conf. on Robotics and Automation ({ICRA})",
-%   year="2014",
-%   month="May-June",
-%   address="Hong Kong, China",
-%   pages="3339--3344"
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
 % }
+%
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 %Parameters of the EM algorithm
 nbMinSteps = 5; %Minimum number of iterations allowed
@@ -25,8 +39,8 @@ nbMaxSteps = 100; %Maximum number of iterations allowed
 maxDiffLL = 1E-5; %Likelihood increase threshold to stop the algorithm
 nbData = size(Data,3);
 
-diagRegularizationFactor = 1E-5; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
-%diagRegularizationFactor = 0; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
+diagRegularizationFactor = 1E-5; %Optional regularization term
+%diagRegularizationFactor = 0; %Optional regularization term
 
 for nbIter=1:nbMaxSteps
 	fprintf('.');
@@ -38,7 +52,7 @@ for nbIter=1:nbMaxSteps
 	%M-step
 	for i=1:model.nbStates
 		
-		%Update Priors, see Eq. (6.0.2) in doc/TechnicalReport.pdf
+		%Update Priors
 		model.Priors(i) = sum(sum(GAMMA(i,:))) / nbData;
 		
 		for m=1:model.nbFrames
@@ -46,10 +60,10 @@ for nbIter=1:nbMaxSteps
 			DataMat=[];
 			DataMat(1:model.nbVars(m),:) = Data(1:model.nbVars(m),m,:);
 			
-			%Update Mu, see Eq. (6.0.3) in doc/TechnicalReport.pdf
+			%Update Mu
 			model.Mu(1:model.nbVars(m),m,i) = DataMat * GAMMA2(i,:)';
 			
-			%Update Sigma (regularization term is optional), see Eq. (6.0.4) in doc/TechnicalReport.pdf
+			%Update Sigma (regularization term is optional)
 			DataTmp = DataMat - repmat(model.Mu(1:model.nbVars(m),m,i),1,nbData);
 			model.Sigma(1:model.nbVars(m),1:model.nbVars(m),m,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(model.nbVars(m))*diagRegularizationFactor;
 		end
@@ -68,9 +82,9 @@ end
 disp(['The maximum number of ' num2str(nbMaxSteps) ' EM iterations has been reached.']);
 end
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [Lik, GAMMA, GAMMA0] = computeGamma(Data, model)
-%See Eq. (6.0.1) in doc/TechnicalReport.pdf
 nbData = size(Data, 3);
 Lik = ones(model.nbStates, nbData);
 GAMMA0 = zeros(model.nbStates, model.nbFrames, nbData);
@@ -85,7 +99,3 @@ for i=1:model.nbStates
 end
 GAMMA = Lik ./ repmat(sum(Lik,1)+realmin, size(Lik,1), 1);
 end
-
-
-
-

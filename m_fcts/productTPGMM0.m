@@ -1,8 +1,37 @@
 function [Mu, Sigma] = productTPGMM0(model, p)
-%Compute the product of Gaussians for a TP-GMM, where the set of task parameters are stored in the variable 'p'.
-%Sylvain Calinon, 2015
+% Compute the product of Gaussians for a task-parametrized model where the
+% set of parameters are stored in the variable 'p'.
+%
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+%
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
-%TP-GMM products, see Eqs (6.0.5)-(6.0.7) in doc/TechnicalReport.pdf
+
 for i=1:model.nbStates
 	% Reallocating
 	SigmaTmp = zeros(model.nbVar);

@@ -1,8 +1,35 @@
 function [model, GAMMA2, LL] = EM_GMM(Data, model)
 % Training of a Gaussian mixture model (GMM) with an expectation-maximization (EM) algorithm.
 %
-% Author:	Sylvain Calinon, 2014
-%         http://programming-by-demonstration.org/SylvainCalinon
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+% 
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 %Parameters of the EM algorithm
 nbMinSteps = 5; %Minimum number of iterations allowed
@@ -10,8 +37,8 @@ nbMaxSteps = 100; %Maximum number of iterations allowed
 maxDiffLL = 1E-4; %Likelihood increase threshold to stop the algorithm
 nbData = size(Data,2);
 
-%diagRegularizationFactor = 1E-6; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
-diagRegularizationFactor = 1E-4; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
+%diagRegularizationFactor = 1E-6; %Regularization term is optional
+diagRegularizationFactor = 1E-4; %Regularization term is optional
 
 for nbIter=1:nbMaxSteps
 	fprintf('.');
@@ -22,13 +49,13 @@ for nbIter=1:nbMaxSteps
 	
 	%M-step
 	for i=1:model.nbStates
-		%Update Priors, see Eq. (2.0.6) in doc/TechnicalReport.pdf
+		%Update Priors
 		model.Priors(i) = sum(GAMMA(i,:)) / nbData;
 		
-		%Update Mu, see Eq. (2.0.7) in doc/TechnicalReport.pdf
+		%Update Mu
 		model.Mu(:,i) = Data * GAMMA2(i,:)';
 		
-		%Update Sigma, see Eq. (2.0.8) in doc/TechnicalReport.pdf (regularization term is optional, see Eq. (2.1.2))
+		%Update Sigma
 		DataTmp = Data - repmat(model.Mu(:,i),1,nbData);
 		model.Sigma(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(size(Data,1)) * diagRegularizationFactor;
 	end
@@ -46,15 +73,13 @@ end
 disp(['The maximum number of ' num2str(nbMaxSteps) ' EM iterations has been reached.']);
 end
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [L, GAMMA] = computeGamma(Data, model)
-%See Eq. (2.0.5) in doc/TechnicalReport.pdf
 L = zeros(model.nbStates,size(Data,2));
 for i=1:model.nbStates
 	L(i,:) = model.Priors(i) * gaussPDF(Data, model.Mu(:,i), model.Sigma(:,:,i));
 end
 GAMMA = L ./ repmat(sum(L,1)+realmin, model.nbStates, 1);
 end
-
-
 

@@ -1,45 +1,55 @@
 function [expData, expSigma, H] = GMR(model, DataIn, in, out)
 % Gaussian mixture regression (GMR)
 %
-% Authors:	Sylvain Calinon, Danilo Bruno, 2014
-%         	http://programming-by-demonstration.org/lib/
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
 %
-% This source code is given for free! In exchange, we would be grateful if you cite
-% the following reference in any academic publication that uses this code or part of it:
-%
-% @article{Calinon07SMC,
-%   author="Calinon, S. and Guenter, F. and Billard, A. G.",
-%   title="On Learning, Representing and Generalizing a Task in a Humanoid Robot",
-%   journal="{IEEE} Trans. on Systems, Man and Cybernetics, Part {B}",
-%   year="2007",
-%   volume="37",
-%   number="2",
-%   pages="286--298",
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
 % }
+%
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 nbData = size(DataIn,2);
 nbVarOut = length(out);
-
-diagRegularizationFactor = 1E-8; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
+diagRegularizationFactor = 1E-8; %Optional regularization term
 
 MuTmp = zeros(nbVarOut,model.nbStates);
 expData = zeros(nbVarOut,nbData);
 expSigma = zeros(nbVarOut,nbVarOut,nbData);
 for t=1:nbData
-	
-	%Compute activation weight, see Eq. (3.0.5) in doc/TechnicalReport.pdf
+	%Compute activation weight
 	for i=1:model.nbStates
 		H(i,t) = model.Priors(i) * gaussPDF(DataIn(:,t), model.Mu(in,i), model.Sigma(in,in,i));
 	end
 	H(:,t) = H(:,t) / sum(H(:,t)+realmin);
-	
-	%Compute conditional means, see Eq. (3.0.8) in doc/TechnicalReport.pdf
+	%Compute conditional means
 	for i=1:model.nbStates
 		MuTmp(:,i) = model.Mu(out,i) + model.Sigma(out,in,i)/model.Sigma(in,in,i) * (DataIn(:,t)-model.Mu(in,i));
 		expData(:,t) = expData(:,t) + H(i,t) * MuTmp(:,i);
 	end
-	
-	%Compute conditional covariances, see Eq. (3.0.14) in doc/TechnicalReport.pdf
+	%Compute conditional covariances
 	for i=1:model.nbStates
 		SigmaTmp = model.Sigma(out,out,i) - model.Sigma(out,in,i)/model.Sigma(in,in,i) * model.Sigma(in,out,i);
 		expSigma(:,:,t) = expSigma(:,:,t) + H(i,t) * (SigmaTmp + MuTmp(:,i)*MuTmp(:,i)');

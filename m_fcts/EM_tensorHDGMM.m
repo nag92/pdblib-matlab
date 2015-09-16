@@ -1,6 +1,35 @@
 function model = EM_tensorHDGMM(Data, model)
-%Training of a task-parameterized high dimensional GMM with an expectation-maximization (EM) algorithm.
-%Sylvain Calinon, 2015
+% Training of a task-parameterized high dimensional GMM with an expectation-maximization (EM) algorithm.
+%
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+%
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 %Parameters of the EM algorithm
 nbMinSteps = 5; %Minimum number of iterations allowed
@@ -8,8 +37,8 @@ nbMaxSteps = 100; %Maximum number of iterations allowed
 maxDiffLL = 1E-5; %Likelihood increase threshold to stop the algorithm
 nbData = size(Data,3);
 
-%diagRegularizationFactor = 1E-2; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
-diagRegularizationFactor = 1E-10; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
+%diagRegularizationFactor = 1E-2; %Optional regularization term
+diagRegularizationFactor = 1E-10; %Optional regularization term
 
 %EM loop
 for nbIter=1:nbMaxSteps
@@ -23,28 +52,28 @@ for nbIter=1:nbMaxSteps
 	%M-step
 	for i=1:model.nbStates
 		
-		%Update Priors, see Eq. (6.0.2) in doc/TechnicalReport.pdf
+		%Update Priors
 		model.Priors(i) = sum(sum(GAMMA(i,:))) / nbData;
 		
 		for m=1:model.nbFrames
 			%Matricization/flattening of tensor
 			DataMat(:,:) = Data(:,m,:);
 			
-			%Update Mu, see Eq. (6.0.3) in doc/TechnicalReport.pdf
+			%Update Mu
 			model.Mu(:,m,i) = DataMat * GAMMA2(i,:)';
 			
-			%Compute covariance, see Eq. (2.2.15) in doc/TechnicalReport.pdf
+			%Compute covariance
 			DataTmp = DataMat - repmat(model.Mu(:,m,i),1,nbData);
 			S(:,:,m,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(model.nbVar)*diagRegularizationFactor;
 			
-			%HDGMM update, see Eq. (2.2.2) in doc/TechnicalReport.pdf
+			%HDGMM update
 			[V,D] = eig(S(:,:,m,i)); 
 			[~,id] = sort(diag(D),'descend');
 			d = diag(D);
 			model.D(:,:,m,i) = diag([d(id(1:model.nbFA)); repmat(mean(d(id(model.nbFA+1:end))), model.nbVar-model.nbFA, 1)]);
 			model.V(:,:,m,i) = V(:,id); 
 	
-			%Reconstruct Sigma, see Eq. (2.2.1) in doc/TechnicalReport.pdf
+			%Reconstruct Sigma
 			model.Sigma(:,:,m,i) = model.V(:,:,m,i) * model.D(:,:,m,i) * model.V(:,:,m,i)' + eye(model.nbVar) * diagRegularizationFactor;
 		end
 	end
@@ -62,9 +91,9 @@ end
 disp(['The maximum number of ' num2str(nbMaxSteps) ' EM iterations has been reached.']);
 end
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [Lik, GAMMA, GAMMA0] = computeGamma(Data, model)
-%See Eq. (6.0.1) in doc/TechnicalReport.pdf
 nbData = size(Data, 3);
 Lik = ones(model.nbStates, nbData);
 GAMMA0 = zeros(model.nbStates, model.nbFrames, nbData);
@@ -78,7 +107,3 @@ for i=1:model.nbStates
 end
 GAMMA = Lik ./ repmat(sum(Lik,1)+realmin, size(Lik,1), 1);
 end
-
-
-
-

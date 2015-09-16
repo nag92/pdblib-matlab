@@ -1,8 +1,6 @@
 function model = init_GMM_kmeans(Data, model)
-%
 % This function initializes the parameters of a Gaussian Mixture Model
 % (GMM) by using k-means clustering algorithm.
-%
 % Inputs -----------------------------------------------------------------
 %   o Data:     D x N array representing N datapoints of D dimensions.
 %   o nbStates: Number K of GMM components.
@@ -12,17 +10,39 @@ function model = init_GMM_kmeans(Data, model)
 %   o Mu:       D x K array representing the centers of the K GMM components.
 %   o Sigma:    D x D x K array representing the covariance matrices of the
 %               K GMM components.
-% Comments ---------------------------------------------------------------
-%   o This function uses the 'kmeans' function from the MATLAB Statistics
-%     toolbox. If you are using a version of the 'netlab' toolbox that also
-%     uses a function named 'kmeans', please rename the netlab function to
-%     'kmeans_netlab.m' to avoid conflicts.
 %
-% Copyright (c) 2006 Sylvain Calinon, LASA Lab, EPFL, CH-1015 Lausanne,
-%               Switzerland, http://lasa.epfl.ch
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+%
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 [nbVar, nbData] = size(Data);
-diagRegularizationFactor = 1E-2;
+diagRegularizationFactor = 1E-2; %Optional regularization term
 
 [Data_id, model.Mu] = kmeansClustering(Data, model.nbStates);
 
@@ -30,8 +50,7 @@ for i=1:model.nbStates
 	idtmp = find(Data_id==i);
 	model.Priors(i) = length(idtmp);
 	model.Sigma(:,:,i) = cov([Data(:,idtmp) Data(:,idtmp)]');
-	%Regularization term to avoid numerical instability
+	%Optional regularization term to avoid numerical instability
 	model.Sigma(:,:,i) = model.Sigma(:,:,i) + eye(nbVar)*diagRegularizationFactor;
 end
 model.Priors = model.Priors / sum(model.Priors);
-

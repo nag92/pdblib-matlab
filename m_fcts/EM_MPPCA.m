@@ -1,7 +1,36 @@
 function [model, GAMMA2] = EM_MPPCA(Data, model)
-%EM for mixture of probabilistic principal component analyzers,
-%inspired by "Mixtures of Probabilistic Principal Component Analysers" by Michael E. Tipping and Christopher M. Bishop
-%Sylvain Calinon, 2015
+% EM for mixture of probabilistic principal component analyzers (implementation based on 
+% "Mixtures of Probabilistic Principal Component Analysers" by Michael E. Tipping and Christopher M. Bishop)
+%
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+%
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 %Parameters of the EM iterations
 nbMinSteps = 5; %Minimum number of iterations allowed
@@ -29,29 +58,29 @@ for nbIter=1:nbMaxSteps
 	GAMMA2 = GAMMA ./ repmat(sum(GAMMA,2),1,nbData);
 	
 	%M-step
-	%Update Priors, see Eq. (2.2.10) in doc/TechnicalReport.pdf
+	%Update Priors
 	model.Priors = sum(GAMMA,2) / nbData;
 	
-	%Update Mu, see Eq. (2.2.11) in doc/TechnicalReport.pdf
+	%Update Mu
 	model.Mu = Data * GAMMA2';
 	
 	%Update factor analyser params
 	for i=1:model.nbStates
-		%Compute covariance, see Eq. (2.2.19) in doc/TechnicalReport.pdf
+		%Compute covariance
 		DataTmp = Data - repmat(model.Mu(:,i),1,nbData);
 		S(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(model.nbVar) * diagRegularizationFactor;
 
-		%Update M, see Eq. (2.2.20) in doc/TechnicalReport.pdf 
+		%Update M 
 		M = eye(model.nbFA)*model.o(i) + model.L(:,:,i)' * model.L(:,:,i);
-		%Update Lambda, see Eq. (2.2.17) in doc/TechnicalReport.pdf 
+		%Update Lambda 
 		Lnew =  S(:,:,i) * model.L(:,:,i) / (eye(model.nbFA)*model.o(i) + M \ model.L(:,:,i)' * S(:,:,i) * model.L(:,:,i));
-		%Update of sigma^2, see Eq. (2.2.21) in doc/TechnicalReport.pdf 
+		%Update of sigma^2 
 		model.o(i) = trace(S(:,:,i) - S(:,:,i) * model.L(:,:,i) / M * Lnew') / model.nbVar;
 		model.L(:,:,i) = Lnew;
-		%Update Psi, see Eq. (2.2.18) in doc/TechnicalReport.pdf 
+		%Update Psi 
 		model.P(:,:,i) = eye(model.nbVar) * model.o(i);
 		
-		%Reconstruct Sigma, see Eq. (2.2.4) in doc/TechnicalReport.pdf
+		%Reconstruct Sigma
 		model.Sigma(:,:,i) = model.L(:,:,i) * model.L(:,:,i)' + model.P(:,:,i);
 	end
 	
@@ -68,9 +97,9 @@ end
 disp(['The maximum number of ' num2str(nbMaxSteps) ' EM iterations has been reached.']);
 end
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [Lik, GAMMA] = computeGamma(Data, model)
-%See Eq. (2.0.5) in doc/TechnicalReport.pdf
 Lik = zeros(model.nbStates,size(Data,2));
 for i=1:model.nbStates
 	Lik(i,:) = model.Priors(i) * gaussPDF(Data, model.Mu(:,i), model.Sigma(:,:,i));

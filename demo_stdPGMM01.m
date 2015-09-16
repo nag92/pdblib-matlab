@@ -1,6 +1,7 @@
 function demo_stdPGMM01
-% Parametric Gaussian mixture model (PGMM) used for task adaptation,
-% with DS-GMR employed to retrieve continuous movements.
+% Parametric Gaussian mixture model (PGMM) used for task adaptation, with DS-GMR employed 
+% to retrieve continuous movements. The approach is inspired by Wilson and Bobick (1999), 
+% with an implementation applied to the special case of Gaussian mixture models (GMM).
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
 % If some parts of the code were useful for your research of for a better understanding 
@@ -12,6 +13,16 @@ function demo_stdPGMM01
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
 %   year="2015"
+% }
+%
+% @article{Wilson99,
+%   author="Wilson, A. D. and Bobick, A. F.",
+%   title="Parametric Hidden {M}arkov Models for Gesture Recognition",
+%   journal="{IEEE} Trans. on Pattern Analysis and Machine Intelligence",
+%   year="1999",
+%   volume="21",
+%   number="9",
+%   pages="884--900"
 % }
 % 
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/

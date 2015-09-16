@@ -1,11 +1,10 @@
 function r = reproduction_DS(DataIn, model, r, currPos)
-% Reproduction with a virtual spring-damper system with constant impedance parameters
+% Reproduction with a virtual spring-damper system with constant impedance parameters.
 %
-% Author: Sylvain Calinon, 2014
-%         http://programming-by-demonstration.org/SylvainCalinon
-%
-% This source code is given for free! In exchange, I would be grateful if you cite
-% the following reference in any academic publication that uses this code or part of it:
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
 %
 % @inproceedings{Calinon14ICRA,
 %   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
@@ -16,6 +15,31 @@ function r = reproduction_DS(DataIn, model, r, currPos)
 %   address="Hong Kong, China",
 %   pages="3339--3344"
 % }
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+%
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon (http://calinon.ch/), Danilo Bruno (danilo.bruno@iit.it)
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 nbData = size(DataIn,2);
 nbVarOut = length(currPos);
@@ -27,7 +51,7 @@ dx = zeros(nbVarOut,1);
 for t=1:nbData
 	L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV];
 	%Compute acceleration
-	ddx =  -L * [x-r.currTar(:,t); dx]; %See Eq. (4.0.1) in doc/TechnicalReport.pdf
+	ddx =  -L * [x-r.currTar(:,t); dx]; 
 	%Update velocity and position
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;
@@ -37,6 +61,3 @@ for t=1:nbData
 	r.kpDet(t) = det(L(:,1:nbVarOut));
 	r.kvDet(t) = det(L(:,nbVarOut+1:end));
 end
-
-
-
