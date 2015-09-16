@@ -1,6 +1,35 @@
 function demo_trajGMM01
-% Trajectory synthesis with a GMM with dynamic features (trajectory GMM)
-% Sylvain Calinon, 2015
+% Trajectory synthesis with a GMM with dynamic features (trajectory GMM).
+%
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+% 
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 addpath('./m_fcts/');
 
@@ -43,7 +72,7 @@ end
 
 %Re-arrange data in vector form
 x = reshape(Data, model.nbVarPos*nbData*nbSamples, 1) * 1E2; %Scale data to avoid numerical computation problem
-zeta = PHI*x; %y is for example [x1(1), x2(1), x1d(1), x2d(1), x1(2), x2(2), x1d(2), x2d(2), ...], see Eq. (2.4.5) in doc/TechnicalReport.pdf
+zeta = PHI*x; %y is for example [x1(1), x2(1), x1d(1), x2d(1), x1(2), x2(2), x1d(2), x2d(2), ...]
 Data = reshape(zeta, model.nbVarPos*model.nbDeriv, nbData*nbSamples); %Include derivatives in Data
 
 
@@ -75,7 +104,7 @@ for n=1:1 %nbSamples
 	%Compute best path for the n-th demonstration
 	[~,r(n).q] = max(GAMMA2(:,(n-1)*nbData+1:n*nbData),[],1); %works also for nbStates=1
 	
-	%Create single Gaussian N(MuQ,SigmaQ) based on optimal state sequence q, see Eq. (2.4.8) in doc/TechnicalReport.pdf
+	%Create single Gaussian N(MuQ,SigmaQ) based on optimal state sequence q
 	MuQ = reshape(model.Mu(:,r(n).q), model.nbVar*nbData, 1); 
 	%MuQ = zeros(model.nbVar*nbData,1);
 	SigmaQ = zeros(model.nbVar*nbData);
@@ -88,13 +117,13 @@ for n=1:1 %nbSamples
 	%SigmaQ = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(model.Sigma(:,:,r(n).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
 
 
-% 	%Least squares computation method 1 (using lscov Matlab function), see Eq. (2.4.11) in doc/TechnicalReport.pdf
-% 	%%%%%%%%%%%%%%%%%%%
-% 	[zeta,~,mse,S] = lscov(PHI1, MuQ, SigmaQ, 'chol'); %Retrieval of data with weighted least squares solution
-% 	r(n).Data = reshape(zeta, model.nbVarPos, nbData); %Reshape data for plotting
+	%Least squares computation method 1 (using lscov Matlab function)
+	%%%%%%%%%%%%%%%%%%%
+	[zeta,~,mse,S] = lscov(PHI1, MuQ, SigmaQ, 'chol'); %Retrieval of data with weighted least squares solution
+	r(n).Data = reshape(zeta, model.nbVarPos, nbData); %Reshape data for plotting
 
 	
-% 	%Least squares computation method 2 (most readable but not optimized), see Eq. (2.4.11) in doc/TechnicalReport.pdf
+% 	%Least squares computation method 2 (most readable but not optimized)
 % 	%%%%%%%%%%%%%%%%%%%
 % 	PHIinvSigmaQ = PHI1' / SigmaQ;
 % 	Rq = PHIinvSigmaQ * PHI1;
@@ -102,32 +131,29 @@ for n=1:1 %nbSamples
 % 	zeta = Rq \ rq; %Can also be computed with c = lscov(Rq, rq)
 % 	size(zeta)
 % 	r(n).Data = reshape(zeta, model.nbVarPos, nbData); %Reshape data for plotting
-% 	%Covariance Matrix computation of ordinary least squares estimate, see Eq. (2.4.12) in doc/TechnicalReport.pdf
+% 	%Covariance Matrix computation of ordinary least squares estimate
 % 	mse =  (MuQ'*inv(SigmaQ)*MuQ - rq'*inv(Rq)*rq) ./ ((model.nbVar-model.nbVarPos)*nbData);
 % 	S = inv(Rq) * mse; 
 	
 
-	%Least squares computation method 3 (efficient computation using Cholesky and QR decompositions, inspired by lscov code)
-	%%%%%%%%%%%%%%%%%%%
-	T = chol(SigmaQ)'; %SigmaQ=T*T'
-	TA = T \ PHI1;
-	TMuQ = T \ MuQ;
-	[Q, R, perm] = qr(TA,0); %PHI1(:,perm)=Q*R
-	z = Q' * TMuQ;
-	zeta = zeros(nbData*model.nbVarPos,1);
-	zeta(perm,:) = R \ z; %zeta=(TA'*TA)\(TA'*TMuQ), see Eq. (2.4.11) in doc/TechnicalReport.pdf
-	r(n).Data = reshape(zeta, model.nbVarPos, nbData); %Reshape data for plotting
-	%Covariance Matrix computation of ordinary least squares estimate
-	err = TMuQ - Q*z;
-	norm(err)
-	norm(eye(size(Q,2)) - Q'*Q)
-	return
-	mse = err'*err ./ (model.nbVar*nbData - model.nbVarPos*nbData);
-	Rinv = R \ eye(model.nbVarPos*nbData);
-	S(perm,perm) = Rinv*Rinv' .* mse; %See Eq. (2.4.12) in doc/TechnicalReport.pdf
+% 	%Least squares computation method 3 (efficient computation using Cholesky and QR decompositions, inspired by lscov code)
+% 	%%%%%%%%%%%%%%%%%%%
+% 	T = chol(SigmaQ)'; %SigmaQ=T*T'
+% 	TA = T \ PHI1;
+% 	TMuQ = T \ MuQ;
+% 	[Q, R, perm] = qr(TA,0); %PHI1(:,perm)=Q*R
+% 	z = Q' * TMuQ;
+% 	zeta = zeros(nbData*model.nbVarPos,1);
+% 	zeta(perm,:) = R \ z; %zeta=(TA'*TA)\(TA'*TMuQ)
+% 	r(n).Data = reshape(zeta, model.nbVarPos, nbData); %Reshape data for plotting
+% 	%Covariance Matrix computation of ordinary least squares estimate
+% 	err = TMuQ - Q*z;
+% 	mse = err'*err ./ (model.nbVar*nbData - model.nbVarPos*nbData);
+% 	Rinv = R \ eye(model.nbVarPos*nbData);
+% 	S(perm,perm) = Rinv*Rinv' .* mse; 
 	
 	
-	%Rebuild covariance by reshaping S, see Eq. (2.4.12) in doc/TechnicalReport.pdf
+	%Rebuild covariance by reshaping S
 	for t=1:nbData
 		id = (t-1)*model.nbVarPos+1:t*model.nbVarPos;
 		r(n).expSigma(:,:,t) = S(id,id) * nbData;

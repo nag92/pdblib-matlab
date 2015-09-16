@@ -1,20 +1,48 @@
 function demo_iterativeLQR02
 % Controller retrieval through an iterative solution of linear quadratic optimal control (finite horizon, 
-% unconstrained linear MPC), by relying on a Gaussian mixture model (GMM) encoding of only position data
+% unconstrained linear MPC), by relying on a Gaussian mixture model (GMM) encoding of only position data.
 %
-% Sylvain Calinon, Danilo Bruno, 2015
-% http://programming-by-demonstration.org/lib/
-%
-% This source code is given for free! In exchange, we would be grateful if you cite
-% the following reference in any academic publication that uses this code or part of it:
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
 %
 % @article{Calinon15,
 %   author="Calinon, S.",
-%   title="A tutorial on task-parameterized movement learning and retrieval",
-%   year="2015",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
 % }
+%
+% @inproceedings{Calinon14,
+%   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
+%   title="A task-parameterized probabilistic model with minimal intervention control",
+%   booktitle="Proc. {IEEE} Intl Conf. on Robotics and Automation ({ICRA})",
+%   year="2014",
+%   month="May-June",
+%   address="Hong Kong, China",
+%   pages="3339--3344"
+% }
+% 
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon (http://calinon.ch/) and Danilo Bruno (danilo.bruno@iit.it)
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

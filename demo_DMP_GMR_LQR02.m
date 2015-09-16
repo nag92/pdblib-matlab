@@ -1,14 +1,45 @@
 function demo_DMP_GMR_LQR02
-%Example of enhanced dynamic movement primitive (DMP) model trained with EM by using a Gaussian mixture model (GMM) representation, 
-%with full covariance matrices coordinating the different variables in the feature space, and by using the task-parameterized model 
-%formalism. After learning (i.e., autonomous organization of the basis functions (position and spread), Gaussian mixture 
-%regression (GMR) is used to regenerate the path of a spring-damper system, resulting in a nonlinear force profile.
-%The gains of the spring-damper system are further refined by LQR based on the retrieved covariance information.
-%In this example, perturbations are added to show the benefit of encapsulating covariance information to coordinate 
-%disturbance rejection. 
-%Sylvain Calinon, 2015
+% Enhanced dynamic movement primitive (DMP) model trained with EM by using a Gaussian mixture 
+% model (GMM) representation, with full covariance matrices coordinating the different variables 
+% in the feature space, and by using the task-parameterized model formalism. After learning 
+% (i.e., autonomous organization of the basis functions (position and spread), Gaussian mixture 
+% regression (GMR) is used to regenerate the path of a spring-damper system, resulting in a 
+% nonlinear force profile. The gains of the spring-damper system are further refined by LQR 
+% based on the retrieved covariance information.  
+% In this example, perturbations are added to show the benefit of encapsulating covariance 
+% information to coordinate disturbance rejection. 
+%
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
+%
+% @article{Calinon15,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%   year="2015"
+% }
+% 
+% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Written by Sylvain Calinon, http://calinon.ch/
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 addpath('./m_fcts/');
+
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

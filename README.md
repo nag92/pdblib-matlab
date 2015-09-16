@@ -1,6 +1,7 @@
 # pbdlib-matlab
 
-PbDLib is a set of tools combining statistical learning, dynamical systems and optimal control approaches for programming-by-demonstration applications. The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute, http://idiap.ch/~scalinon/, http://calinon.ch.
+PbDlib is a set of tools combining statistical learning, dynamical systems and optimal control approaches for programming-by-demonstration applications, http://www.idiap.ch/software/pbdlib/. 
+The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute.
 
 A C++ version of the library (with currently fewer functionalities) is available at https://gitlab.idiap.ch/rli/pbdlib
 
@@ -14,7 +15,7 @@ Examples starting with `demo_` can be run from Matlab/GNU Octave.
 
 ### References
 
-Did you find PbDLib useful for your research? Please acknowledge the authors in any academic publications that used some parts of these codes.
+Did you find PbDLib useful for your research? Please acknowledge the authors in any academic publications that used parts of these codes.
 
 ```
 @article{Calinon15,
@@ -38,6 +39,23 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 ### Dataset
 
 The folder "data" contains a dataset of 2D handwriting movements from LASA-EPFL (http://lasa.epfl.ch), collected within the context of the AMARSI European Project. Reference: S.M. Khansari-Zadeh and A. Billard, "Learning Stable Non-Linear Dynamical Systems with Gaussian Mixture Models", IEEE Transaction on Robotics, 2011.
+
+### License
+
+Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+Written by Sylvain Calinon, http://calinon.ch/
+
+PbDlib is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 3 as
+published by the Free Software Foundation.
+
+PbDlib is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 ### List of examples
 
