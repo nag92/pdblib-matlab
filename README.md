@@ -22,8 +22,8 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 @article{Calinon15,
 	author="Calinon, S.",
 	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-  journal="Intelligent Service Robotics",
-  publisher="Springer",
+	journal="Intelligent Service Robotics",
+	publisher="Springer",
 	year="2015",
 }
 ```
