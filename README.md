@@ -1,6 +1,7 @@
 # pbdlib-matlab
 
-PbDlib is a set of tools combining statistical learning, dynamical systems and optimal control approaches for programming-by-demonstration applications, http://www.idiap.ch/software/pbdlib/. 
+PbDlib is a set of tools combining statistical learning, dynamical systems and optimal control approaches for programming-by-demonstration applications (see http://www.idiap.ch/software/pbdlib/ for details). 
+
 The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute.
 
 A C++ version of the library (with currently fewer functionalities) is available at https://gitlab.idiap.ch/rli/pbdlib
@@ -20,7 +21,9 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 ```
 @article{Calinon15,
 	author="Calinon, S.",
-	title="A tutorial on task-parameterized movement learning and retrieval",
+	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+  journal="Intelligent Service Robotics",
+  publisher="Springer",
 	year="2015",
 }
 ```
@@ -43,6 +46,7 @@ The folder "data" contains a dataset of 2D handwriting movements from LASA-EPFL 
 ### License
 
 Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+
 Written by Sylvain Calinon, http://calinon.ch/
 
 PbDlib is free software: you can redistribute it and/or modify
