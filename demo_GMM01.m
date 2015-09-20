@@ -38,13 +38,13 @@ addpath('./m_fcts/');
 model.nbStates = 5; %Number of states in the GMM
 model.nbVar = 2; %Number of variables [x1,x2]
 nbData = 200; %Length of each trajectory
+nbSamples = 5; %Number of demonstrations
 
-
-%% Load AMARSI data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
-load('data/AMARSI/GShape.mat');
-nbSamples = length(demos);
+load('data/2Dletters/G.mat');
+%nbSamples = length(demos);
 Data=[];
 for n=1:nbSamples
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
@@ -60,9 +60,9 @@ model = EM_GMM(Data, model);
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10,10,1000,500]); hold on; box on; 
-plotGMM(model.Mu, model.Sigma, [.8 0 0]);
+figure('position',[10,10,700,500]); hold on; box on; 
 plot(Data(1,:),Data(2,:),'.','markersize',8,'color',[.7 .7 .7]);
+plotGMM(model.Mu, model.Sigma, [.8 0 0],.5);
 axis equal; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 
 %print('-dpng','graphs/demo_GMM01.png');

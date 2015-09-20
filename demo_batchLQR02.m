@@ -36,7 +36,7 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-nbSamples = 3; %Number of demonstrations
+nbSamples = 5; %Number of demonstrations
 nbRepros = 5; %Number of reproductions
 nbData = 100; %Number of datapoints
 
@@ -69,9 +69,9 @@ for n=2:nbData
 end
 
 
-%% Load AMARSI handwriting data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-load('data/AMARSI/GShape.mat')
+load('data/2Dletters/G.mat');
 Data=[];
 for n=1:nbSamples
 	s(n).Data=[];

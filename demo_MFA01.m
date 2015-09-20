@@ -42,15 +42,15 @@ nbData = 200; %Length of each trajectory
 nbSamples = 5; %Number of demonstrations
 
 
-%% Load AMARSI handwriting data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
-load('data/AMARSI/GShape.mat'); %Load x1,x2 variables
+load('data/2Dletters/C.mat'); %Load x1,x2 variables
 for n=1:nbSamples
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
 end
 demos=[];
-load('data/AMARSI/CShape.mat'); %Load x3,x4 variables
+load('data/2Dletters/D.mat'); %Load x3,x4 variables
 Data=[];
 for n=1:nbSamples
 	s(n).Data = [s(n).Data; spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData))]; %Resampling
@@ -67,12 +67,12 @@ model = EM_MFA(Data, model);
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10,10,1000,500]); 
+figure('position',[10,10,1300,500]); 
 for i=1:2
 	subplot(1,2,i); hold on; box on; 
-	plotGMM(model0.Mu((i-1)*2+1:i*2,:), model0.Sigma((i-1)*2+1:i*2,(i-1)*2+1:i*2,:), [.8 .8 .8]);
-	plotGMM(model.Mu((i-1)*2+1:i*2,:), model.Sigma((i-1)*2+1:i*2,(i-1)*2+1:i*2,:), [.8 0 0]);
 	plot(Data((i-1)*2+1,:),Data(i*2,:),'.','markersize',8,'color',[.7 .7 .7]);
+	plotGMM(model0.Mu((i-1)*2+1:i*2,:), model0.Sigma((i-1)*2+1:i*2,(i-1)*2+1:i*2,:), [.8 .8 .8], .5);
+	plotGMM(model.Mu((i-1)*2+1:i*2,:), model.Sigma((i-1)*2+1:i*2,(i-1)*2+1:i*2,:), [.8 0 0], .5);
 	axis equal; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 	xlabel(['x_' num2str((i-1)*2+1)]); ylabel(['x_' num2str(i*2)]);
 end

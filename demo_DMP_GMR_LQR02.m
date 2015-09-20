@@ -53,7 +53,7 @@ model.dt = 0.01; %Duration of time step
 model.nbVarPos = model.nbVar-1; %Dimension of spatial variables
 model.rFactor = 1E-5; %Weighting term for the minimization of control commands in LQR
 nbData = 200; %Number of datapoints in a trajectory
-nbSamples = 1; %Number of demonstrations
+nbSamples = 3; %Number of demonstrations
 
 %Canonical system parameters
 A = kron([0 1; 0 0], eye(model.nbVarPos)); %See Eq. (5.1.1) in doc/TechnicalReport.pdf
@@ -71,10 +71,10 @@ K1d = [1, model.kV/model.kP, 1/model.kP];
 K = kron(K1d,eye(model.nbVarPos));
 
 
-%% Load AMARSI data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
-load('data/AMARSI/Line.mat');
+load('data/2Dletters/I.mat');
 sIn(1) = 1; %Initialization of decay term
 for t=2:nbData
 	sIn(t) = sIn(t-1) - model.alpha * sIn(t-1) * model.dt; %Update of decay term (ds/dt=-alpha s)
@@ -133,21 +133,22 @@ Fpert = zeros(model.nbVarPos,nbData);
 %Fpert(:,5) = [4E4; 0]; %Impulse perturbation force at the beginning of the motion 
 
 %Motion retrieval 
-x = Data(1:model.nbVarPos,1) + [-10; 10]; %Offset for the starting point
+x = Data(1:model.nbVarPos,1) + [-5; -2]; %Offset for the starting point
 dx = zeros(model.nbVarPos,1);
 for t=1:nbData
+	r(1).Data(:,t) = x;
 	K = (Bd' * P(:,:,t) * Bd + R) \ Bd' * P(:,:,t) * Ad;
 	ddx = K * ([r(1).currTar(:,t); zeros(model.nbVarPos,1)] - [x; dx]) + Fpert(:,t);
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;
-	r(1).Data(:,t) = x;
 	r(1).detKp(t) = det(K(:,1:model.nbVarPos));
 end	
 
 %Motion retrieval 
-x = Data(1:model.nbVarPos,1) + [-10; 10]; %Offset for the starting point
+x = Data(1:model.nbVarPos,1) + [-5; -2]; %Offset for the starting point
 dx = zeros(model.nbVarPos,1);
 for t=1:nbData
+	r(2).Data(:,t) = x;
 	K = (Bd' * P(:,:,t) * Bd + R) \ Bd' * P(:,:,t) * Ad;
 	%Corresponding scalar stiffness and damping gains (for comparison purpose)
 	K(:,1:model.nbVarPos) = eye(model.nbVarPos) * det(K(:,1:model.nbVarPos))^(1/model.nbVarPos);
@@ -156,7 +157,6 @@ for t=1:nbData
 	ddx = K * ([r(1).currTar(:,t); zeros(model.nbVarPos,1)] - [x; dx]) + Fpert(:,t);
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;
-	r(2).Data(:,t) = x;
 end	
 
 
@@ -185,14 +185,14 @@ axis equal;
 %Timeline plot of the nonlinear perturbing force
 subplot(2,4,[2:4]); hold on;
 for n=1:nbSamples
-	plot(sIn, DataDMP(2,(n-1)*nbData+1:n*nbData), '-','linewidth',2,'color',[.7 .7 .7]);
+	plot(sIn, DataDMP(3,(n-1)*nbData+1:n*nbData), '-','linewidth',2,'color',[.7 .7 .7]);
 end
 for i=1:model.nbStates
-	plotGMM(model.Mu(1:2,i), model.Sigma(1:2,1:2,i), clrmap(i,:), .7);
+	plotGMM(model.Mu([1,3],i), model.Sigma([1,3],[1,3],i), clrmap(i,:), .7);
 end
-plot(sIn, r(1).currTar(1,:), '-','linewidth',2,'color',[.8 0 0]);
-axis([0 1 min(DataDMP(2,:)) max(DataDMP(2,:))]);
-ylabel('$\hat{x}_1$','fontsize',16,'interpreter','latex');
+plot(sIn, r(1).currTar(2,:), '-','linewidth',2,'color',[.8 0 0]);
+%axis([0 1 min(DataDMP(3,:)) max(DataDMP(3,:))]);
+ylabel('$\hat{x}_2$','fontsize',16,'interpreter','latex');
 view(180,-90);
 
 %Timeline plot of the evolution of stiffness

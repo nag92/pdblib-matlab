@@ -43,10 +43,10 @@ nbData = 200; %Length of each trajectory
 nbSamples = 5; %Number of demonstrations
 
 
-%% Load AMARSI handwriting data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
-load('data/AMARSI/CShape.mat');
+load('data/2Dletters/G.mat');
 Data=[];
 for n=1:nbSamples
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
@@ -64,16 +64,16 @@ model = EM_GMM(Data, model);
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10,10,1000,500]); 
+figure('position',[10,10,1300,500]); 
 %Plot GMM
 subplot(1,2,1); hold on; box on; title('GMM');
-plotGMM(model.Mu(2:model.nbVar,:), model.Sigma(2:model.nbVar,2:model.nbVar,:), [.8 0 0]);
 plot(Data(2,:),Data(3,:),'.','markersize',8,'color',[.7 .7 .7]);
+plotGMM(model.Mu(2:model.nbVar,:), model.Sigma(2:model.nbVar,2:model.nbVar,:), [.8 0 0], .5);
 axis equal; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 %Plot GMR
 subplot(1,2,2); hold on; box on; title('GMR');
-plotGMM(DataOut, SigmaOut, [0 .8 0]);
 plot(Data(2,:),Data(3,:),'.','markersize',8,'color',[.7 .7 .7]);
+plotGMM(DataOut, SigmaOut, [0 .8 0], .03);
 plot(DataOut(1,:),DataOut(2,:),'-','linewidth',2,'color',[0 .4 0]);
 axis equal; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 

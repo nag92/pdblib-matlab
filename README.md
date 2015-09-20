@@ -2,17 +2,7 @@
 
 PbDlib is a set of tools combining statistical learning, dynamical systems and optimal control approaches for programming-by-demonstration applications (see http://www.idiap.ch/software/pbdlib/ for details). 
 
-The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute.
-
-A C++ version of the library (with currently fewer functionalities) is available at https://gitlab.idiap.ch/rli/pbdlib
-
-### Compatibility
-
-The codes are compatible with both Matlab and GNU Octave.
-
-### Usage
-
-Examples starting with `demo_` can be run from Matlab/GNU Octave.
+The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute. A C++ version of the library (with currently fewer functionalities) is available at https://gitlab.idiap.ch/rli/pbdlib
 
 ### References
 
@@ -39,9 +29,13 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-### Dataset
+### Compatibility
 
-The folder "data" contains a dataset of 2D handwriting movements from LASA-EPFL (http://lasa.epfl.ch), collected within the context of the AMARSI European Project. Reference: S.M. Khansari-Zadeh and A. Billard, "Learning Stable Non-Linear Dynamical Systems with Gaussian Mixture Models", IEEE Transaction on Robotics, 2011.
+The codes are compatible with both Matlab and GNU Octave.
+
+### Usage
+
+Examples starting with `demo_` can be run from Matlab/GNU Octave.
 
 ### License
 

@@ -62,8 +62,8 @@ nbData = 100; %Number of datapoints in a trajectory
 % end
 % Data = DataTmp;
 
-%Load Amarsi handwriting movements
-load('data/AMARSI/Sshape.mat');
+%Load handwriting movements
+load('data/2Dletters/S.mat');
 Data=[];
 for n=1:nbSamples
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling

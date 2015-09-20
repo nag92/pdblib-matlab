@@ -69,10 +69,10 @@ K1d = [1, model.kV/model.kP, 1/model.kP];
 K = kron(K1d,eye(model.nbVarPos));
 
 
-%% Load AMARSI data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
-load('data/AMARSI/GShape.mat');
+load('data/2Dletters/G.mat');
 sIn(1) = 1; %Initialization of decay term
 for t=2:nbData
 	sIn(t) = sIn(t-1) - model.alpha * sIn(t-1) * model.dt; %Update of decay term (ds/dt=-alpha s)

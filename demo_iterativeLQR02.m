@@ -65,9 +65,9 @@ B = kron([0; model.dt], eye(model.nbVarPos));
 R = eye(model.nbVarPos) * model.rfactor;
 
 
-%% Load Data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-load('data/AMARSI/GShape.mat')
+load('data/2Dletters/G.mat');
 Data=[];
 for n=1:nbSamples
 	s(n).Data=[];
@@ -121,7 +121,7 @@ end
 
 %% Plot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10 10 1300 600],'color',[1 1 1]); 
+figure('position',[10 10 1300 500],'color',[1 1 1]); 
 %Plot position
 subplot(1,2,1); hold on; 
 plotGMM(model.Mu(1:2,:), model.Sigma(1:2,1:2,:), [0.5 0.5 0.5], .3);
@@ -149,6 +149,6 @@ axis equal;
 xlabel('dx_1'); ylabel('dx_2');
 
 %print('-dpng','graphs/demo_iterativeLQR02.png');
-pause;
-close all;
+%pause;
+%close all;
 

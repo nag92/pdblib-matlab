@@ -45,7 +45,7 @@ D = ones(sx+1,sy+1) * Inf;
 D(1,1) = 0;
 
 %DP loop
-for i=1:nx
+for i=1:sx
   for j=max(i-w,1):min(i+w,sy)
     D(i+1,j+1) = norm(x(:,i)-y(:,j)) + min([D(i,j+1), D(i+1,j), D(i,j)]);
   end

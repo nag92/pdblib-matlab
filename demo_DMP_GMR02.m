@@ -50,11 +50,11 @@ nbSamples = 4; %Number of demonstrations
 L = [eye(model.nbVarPos)*model.kP, eye(model.nbVarPos)*model.kV]; %Feedback term
 
 
-%% Load AMARSI data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 posId=[1:model.nbVar-1]; velId=[model.nbVar:2*(model.nbVar-1)]; accId=[2*(model.nbVar-1)+1:3*(model.nbVar-1)]; 
 demos=[];
-load('data/AMARSI/GShape.mat');
+load('data/2Dletters/G.mat');
 sIn(1) = 1; %Initialization of decay term
 for t=2:nbData
 	sIn(t) = sIn(t-1) - model.alpha * sIn(t-1) * model.dt; %Update of decay term (ds/dt=-alpha s)

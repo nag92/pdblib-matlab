@@ -38,27 +38,27 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model.nbStates = 3; %Number of components in the mixture model
+model.nbStates = 5; %Number of components in the mixture model
 model.nbFA = 1; %Dimension of the subspace in each cluster
 model.nbVarPos = 4; %Dimension of the position datapoint
 model.nbDeriv = 3; %Nb derivatives+1 (D=2 for [x,dx], D=3 for [x,dx,ddx], etc.)
 model.nbVar = model.nbVarPos * model.nbDeriv;
 model.dt = 1; %Time step (large values such as 1 will tend to create clusers by following position information)
 nbData = 100; %Number of datapoints in a trajectory
-nbSamples = 1; %Number of trajectory samples
+nbSamples = 5; %Number of trajectory samples
 
 [PHI,PHI1] = constructPHI(model,nbData,nbSamples); %Construct PHI operator (big sparse matrix)
 
 
-%% Load AMARSI handwriting data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
-load('data/AMARSI/GShape.mat'); %Load x1,x2 variables
+load('data/2Dletters/G.mat'); %Load x1,x2 variables
 for n=1:nbSamples
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
 end
 demos=[];
-load('data/AMARSI/CShape.mat'); %Load x3,x4 variables
+load('data/2Dletters/C.mat'); %Load x3,x4 variables
 Data=[];
 for n=1:nbSamples
 	s(n).Data = [s(n).Data; spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData))]; %Resampling
@@ -100,7 +100,7 @@ end
 
 %Least squares computation
 [zeta,~,mse,S] = lscov(PHI1, MuQ, SigmaQ, 'chol'); %Retrieval of data with weighted least squares solution
-r(n).Data = reshape(zeta, model.nbVarPos, nbData); %Reshape data for plotting
+r(1).Data = reshape(zeta, model.nbVarPos, nbData); %Reshape data for plotting
 
 %Rebuild covariance by reshaping S
 for t=1:nbData

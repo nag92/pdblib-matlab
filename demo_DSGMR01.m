@@ -48,7 +48,7 @@ nbVarOut = model.nbVar-1; %Dimension of spatial variables
 L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV]; %Feedback term
 
 
-%% Load AMARSI data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 sIn(1) = 1; %Initialization of decay term
 for t=2:nbData
@@ -61,7 +61,7 @@ end
 % D = (diag(ones(1,nbData-1),-1)-eye(nbData)) / model.dt;
 % D(end,end) = 0;
 
-load('data/AMARSI/GShape.mat');
+load('data/2Dletters/G.mat');
 Data=[]; Data0=[];
 for n=1:nbSamples
 	DataTmp = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling

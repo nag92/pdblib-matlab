@@ -41,10 +41,10 @@ nbSamples = 5; %Number of demonstrations
 nbVar = 2; %Number of dimensions (max 2 for AMARSI data)
 
 
-%% Load AMARSI handwriting data
+%% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
-load('data/AMARSI/GShape.mat');
+load('data/2Dletters/G.mat');
 for n=1:nbSamples
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos(1:nbVar,:), linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
 end
