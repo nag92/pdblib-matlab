@@ -9,12 +9,17 @@ The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap 
 Did you find PbDLib useful for your research? Please acknowledge the authors in any academic publications that used parts of these codes.
 
 ```
-@article{Calinon15,
+@article{Calinon16JIST,
 	author="Calinon, S.",
 	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 	journal="Intelligent Service Robotics",
-	publisher="Springer",
-	year="2015",
+	publisher="Springer Berlin Heidelberg",
+	issn="1861-2776",
+	doi="10.1007/s11370-015-0187-9",
+	year="2016",
+	volume="9",
+	number="1",
+	pages="1--29"
 }
 ```
 ```
