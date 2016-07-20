@@ -83,6 +83,7 @@ All the examples are located in the main folder, and the functions are located i
 | demo_DMP_GMR04 | Same as demo_DMP_GMR03 by using the task-parameterized model formalism | 
 | demo_DMP_GMR_LQR01 | Same as demo_DMP_GMR04 but with LQR used to refine the parameters of the spring-damper system | 
 | demo_DMP_GMR_LQR02 | Same as demo_DMP_GMR_LQR01 with perturbations added to show the benefit of full covariance to coordinate disturbance rejection | 
+| demo_DPMeans_Online01 | Online clustering with DP-Means algorithm |
 | demo_DSGMR01 | Gaussian mixture model (GMM), with Gaussian mixture regression(GMR) and dynamical systems used for reproduction, with decay variable used as input (as in DMP) |
 | demo_DTW01 | Trajectory realignment through dynamic time warping (DTW) |
 | demo_GMM01 | Gaussian mixture model (GMM) parameters estimation |
