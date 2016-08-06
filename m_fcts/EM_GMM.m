@@ -32,15 +32,25 @@ function [model, GAMMA2, LL] = EM_GMM(Data, model)
 
 
 %Parameters of the EM algorithm
-nbMinSteps = 5; %Minimum number of iterations allowed
-nbMaxSteps = 100; %Maximum number of iterations allowed
-maxDiffLL = 1E-4; %Likelihood increase threshold to stop the algorithm
 nbData = size(Data,2);
+if ~isfield(model,'params_nbMinSteps')
+	model.params_nbMinSteps = 5; %Minimum number of iterations allowed
+end
+if ~isfield(model,'params_nbMaxSteps')
+	model.params_nbMaxSteps = 100; %Maximum number of iterations allowed
+end
+if ~isfield(model,'params_maxDiffLL')
+	model.params_maxDiffLL = 1E-4; %Likelihood increase threshold to stop the algorithm
+end
+if ~isfield(model,'params_diagRegFact')
+	%model.params.diagRegFact = 1E-8; %Regularization term is optional
+	model.params_diagRegFact = 1E-4; %Regularization term is optional
+end
+if ~isfield(model,'params_updateComp')
+	model.params_updateComp = ones(3,1);
+end	
 
-%diagRegularizationFactor = 1E-6; %Regularization term is optional
-diagRegularizationFactor = 1E-4; %Regularization term is optional
-
-for nbIter=1:nbMaxSteps
+for nbIter=1:model.params_nbMaxSteps
 	fprintf('.');
 	
 	%E-step
@@ -50,27 +60,31 @@ for nbIter=1:nbMaxSteps
 	%M-step
 	for i=1:model.nbStates
 		%Update Priors
-		model.Priors(i) = sum(GAMMA(i,:)) / nbData;
-		
+		if model.params_updateComp(1)
+			model.Priors(i) = sum(GAMMA(i,:)) / nbData;
+		end
 		%Update Mu
-		model.Mu(:,i) = Data * GAMMA2(i,:)';
-		
+		if model.params_updateComp(2)
+			model.Mu(:,i) = Data * GAMMA2(i,:)';
+		end
 		%Update Sigma
-		DataTmp = Data - repmat(model.Mu(:,i),1,nbData);
-		model.Sigma(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(size(Data,1)) * diagRegularizationFactor;
+		if model.params_updateComp(3)
+			DataTmp = Data - repmat(model.Mu(:,i),1,nbData);
+			model.Sigma(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(size(Data,1)) * model.params_diagRegFact;
+		end
 	end
 	
 	%Compute average log-likelihood
 	LL(nbIter) = sum(log(sum(L,1))) / nbData;
 	%Stop the algorithm if EM converged (small change of LL)
-	if nbIter>nbMinSteps
-		if LL(nbIter)-LL(nbIter-1)<maxDiffLL || nbIter==nbMaxSteps-1
+	if nbIter>model.params_nbMinSteps
+		if LL(nbIter)-LL(nbIter-1)<model.params_maxDiffLL || nbIter==model.params_nbMaxSteps-1
 			disp(['EM converged after ' num2str(nbIter) ' iterations.']);
 			return;
 		end
 	end
 end
-disp(['The maximum number of ' num2str(nbMaxSteps) ' EM iterations has been reached.']);
+disp(['The maximum number of ' num2str(model.params_nbMaxSteps) ' EM iterations has been reached.']);
 end
 
 
@@ -82,4 +96,6 @@ for i=1:model.nbStates
 end
 GAMMA = L ./ repmat(sum(L,1)+realmin, model.nbStates, 1);
 end
+
+
 

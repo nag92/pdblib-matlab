@@ -1,5 +1,5 @@
-function demo_GPR01
-% Gaussian process regression (GPR) 
+function demo_GPR02
+% Gaussian process regression (GPR) with stochastic samples from the prior and the posterior.
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
 % If some parts of the code were useful for your research of for a better understanding 
@@ -40,25 +40,17 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-nbVar = 3; %Dimension of datapoint (t,x1,x2)
-nbData = 20; %Number of datapoints
+nbVar = 2; %Dimension of datapoint (t,x1)
+nbData = 4; %Number of datapoints
 nbDataRepro = 100; %Number of datapoints for reproduction
-nbSamples = 1; %Number of demonstrations
-p(1)=1E0; p(2)=1E1; p(3)=1E-2; %GPR parameters
+nbRepros = 20; %Number of reproductions
+p(1)=1E0; p(2)=1E-1; p(3)=1E-2; %GPR parameters
 
 
-%% Load handwriting data
+%% Generate data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-demos=[];
-load('data/2Dletters/G.mat');
-Data=[];
-for n=1:nbSamples
-	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
-	tt = [1:nbData/2,3*nbData/4:nbData];  %Simulate missing data
-	%tt = 1:nbData;
-	s(n).Data = [tt; s(n).Data(:,tt)];
-	Data = [Data s(n).Data]; 
-end
+%Data = rand(2,nbData);
+Data = [linspace(0,1,nbData); rand(1,nbData)-0.5];
 %GPR precomputation
 xIn = Data(1,:);
 xOut = Data(2:end,:);
@@ -69,51 +61,69 @@ invK = pinv(K + p(3) * eye(size(K)));
 
 %% Reproduction with GPR
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-xInHat = linspace(1,nbData,nbDataRepro);
+%Mean trajectory computation
+xInHat = linspace(0,1,nbDataRepro);
 Md = pdist2(xInHat', xIn');
 Kd = p(1) * exp(-p(2)^-1 * Md.^2);
 r(1).Data = [xInHat; (Kd * invK * xOut')']; 
 %Covariance computation
 Mdd = pdist2(xInHat',xInHat');
 Kdd = p(1) * exp(-p(2)^-1 * Mdd.^2);
+%Kdd = Kdd + p(3) * eye(size(Kdd)); 
 S = Kdd - Kd * invK * Kd';
 r(1).SigmaOut = zeros(nbVar-1,nbVar-1,nbData);
 for t=1:nbDataRepro
 	r(1).SigmaOut(:,:,t) = eye(nbVar-1) * S(t,t); 
 end
 
+%Generate stochastic samples from the prior 
+[V,D] = eig(Kdd);
+for n=2:nbRepros/2
+	DataOut = real(V*D^.5) * randn(nbDataRepro,1)*0.4;  
+	r(n).Data = [xInHat; DataOut'];
+end
+%Generate stochastic samples from the posterior 
+[V,D] = eig(S);
+for n=nbRepros/2+1:nbRepros
+	DataOut = real(V*D^.5) * randn(nbDataRepro,1)*0.5 + r(1).Data(2,:)';  
+	r(n).Data = [xInHat; DataOut'];
+end
 
-%% Plots
+
+%% Plot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10 10 1300 600]);
-%Plots 1D
-for m=2:nbVar
-	limAxes = [1, nbData, min(Data(m,:))-1E0, max(Data(m,:))+1E0];
-	subplot(nbVar-1,2,(m-2)*2+1); hold on;
-	patch([r(1).Data(1,:), r(1).Data(1,end:-1:1)], ...
-		[r(1).Data(m,:)+squeeze(r(1).SigmaOut(m-1,m-1,:).^.5)'*2E1, r(1).Data(m,end:-1:1)-squeeze(r(1).SigmaOut(m-1,m-1,end:-1:1).^.5)'*2E1], ...
-		[1 .8 .8],'edgecolor','none');
-	plot(r(1).Data(1,:), r(1).Data(m,:), '-','lineWidth',3.5,'color',[.8 0 0]);
-	for n=1:nbSamples
-		plot(s(n).Data(1,:), s(n).Data(m,:), '.','markersize',20,'color',[.2 .2 .2]);
-	end
-	set(gca,'xtick',[],'ytick',[]);
-	xlabel('$t$','interpreter','latex','fontsize',18);
-	ylabel(['$x_' num2str(m) '$'],'interpreter','latex','fontsize',18);
-	axis(limAxes);
+figure('PaperPosition',[0 0 12 4],'position',[10 10 1300 600]); 
+%Prior samples
+subplot(1,3,1); hold on; title('Samples from prior','fontsize',14);
+for n=2:nbRepros/2
+	plot(r(n).Data(1,:), r(n).Data(2,:), '-','lineWidth',3.5,'color',[.9 .9 .9]*rand(1));
 end
-%Plot 2D
-subplot(nbVar-1,2,[2:2:(nbVar-1)*2]); hold on;
-plotGMM(r(1).Data(2:3,:),r(1).SigmaOut*1E1,[1 .2 .2],.2);
-plot(r(1).Data(2,:), r(1).Data(3,:), '-','lineWidth',3.5,'color',[.8 0 0]);
-for n=1:nbSamples
-	plot(s(n).Data(2,:), s(n).Data(3,:), '.','markersize',20,'color',[.2 .2 .2]); 
-end
-set(gca,'xtick',[],'ytick',[]); axis equal; axis square;
-xlabel(['$x_1$'],'interpreter','latex','fontsize',18);
-ylabel(['$x_2$'],'interpreter','latex','fontsize',18);
+set(gca,'xtick',[],'ytick',[]); axis([0, 1, -1.2 1.2]);
+xlabel('$x_1$','interpreter','latex','fontsize',18);
+ylabel('$y_1$','interpreter','latex','fontsize',18);
 
-%print('-dpng','graphs/demo_GPR01.png');
+%Posterior samples
+subplot(1,3,2); hold on;  title('Samples from posterior','fontsize',14);
+for n=nbRepros/2+1:nbRepros
+	plot(r(n).Data(1,:), r(n).Data(2,:), '-','lineWidth',3.5,'color',[.9 .9 .9]*rand(1));
+end
+plot(Data(1,:), Data(2,:), '.','markersize',24,'color',[1 0 0]);
+set(gca,'xtick',[],'ytick',[]); axis([0, 1, -1.2 1.2]);
+xlabel('$x_1$','interpreter','latex','fontsize',18);
+ylabel('$y_1$','interpreter','latex','fontsize',18);
+
+%Trajectory distribution
+subplot(1,3,3); hold on;  title('Trajectory distribution','fontsize',14);
+patch([r(1).Data(1,:), r(1).Data(1,end:-1:1)], ...
+	[r(1).Data(2,:)+squeeze(r(1).SigmaOut.^.5)', r(1).Data(2,end:-1:1)-squeeze(r(1).SigmaOut(:,:,end:-1:1).^.5)'], ...
+	[.8 .8 .8],'edgecolor','none');
+plot(r(1).Data(1,:), r(1).Data(2,:), '-','lineWidth',3.5,'color',[0 0 0]);
+plot(Data(1,:), Data(2,:), '.','markersize',24,'color',[1 0 0]);
+set(gca,'xtick',[],'ytick',[]); axis([0, 1, -1.2 1.2]);
+xlabel('$x_1$','interpreter','latex','fontsize',18);
+ylabel('$y_1$','interpreter','latex','fontsize',18);
+
+%print('-dpng','graphs/GPR02.png');
 %pause;
 %close all;
 

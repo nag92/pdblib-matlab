@@ -1,5 +1,5 @@
-function h = plot2DArrow(pos,dir,col,lnw,sz,alpha)
-% Simple display of a 2D arrow
+function [GAMMA, ALPHA] = computeGammaHMM(s, model)
+% Compute Gamma probability in HMM by using forward and backward variables.
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
 % If some parts of the code were useful for your research of for a better understanding 
@@ -17,7 +17,7 @@ function h = plot2DArrow(pos,dir,col,lnw,sz,alpha)
 %   pages="1--11",
 %   doi="10.3389/frobt.2016.00030"
 % }
-%
+% 
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
@@ -36,26 +36,45 @@ function h = plot2DArrow(pos,dir,col,lnw,sz,alpha)
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 
-if nargin<6
-	alpha = 1;
-end
-if nargin<5
-	sz = 1E-1;
-end
-if nargin<4
-	lnw = 2;
-end
-if nargin<3
-	col = [0,0,0];
+%Initialization of the parameters
+nbSamples = length(s);
+Data = [];
+for n=1:nbSamples
+	Data = [Data s(n).Data];
+	s(n).nbData = size(s(n).Data,2);
 end
 
-msh = pos;
-pos = pos+dir;
-if norm(dir)>sz
-  d = dir/norm(dir);
-  prp = [d(2); -d(1)];
-  d = d*sz;
-  prp = prp*sz;
-  msh = [msh pos-d pos-d-prp/2 pos pos-d+prp/2 pos-d msh];
-  h = patch(msh(1,:),msh(2,:),col,'edgecolor',col,'linewidth',lnw,'edgealpha',alpha,'facealpha',alpha); 
+for n=1:nbSamples
+	%Emission probabilities
+	for i=1:model.nbStates
+		s(n).B(i,:) = model.Priors(i) * gaussPDF(s(n).Data, model.Mu(:,i), model.Sigma(:,:,i));
+	end
+	%Forward variable ALPHA
+	s(n).ALPHA(:,1) = model.StatesPriors .* s(n).B(:,1);
+	%Scaling to avoid underflow issues
+	s(n).c(1) = 1 / sum(s(n).ALPHA(:,1)+realmin);
+	s(n).ALPHA(:,1) = s(n).ALPHA(:,1) * s(n).c(1);
+	for t=2:s(n).nbData
+		s(n).ALPHA(:,t) = (s(n).ALPHA(:,t-1)'*model.Trans)' .* s(n).B(:,t); 
+		%Scaling to avoid underflow issues
+		s(n).c(t) = 1 / sum(s(n).ALPHA(:,t)+realmin);
+		s(n).ALPHA(:,t) = s(n).ALPHA(:,t) * s(n).c(t);
+	end
+	%Backward variable BETA
+	s(n).BETA(:,s(n).nbData) = ones(model.nbStates,1) * s(n).c(end); %Rescaling
+	for t=s(n).nbData-1:-1:1
+		s(n).BETA(:,t) = model.Trans * (s(n).BETA(:,t+1) .* s(n).B(:,t+1));
+		s(n).BETA(:,t) = min(s(n).BETA(:,t) * s(n).c(t), realmax); %Rescaling
+	end
+	%Intermediate variable GAMMA
+	s(n).GAMMA = (s(n).ALPHA.*s(n).BETA) ./ repmat(sum(s(n).ALPHA.*s(n).BETA)+realmin, model.nbStates, 1); 
 end
+
+%Concatenation of GAMMAs
+GAMMA=[]; ALPHA=[]; 
+for n=1:nbSamples
+	GAMMA = [GAMMA s(n).GAMMA];
+	ALPHA = [ALPHA s(n).ALPHA];
+end
+
+

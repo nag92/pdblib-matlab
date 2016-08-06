@@ -178,7 +178,6 @@ for n=1:nbSamples
 	%Compute best path for the n-th demonstration
 	[~,s(n).q] = max(model.Pix(:,(n-1)*nbData+1:n*nbData),[],1); %works also for nbStates=1	
 	
-	
 	%Build a reference trajectory for each frame, see Eq. (27)
 	invSigmaQ = zeros(model.nbVar*nbData);
 	for m=1:model.nbFrames

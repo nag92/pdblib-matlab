@@ -1,5 +1,5 @@
 function [ model,N ] = OnlineEMDP( N,P,MinSigma,model,lambda )
-%ONLINEEMDP Online clustering with DP Means
+%Online clustering with DP Means
 %This function updates a Gaussian Mixture Model by using an extended version of DPMEANS algorithm.
 %
 %Author: Danilo Bruno, 2015
@@ -7,12 +7,10 @@ function [ model,N ] = OnlineEMDP( N,P,MinSigma,model,lambda )
 %Refs:
 %for DPMEANS :
 %Kulis, B. and Jordan, M. I. (2012). Revisiting k-means: New algorithms via bayesian nonparametrics. In Proc. Intl Conf. on Machine Learning (ICML), Edimburgh (UK).
-%
 %for MAP update of GMM:
 %Gauvain, J.-L. and Lee, C.-H. (1994). Maximum a posteriori estimation for multivariate gaussian mixture observations of markov chians. IEE Transactions on Speech and Audio Processing, 2(2):291–298.
 %
-%
-%Variables
+%Variables:
 %N: 		current number of points processed
 %P: 		current point
 %MinSigma :	minimum covariance for regularization
@@ -21,6 +19,38 @@ function [ model,N ] = OnlineEMDP( N,P,MinSigma,model,lambda )
 %				model.Sigma :	Covariance
 %				model.Priors :	Priors
 %lambda :	splitting distance
+%
+% Writing code takes time. Polishing it and making it available to others takes longer! 
+% If some parts of the code were useful for your research of for a better understanding 
+% of the algorithms, please reward the authors by citing the related publications, 
+% and consider making your own research available in this way.
+%
+% @article{Bruno16AURO,
+%   author="Bruno, D. and Calinon, S. and Caldwell, D. G.",
+%   title="Learning Autonomous Behaviours for the Body of a Flexible Surgical Robot",
+%   journal="Autonomous Robots",
+%   year="2016",
+%   volume="",
+%   number="",
+%   pages="",
+% 	doi="10.1007/s10514-016-9544-6",
+% }
+% 
+% Written by Danilo Bruno, 2015
+% 
+% This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
+% 
+% PbDlib is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License version 3 as
+% published by the Free Software Foundation.
+% 
+% PbDlib is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 if N == 0 		%if no point exists, create gmm with current point
 	nbVar = size(P,1);

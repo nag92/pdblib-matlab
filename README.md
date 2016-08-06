@@ -75,7 +75,7 @@ Examples starting with `demo_` can be run from Matlab/GNU Octave.
 
 Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
 
-Written by Sylvain Calinon, http://calinon.ch/
+Maintained by Sylvain Calinon, http://calinon.ch/
 
 PbDlib is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as
@@ -119,13 +119,30 @@ All the examples are located in the main folder, and the functions are located i
 | demo_DSGMR01 | Gaussian mixture model (GMM), with Gaussian mixture regression(GMR) and dynamical systems used for reproduction, with decay variable used as input (as in DMP) |
 | demo_DTW01 | Trajectory realignment through dynamic time warping (DTW) |
 | demo_GMM01 | Gaussian mixture model (GMM) parameters estimation |
+| demo_GMM02 | GMM with different covariance structures |
 | demo_GMR01 | GMM and time-based Gaussian mixture regression (GMR) used for reproduction |
-| demo_GPR01 | Use of Gaussian process regression (GPR) as a task-parameterized model, with DS-GMR used to retrieve continuous movements |
+| demo_GMR02 | GMR computed with precision matrices instead of covariances |
+| demo_GMR03 | Chain rule with Gaussian conditioning |
+| demo_GMR_3Dviz01 | 3D visualization of a GMM with time-based GMR used for reproduction |
+| demo_GMR_polyFit01 | Polynomial fitting with multivariate GMR |
+| demo_GPR01 | Gaussian process regression (GPR) |
+| demo_GPR02 | GPR with stochastic samples from the prior and the posterior |
+| demo_GPR03 | GPR with periodic kernel function |
+| demo_GPR_TP01 | Use of GPR as a task-parameterized model, with DS-GMR used to retrieve continuous movements |
+| demo_grabData01 | Collect movement data from mouse cursor |
 | demo_HDDC01 | High Dimensional Data Clustering (HDDC, or HD-GMM) |
+| demo_HMM01 | Hidden Markov model (HMM) with single Gaussian as emission distribution |
+| demo_HMM_Viterbi01 | Viterbi decoding in HMM to estimate best state sequence from observations |
+| demo_HSMM01 | Variable duration model implemented as a hidden semi-Markov model (HSMM), by encoding the state duration after EM |
 | demo_iterativeLQR01 | Controller retrieval through an iterative solution of linear quadratic optimal control (finite horizon, unconstrained linear MPC), by relying on a GMM encoding of position and velocity data (see also demo_batchLQR01) |
 | demo_iterativeLQR02 | Same as demo_iterativeLQR01 with only position data |
 | demo_MFA01 | Mixture of factor analyzers (MFA) |
 | demo_MPPCA01 | Mixture of probabilistic principal component analyzers (MPPCA) |
+| demo_regularization01 | Regularization of GMM parameters with minimum admissible eigenvalue |
+| demo_regularization02 | Regularization of GMM parameters with the addition of a small circular covariance |
+| demo_SEDS01 | Continuous autonomous dynamical system with state-space encoding using GMM, with GMR used for reproduction by using a constrained optimization similar to the SEDS approach |
+| demo_SEDS_discrete01 | Discrete autonomous dynamical system with state-space encoding using GMM, with GMR used for reproduction by using a constrained optimization similar to the SEDS approach |
+| demo_semitiedGMM01 | Semi-tied Gaussian Mixture Model by tying the covariance matrices of a GMM with a set of common basis vectors |
 | demo_stdPGMM01 | Parametric Gaussian mixture model (PGMM) used as a task-parameterized model, with DS-GMR employed to retrieve continuous movements |
 | demo_testDampingRatio01 | Test with critically damped system and ideal underdamped system |
 | demo_testLQR01 | Test of linear quadratic regulation (LQR) with different variance in the data |
@@ -145,8 +162,12 @@ All the examples are located in the main folder, and the functions are located i
 | demo_TPMPC01 | Task-parameterized model encoding position data, with MPC used to track the associated stepwise reference path |
 | demo_TPMPC02 | Same as demo_TPMPC01 with a generalized version of MPC used to track associated stepwise reference paths in multiple frames |
 | demo_TPMPPCA01 | Task-parameterized mixture of probabilistic principal component analyzers (TP-MPPCA) |
+| demo_TPproMP01 | Task-parameterized probabilistic movement primitives (TP-ProMP) |
+| demo_TPtrajDistrib01 | Task-parameterized model with trajectory distribution and eigendecomposition |
 | demo_TPtrajGMM01 | Task-parameterized model with trajectory-GMM encoding |
+| demo_trajDistrib01 | Stochastic sampling with Gaussian trajectory distribution |
 | demo_trajGMM01 | Reproduction of trajectory with a GMM with dynamic features (trajectory-GMM) |
+| demo_trajHSMM01 | Trajectory synthesis with an HSMM with dynamic features (trajectory-HSMM) |
 | demo_trajMFA01 | Trajectory model with either a mixture of factor analysers (MFA), a mixture of probabilistic principal component analyzers (MPPCA), or a high-dimensional data clustering approach (HD-GMM) |
 | demoIK_nullspace_TPGMM01 | IK with nullspace treated with task-parameterized GMM (bimanual tracking task, version with 4 frames) |
 | demoIK_pointing_TPGMM01 | Task-parameterized GMM to encode pointing direction by considering nullspace constraint (4 frames) (example with two objects and robot frame, starting from the same initial pose (nullspace constraint), by using a single Euler orientation angle and 3 DOFs robot) |
