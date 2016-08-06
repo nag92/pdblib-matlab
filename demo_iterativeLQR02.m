@@ -18,16 +18,6 @@ function demo_iterativeLQR02
 %		number="1",
 %		pages="1--29"
 % }
-%
-% @inproceedings{Calinon14,
-%   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
-%   title="A task-parameterized probabilistic model with minimal intervention control",
-%   booktitle="Proc. {IEEE} Intl Conf. on Robotics and Automation ({ICRA})",
-%   year="2014",
-%   month="May-June",
-%   address="Hong Kong, China",
-%   pages="3339--3344"
-% }
 % 
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon (http://calinon.ch/) and Danilo Bruno (danilo.bruno@iit.it)
@@ -62,12 +52,42 @@ model.nbVar = model.nbVarPos * model.nbDeriv; %Dimension of state vector
 model.rfactor = 1E-6;	%Control cost in LQR
 model.dt = 0.01; %Time step duration
 
-%Dynamical System settings (discrete version)
-A = kron([1, model.dt; 0, 1], eye(model.nbVarPos));
-B = kron([0; model.dt], eye(model.nbVarPos));
-%C = kron([1, 0], eye(model.nbVarPos));
 %Control cost matrix
 R = eye(model.nbVarPos) * model.rfactor;
+
+
+%% Dynamical System settings (discrete version)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+nbDeriv = model.nbDeriv + 1; %For definition of dynamical system
+
+% %Integration with Euler method 
+% Ac1d = diag(ones(nbDeriv-1,1),1); 
+% Bc1d = [zeros(nbDeriv-1,1); 1];
+% A = kron(eye(nbDeriv)+Ac1d*model.dt, eye(model.nbVarPos)); 
+% B = kron(Bc1d*model.dt, eye(model.nbVarPos));
+% C = kron([1, 0], eye(model.nbVarPos));
+
+%Integration with higher order Taylor series expansion
+A1d = zeros(nbDeriv);
+for i=0:nbDeriv-1
+	A1d = A1d + diag(ones(nbDeriv-i,1),i) * model.dt^i * 1/factorial(i); %Discrete 1D
+end
+B1d = zeros(nbDeriv,1); 
+for i=1:nbDeriv
+	B1d(nbDeriv-i+1) = model.dt^i * 1/factorial(i); %Discrete 1D
+end
+A = kron(A1d, eye(model.nbVarPos)); %Discrete nD
+B = kron(B1d, eye(model.nbVarPos)); %Discrete nD
+C = kron([1, 0], eye(model.nbVarPos));
+
+% %Conversion with control toolbox
+% Ac1d = diag(ones(nbDeriv-1,1),1); %Continuous 1D
+% Bc1d = [zeros(nbDeriv-1,1); 1]; %Continuous 1D
+% Cc1d = [1, zeros(1,nbDeriv-1)]; %Continuous 1D
+% sysd = c2d(ss(Ac1d,Bc1d,Cc1d,0), model.dt);
+% A = kron(sysd.a, eye(model.nbVarPos)); %Discrete nD
+% B = kron(sysd.b, eye(model.nbVarPos)); %Discrete nD
+% C = kron([1, 0], eye(model.nbVarPos));
 
 
 %% Load handwriting data
@@ -152,6 +172,7 @@ end
 plot(0,0,'k+');
 axis equal;
 xlabel('dx_1'); ylabel('dx_2');
+
 
 %print('-dpng','graphs/demo_iterativeLQR02.png');
 %pause;

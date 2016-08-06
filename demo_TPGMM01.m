@@ -56,6 +56,15 @@ disp('Load 3rd order tensor data...');
 % multiplied by the number of demonstrations (M=5).
 load('data/Data01.mat');
 
+% %Regenerate data
+% Data = zeros(model.nbVar, model.nbFrames, nbSamples*nbData);
+% for n=1:nbSamples
+% 	s(n).Data0 = s(n).Data0(2:end,:); %Remove time
+% 	for m=1:model.nbFrames
+% 		Data(:,m,(n-1)*nbData+1:n*nbData) = s(n).p(m).A \ (s(n).Data0 - repmat(s(n).p(m).b, 1, nbData));
+% 	end
+% end
+
 
 %% TP-GMM learning
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,6 +76,23 @@ model = EM_tensorGMM(Data, model);
 for n=1:nbSamples
 	[s(n).Mu, s(n).Sigma] = productTPGMM0(model, s(n).p);
 end
+
+% %Products of linearly transformed Gaussians
+% for n=1:nbSamples
+% 	for i=1:model.nbStates
+% 		SigmaTmp = zeros(model.nbVar);
+% 		MuTmp = zeros(model.nbVar,1);
+% 		for m=1:model.nbFrames
+% 			MuP = s(n).p(m).A * model.Mu(:,m,i) + s(n).p(m).b;
+% 			SigmaP = s(n).p(m).A * model.Sigma(:,:,m,i) * s(n).p(m).A';
+% 			SigmaTmp = SigmaTmp + inv(SigmaP);
+% 			MuTmp = MuTmp + SigmaP\MuP;
+% 		end
+% 		s(n).Sigma(:,:,i) = inv(SigmaTmp);
+% 		s(n).Mu(:,i) = s(n).Sigma(:,:,i) * MuTmp;
+% 	end
+% end
+
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -41,7 +41,7 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model.nbStates = 3; %Number of Gaussians in the GMM
+model.nbStates = 6; %Number of Gaussians in the GMM
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVarPos = 2; %Dimension of position data (here: x1,x2)
 model.nbDeriv = 2; %Number of static & dynamic features (D=2 for [x,dx])
@@ -51,75 +51,41 @@ model.dt = 0.01; %Time step duration
 nbData = 200; %Number of datapoints in a trajectory
 nbRepros = 5; %Number of reproductions
 
-%Dynamical System settings (discrete version), see Eq. (33)
-A = kron([1, model.dt; 0, 1], eye(model.nbVarPos));
-B = kron([0; model.dt], eye(model.nbVarPos));
 %Control cost matrix
 R = eye(model.nbVarPos) * model.rfactor;
 R = kron(eye(nbData-1),R);
 
 
-%% Load 3rd order tensor data
+%% Dynamical System settings (discrete version)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('Load 3rd order tensor data...');
-% The MAT file contains a structure 's' with the multiple demonstrations. 's(n).Data' is a matrix data for
-% sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
-% orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
-% in the different frames. It is a 3rd order tensor of dimension DC x P x N, with D=2 the dimension of a
-% datapoint, C=2 the number of derivatives (incl. position), P=2 the number of candidate frames, and N=TM 
-% the number of datapoints in a trajectory (T=200) multiplied by the number of demonstrations (M=5).
-load('data/DataWithDeriv01.mat');
 
-% %Convert position data to position+velocity data
-% load('data/Data01.mat');
-% %Create transformation matrix to compute derivatives
-% D = (diag(ones(1,nbData-1),-1)-eye(nbData)) / model.dt;
-% D(end,end) = 0;
-% %Create 3rd order tensor data and task parameters
-% model.nbVar = model.nbVarPos * model.nbDeriv;
-% Data = zeros(model.nbVar, model.nbFrames, nbSamples*nbData);
-% for n=1:nbSamples
-% 	s(n).Data = zeros(model.nbVar,model.nbFrames,nbData);
-% 	s(n).Data0 = s(n).Data0(2:end,:); %Remove time
-% 	DataTmp = s(n).Data0;
-% 	for k=1:model.nbDeriv-1
-% 		DataTmp = [DataTmp; s(n).Data0*D^k]; %Compute derivatives
-% 	end
-% 	for m=1:model.nbFrames
-% 		s(n).p(m).b = [s(n).p(m).b; zeros((model.nbDeriv-1)*model.nbVarPos,1)];
-% 		s(n).p(m).A = kron(eye(model.nbDeriv), s(n).p(m).A);
-% 		s(n).Data(:,m,:) = s(n).p(m).A \ (DataTmp - repmat(s(n).p(m).b, 1, nbData));
-% 		Data(:,m,(n-1)*nbData+1:n*nbData) = s(n).Data(:,m,:);
-% 	end
-% end
-% %Save new dataset including derivatives
-% save('data/DataWithDeriv01.mat', 'Data','s','nbSamples');
+% %Integration with Euler method 
+% Ac1d = diag(ones(model.nbDeriv-1,1),1); 
+% Bc1d = [zeros(model.nbDeriv-1,1); 1];
+% A = kron(eye(model.nbDeriv)+Ac1d*model.dt, eye(model.nbVarPos)); 
+% B = kron(Bc1d*model.dt, eye(model.nbVarPos));
 
-
-%% TP-GMM learning
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fprintf('Parameters estimation of TP-GMM with EM...');
-%model = init_tensorGMM_kmeans(Data, model); %Initialization
-
-%Initialization based on position data
-model0 = init_tensorGMM_kmeans(Data(1:model.nbVarPos,:,:), model);
-[~,~,GAMMA2] = EM_tensorGMM(Data(1:model.nbVarPos,:,:), model0);
-model.Priors = model0.Priors;
-for i=1:model.nbStates
-	for m=1:model.nbFrames
-		DataTmp = squeeze(Data(:,m,:));
-		model.Mu(:,m,i) = DataTmp * GAMMA2(i,:)';
-		DataTmp = DataTmp - repmat(model.Mu(:,m,i),1,nbData*nbSamples);
-		model.Sigma(:,:,m,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp';
-	end
+%Integration with higher order Taylor series expansion
+A1d = zeros(model.nbDeriv);
+for i=0:model.nbDeriv-1
+	A1d = A1d + diag(ones(model.nbDeriv-i,1),i) * model.dt^i * 1/factorial(i); %Discrete 1D
 end
+B1d = zeros(model.nbDeriv,1); 
+for i=1:model.nbDeriv
+	B1d(model.nbDeriv-i+1) = model.dt^i * 1/factorial(i); %Discrete 1D
+end
+A = kron(A1d, eye(model.nbVarPos)); %Discrete nD
+B = kron(B1d, eye(model.nbVarPos)); %Discrete nD
 
-model = EM_tensorGMM(Data, model);
+% %Conversion with control toolbox
+% Ac1d = diag(ones(model.nbDeriv-1,1),1); %Continuous 1D
+% Bc1d = [zeros(model.nbDeriv-1,1); 1]; %Continuous 1D
+% Cc1d = [1, zeros(1,model.nbDeriv-1)]; %Continuous 1D
+% sysd = c2d(ss(Ac1d,Bc1d,Cc1d,0), model.dt);
+% A = kron(sysd.a, eye(model.nbVarPos)); %Discrete nD
+% B = kron(sysd.b, eye(model.nbVarPos)); %Discrete nD
 
 
-%% Reproduction with LQR for the task parameters used to train the model
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('Reproductions with batch LQR...');
 %Construct Su and Sx matrices, see Eq. (35)
 Su = zeros(model.nbVar*nbData, model.nbVarPos*(nbData-1));
 Sx = kron(ones(nbData,1),eye(model.nbVar)); 
@@ -135,7 +101,46 @@ for n=2:nbData
 	M = [A*M(:,1:model.nbVarPos), M];
 end
 
-%Reproductions
+
+%% Load 3rd order tensor data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+disp('Load 3rd order tensor data...');
+% The MAT file contains a structure 's' with the multiple demonstrations. 's(n).Data' is a matrix data for
+% sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
+% orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
+% in the different frames. It is a 3rd order tensor of dimension DC x P x N, with D=2 the dimension of a
+% datapoint, C=2 the number of derivatives (incl. position), P=2 the number of candidate frames, and N=TM 
+% the number of datapoints in a trajectory (T=200) multiplied by the number of demonstrations (M=5).
+load('data/DataWithDeriv01.mat');
+
+
+%% TP-GMM learning
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fprintf('Parameters estimation of TP-GMM with EM...');
+%model = init_tensorGMM_kmeans(Data, model); %Initialization
+model = init_tensorGMM_kbins(s, model);
+
+% %Initialization based on position data
+% model0 = init_tensorGMM_kmeans(Data(1:model.nbVarPos,:,:), model);
+% [~,~,GAMMA2] = EM_tensorGMM(Data(1:model.nbVarPos,:,:), model0);
+% model.Priors = model0.Priors;
+% for i=1:model.nbStates
+% 	for m=1:model.nbFrames
+% 		DataTmp = squeeze(Data(:,m,:));
+% 		model.Mu(:,m,i) = DataTmp * GAMMA2(i,:)';
+% 		DataTmp = DataTmp - repmat(model.Mu(:,m,i),1,nbData*nbSamples);
+% 		model.Sigma(:,:,m,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp';
+% 	end
+% end
+% [~, GAMMA] = computeGamma(Data, model); %See 'computeGamma' function below
+% model.Pix = GAMMA ./ repmat(sum(GAMMA,2),1,nbData*nbSamples);
+	
+model = EM_tensorGMM(Data, model);
+
+
+%% Reproduction with LQR for the task parameters used to train the model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+disp('Reproductions with batch LQR...');
 for n=1:nbSamples
 	%Reconstruct GMM 
 	[s(n).Mu, s(n).Sigma] = productTPGMM0(model, s(n).p);
@@ -143,8 +148,7 @@ for n=1:nbSamples
 	[~,s(n).q] = max(model.Pix(:,(n-1)*nbData+1:n*nbData),[],1); %works also for nbStates=1	
 	%Build stepwise reference trajectory, see Eq. (27)
 	MuQ = reshape(s(n).Mu(:,s(n).q), model.nbVar*nbData, 1); 
-	SigmaQ = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(s(n).Sigma(:,:,s(n).q), model.nbVar, model.nbVar*nbData)) ...
-		.* kron(eye(nbData), ones(model.nbVar));
+	SigmaQ = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(s(n).Sigma(:,:,s(n).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
 	%Batch LQR (unconstrained linear MPC), see Eq. (37)
 	SuInvSigmaQ = Su' / SigmaQ;
 	Rq = SuInvSigmaQ * Su + R;
@@ -172,8 +176,7 @@ for n=1:nbRepros
 	[~,rnew(n).q] = max(model.Pix(:,1:nbData),[],1); %works also for nbStates=1	
 	%Build stepwise reference trajectory, see Eq. (27)
 	MuQ = reshape(rnew(n).Mu(:,rnew(n).q), model.nbVar*nbData, 1); 
-	SigmaQ = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(rnew(n).Sigma(:,:,rnew(n).q), model.nbVar, model.nbVar*nbData)) ...
-		.* kron(eye(nbData), ones(model.nbVar));
+	SigmaQ = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(rnew(n).Sigma(:,:,rnew(n).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
 	%Batch LQR (unconstrained linear MPC), see Eq. (37)
 	SuInvSigmaQ = Su' / SigmaQ;
 	Rq = SuInvSigmaQ * Su + R;
@@ -223,7 +226,7 @@ for n=1:nbSamples
 end
 for n=1:nbSamples
 	%Plot Gaussians
-	plotGMM(s(n).Mu(1:2,:,1), s(n).Sigma(1:2,1:2,:,1), [.5 .5 .5], .4);
+	plotGMM(s(n).Mu(1:2,:), s(n).Sigma(1:2,1:2,:), [.5 .5 .5], .4);
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
@@ -243,10 +246,61 @@ for n=1:nbRepros
 end
 for n=1:nbRepros
 	%Plot Gaussians
-	plotGMM(rnew(n).Mu(1:2,:,1), rnew(n).Sigma(1:2,1:2,:,1), [.5 .5 .5], .4);
+	plotGMM(rnew(n).Mu(1:2,:), rnew(n).Sigma(1:2,1:2,:), [.5 .5 .5], .4);
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
+
+%Plot position
+figure; 
+subplot(2,1,1); hold on;
+m=1;
+for n=1:1 %nbSamples
+	msh=[]; x0=[];
+	for t=1:nbData-1
+		if size(msh,2)==0
+			msh(:,1) = [t; s(n).Mu(m,s(n).q(t))];
+		end
+		if t==nbData-1 || s(n).q(t+1)~=s(n).q(t)
+			msh(:,2) = [t+1; s(n).Mu(m,s(n).q(t))];
+			sTmp = s(n).Sigma(m,m,s(n).q(t))^.5;
+			msh2 = [msh(:,1)+[0;sTmp], msh(:,2)+[0;sTmp], msh(:,2)-[0;sTmp], msh(:,1)-[0;sTmp], msh(:,1)+[0;sTmp]];
+			patch(msh2(1,:), msh2(2,:), [.85 .85 .85],'edgecolor',[.7 .7 .7]);
+			plot(msh(1,:), msh(2,:), '-','linewidth',3,'color',[.7 .7 .7]);
+			x0 = [x0 msh];
+			msh=[];
+		end
+	end
+	plot(s(n).Data0(m,:),':');
+	plot(r(n).Data(m,:),'-');
+end
+xlabel('t'); ylabel('x_1');
+
+%Plot velocity
+subplot(2,1,2); hold on;
+m=3;
+for n=1:1 %nbSamples
+	msh=[]; x0=[];
+	for t=1:nbData-1
+		if size(msh,2)==0
+			msh(:,1) = [t; s(n).Mu(m,s(n).q(t))];
+		end
+		if t==nbData-1 || s(n).q(t+1)~=s(n).q(t)
+			msh(:,2) = [t+1; s(n).Mu(m,s(n).q(t))];
+			sTmp = s(n).Sigma(m,m,s(n).q(t))^.5;
+			msh2 = [msh(:,1)+[0;sTmp], msh(:,2)+[0;sTmp], msh(:,2)-[0;sTmp], msh(:,1)-[0;sTmp], msh(:,1)+[0;sTmp]];
+			patch(msh2(1,:), msh2(2,:), [.85 .85 .85],'edgecolor',[.7 .7 .7]);
+			plot(msh(1,:), msh(2,:), '-','linewidth',3,'color',[.7 .7 .7]);
+			x0 = [x0 msh];
+			msh=[];
+		end
+	end
+	%plot(s(n).Data0(m,:),':');
+	plot(r(n).Data(m,:),'-');
+end
+xlabel('t'); ylabel('dx_1');
+
 
 %print('-dpng','graphs/demo_TPbatchLQR01.png');
 %pause;
 %close all;
+

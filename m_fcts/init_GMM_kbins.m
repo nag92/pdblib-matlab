@@ -1,5 +1,6 @@
-function demo_GMM01
-% Gaussian mixture model (GMM) parameters estimation.
+function model = init_GMM_kbins(Data, model, nbSamples)
+% Initialization of Gaussian Mixture Model (GMM) parameters by clustering 
+% an ordered dataset into equal bins.
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
 % If some parts of the code were useful for your research of for a better understanding 
@@ -35,42 +36,21 @@ function demo_GMM01
 % You should have received a copy of the GNU General Public License
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
-addpath('./m_fcts/');
 
+diagRegularizationFactor = 1E-8; %Optional regularization term to avoid numerical instability
+nbData = size(Data,2) / nbSamples;
 
-%% Parameters
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model.nbStates = 5; %Number of states in the GMM
-model.nbVar = 2; %Number of variables [x1,x2]
-nbData = 200; %Length of each trajectory
-nbSamples = 5; %Number of demonstrations
+%Delimit the cluster bins for the first demonstration
+tSep = round(linspace(1, nbData, model.nbStates+1)); 
 
-%% Load handwriting data
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-demos=[];
-load('data/2Dletters/G.mat');
-%nbSamples = length(demos);
-Data=[];
-for n=1:nbSamples
-	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
-	%s(n).Data = interp1(1:size(demos{n}.pos,2), demos{n}.pos', linspace(1,size(demos{n}.pos,2),nbData));
-	Data = [Data s(n).Data]; 
+%Compute statistics for each bin
+for i=1:model.nbStates
+	id=[];
+	for n=1:nbSamples
+		id = [id (n-1)*nbData+[tSep(i):tSep(i+1)]];
+	end
+	model.Priors(i) = length(id);
+	model.Mu(:,i) = mean(Data(:,id),2);
+	model.Sigma(:,:,i) = cov(Data(:,id)') + eye(size(Data,1)) * diagRegularizationFactor;
 end
-
-
-%% Parameters estimation
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model = init_GMM_kmeans(Data, model);
-model = EM_GMM(Data, model);
-
-
-%% Plots
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10,10,700,500]); hold on; axis off;
-plot(Data(1,:),Data(2,:),'.','markersize',8,'color',[.5 .5 .5]);
-plotGMM(model.Mu, model.Sigma, [.8 0 0],.5);
-axis equal; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
-
-%print('-dpng','graphs/demo_GMM01.png');
-%pause;
-%close all;
+model.Priors = model.Priors / sum(model.Priors);

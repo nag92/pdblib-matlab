@@ -8,31 +8,60 @@ The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap 
 
 Did you find PbDLib useful for your research? Please acknowledge the authors in any academic publications that used parts of these codes.
 
+* Tutorial (covers GMM, TP-GMM, MFA, MPPCA, GMR, LWR, GPR, MPC, LQR, trajGMM):
 ```
 @article{Calinon16JIST,
 	author="Calinon, S.",
 	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 	journal="Intelligent Service Robotics",
 	publisher="Springer Berlin Heidelberg",
-	issn="1861-2776",
-	doi="10.1007/s11370-015-0187-9",
 	year="2016",
 	volume="9",
 	number="1",
-	pages="1--29"
+	pages="1--29",
+	doi="10.1007/s11370-015-0187-9",
 }
 ```
+
+* HMM, HSMM:
 ```
-@inproceedings{Calinon14ICRA,
-	author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
-	title="A task-parameterized probabilistic model with minimal intervention control",
-	booktitle="Proc. {IEEE} Intl Conf. on Robotics and Automation ({ICRA})",
-	year="2014",
-	month="May-June",
-	address="Hong Kong, China",
-	pages="3339--3344"
+@article{Rozo16Frontiers,
+  author="Rozo, L. and Silv\'erio, J. and Calinon, S. and Caldwell, D. G.",
+  title="Learning Controllers for Reactive and Proactive Behaviors in Human-Robot Collaboration",
+  journal="Frontiers in Robotics and {AI}",
+  year="2016",
+  month="June",
+  volume="3",
+  number="30",
+  pages="1--11",
+  doi="10.3389/frobt.2016.00030"
 }
 ```
+
+* Semi-tied covariances in mixture models:
+@article{Tanwani16RAL,
+  author="Tanwani, A. K. and Calinon, S.",
+  title="Learning Robot Manipulation Tasks with Task-Parameterized Semi-Tied Hidden Semi-{M}arkov Model",
+  journal="{IEEE} Robotics and Automation Letters ({RA-L})",
+  year="2016",
+  month="January",
+  volume="1",
+  number="1",
+  pages="235--242",
+	doi="10.1109/LRA.2016.2517825"
+}
+
+* DP-means:
+@article{Bruno16AURO,
+  author="Bruno, D. and Calinon, S. and Caldwell, D. G.",
+  title="Learning Autonomous Behaviours for the Body of a Flexible Surgical Robot",
+  journal="Autonomous Robots",
+  year="2016",
+  volume="",
+  number="",
+  pages="",
+	doi="10.1007/s10514-016-9544-6",
+}
 
 ### Compatibility
 
@@ -77,13 +106,16 @@ All the examples are located in the main folder, and the functions are located i
 | demo_affineTransform01 | Affine transformations of raw data as pre-processing step to train a task-parameterized model |
 | demo_batchLQR01 | Controller retrieval through a batch solution of linear quadratic optimal control (unconstrained linear MPC), by relying on a Gaussian mixture model (GMM) encoding of position and velocity data (see also demo_iterativeLQR01) |
 | demo_batchLQR02 | Same as demo_batchLQR01 but with only position data |
+| demo_batchLQR_augmSigma01 | Batch LQR with augmented covariance to transform a tracking problem to a regulation problem |
+| demo_DMP01 | Dynamic movement primitive (DMP) encoding with radial basis functions |
+| demo_DMP02 | Generalization of dynamic movement primitive (DMP) with polynomial fitting using radial basis functions |
 | demo_DMP_GMR01 | Emulation of a standard dynamic movement primitive (DMP) by using a GMM with diagonal covariance matrix, and retrieval computed through Gaussian mixture regression (GMR) | 
 | demo_DMP_GMR02 | Same as demo_DMP_GMR01 but with full covariance matrices coordinating the different variables | 
 | demo_DMP_GMR03 | Same as demo_DMP_GMR02 but with GMR used to regenerate the path of a spring-damper system instead of encoding the nonlinear forcing term | 
 | demo_DMP_GMR04 | Same as demo_DMP_GMR03 by using the task-parameterized model formalism | 
 | demo_DMP_GMR_LQR01 | Same as demo_DMP_GMR04 but with LQR used to refine the parameters of the spring-damper system | 
 | demo_DMP_GMR_LQR02 | Same as demo_DMP_GMR_LQR01 with perturbations added to show the benefit of full covariance to coordinate disturbance rejection | 
-| demo_DPMeans_Online01 | Online clustering with DP-Means algorithm |
+| demo_DPMeans_Online01 | Online clustering with DP-means algorithm |
 | demo_DSGMR01 | Gaussian mixture model (GMM), with Gaussian mixture regression(GMR) and dynamical systems used for reproduction, with decay variable used as input (as in DMP) |
 | demo_DTW01 | Trajectory realignment through dynamic time warping (DTW) |
 | demo_GMM01 | Gaussian mixture model (GMM) parameters estimation |
@@ -110,7 +142,7 @@ All the examples are located in the main folder, and the functions are located i
 | demo_TPGP01 | Task-parameterized Gaussian process regression (TP-GPR) |
 | demo_TPHDDC01 | Task-parameterized high dimensional data clustering (TP-HDDC) |
 | demo_TPMFA01 | Task-parameterized mixture of factor analyzers (TP-MFA), without motion retrieval |
-|demo_TPMPC01 | Task-parameterized model encoding position data, with MPC used to track the associated stepwise reference path |
+| demo_TPMPC01 | Task-parameterized model encoding position data, with MPC used to track the associated stepwise reference path |
 | demo_TPMPC02 | Same as demo_TPMPC01 with a generalized version of MPC used to track associated stepwise reference paths in multiple frames |
 | demo_TPMPPCA01 | Task-parameterized mixture of probabilistic principal component analyzers (TP-MPPCA) |
 | demo_TPtrajGMM01 | Task-parameterized model with trajectory-GMM encoding |

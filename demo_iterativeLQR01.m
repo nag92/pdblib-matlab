@@ -19,16 +19,6 @@ function demo_iterativeLQR01
 %		number="1",
 %		pages="1--29"
 % }
-%
-% @inproceedings{Calinon14,
-%   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
-%   title="A task-parameterized probabilistic model with minimal intervention control",
-%   booktitle="Proc. {IEEE} Intl Conf. on Robotics and Automation ({ICRA})",
-%   year="2014",
-%   month="May-June",
-%   address="Hong Kong, China",
-%   pages="3339--3344"
-% }
 % 
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon (http://calinon.ch/) and Danilo Bruno (danilo.bruno@iit.it)
@@ -52,22 +42,48 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-nbSamples = 3; %Number of demonstrations
-nbRepros = 5; %Number of reproductions
-nbData = 100; %Number of datapoints
-
 model.nbStates = 5; %Number of Gaussians in the GMM
 model.nbVarPos = 2; %Dimension of position data (here: x1,x2)
-model.nbDeriv = 2; %Number of static & dynamic features (D=2 for [x,dx])
+model.nbDeriv = 2; %Number of static and dynamic features (nbDeriv=2 for [x,dx] and u=ddx)
 model.nbVar = model.nbVarPos * model.nbDeriv; %Dimension of state vector
-model.rfactor = 1E-6;	%Control cost in LQR
 model.dt = 0.01; %Time step duration
+model.rfactor = 0.1 * model.dt^model.nbDeriv;	%Control cost in LQR
+nbSamples = 3; %Number of demonstrations
+nbRepros = 5; %Number of reproductions
+nbData = 200; %Number of datapoints
 
-%Dynamical System settings (discrete version)
-A = kron([1, model.dt; 0, 1], eye(model.nbVarPos));
-B = kron([0; model.dt], eye(model.nbVarPos));
 %Control cost matrix
 R = eye(model.nbVarPos) * model.rfactor;
+
+
+%% Dynamical System settings (discrete version)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% %Integration with Euler method 
+% Ac1d = diag(ones(model.nbDeriv-1,1),1); 
+% Bc1d = [zeros(model.nbDeriv-1,1); 1];
+% A = kron(eye(model.nbDeriv)+Ac1d*model.dt, eye(model.nbVarPos)); 
+% B = kron(Bc1d*model.dt, eye(model.nbVarPos));
+
+%Integration with higher order Taylor series expansion
+A1d = zeros(model.nbDeriv);
+for i=0:model.nbDeriv-1
+	A1d = A1d + diag(ones(model.nbDeriv-i,1),i) * model.dt^i * 1/factorial(i); %Discrete 1D
+end
+B1d = zeros(model.nbDeriv,1); 
+for i=1:model.nbDeriv
+	B1d(model.nbDeriv-i+1) = model.dt^i * 1/factorial(i); %Discrete 1D
+end
+A = kron(A1d, eye(model.nbVarPos)); %Discrete nD
+B = kron(B1d, eye(model.nbVarPos)); %Discrete nD
+
+% %Conversion with control toolbox
+% Ac1d = diag(ones(model.nbDeriv-1,1),1); %Continuous 1D
+% Bc1d = [zeros(model.nbDeriv-1,1); 1]; %Continuous 1D
+% Cc1d = [1, zeros(1,model.nbDeriv-1)]; %Continuous 1D
+% sysd = c2d(ss(Ac1d,Bc1d,Cc1d,0), model.dt);
+% A = kron(sysd.a, eye(model.nbVarPos)); %Discrete nD
+% B = kron(sysd.b, eye(model.nbVarPos)); %Discrete nD
 
 
 %% Load handwriting data
@@ -91,22 +107,25 @@ end
 %% Learning
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %model = init_GMM_kmeans(Data,model);
-%Initialization based on position data
-model0 = init_GMM_kmeans(Data(1:model.nbVarPos,:), model);
-[~, GAMMA2] = EM_GMM(Data(1:model.nbVarPos,:), model0);
-model.Priors = model0.Priors;
-for i=1:model.nbStates
-	model.Mu(:,i) = Data * GAMMA2(i,:)';
-	DataTmp = Data - repmat(model.Mu(:,i),1,nbData*nbSamples);
-	model.Sigma(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp';
-end
+model = init_GMM_kbins(Data,model,nbSamples);
+
+% %Initialization based on position data
+% model0 = init_GMM_kmeans(Data(1:model.nbVarPos,:), model);
+% [~, GAMMA2] = EM_GMM(Data(1:model.nbVarPos,:), model0);
+% model.Priors = model0.Priors;
+% for i=1:model.nbStates
+% 	model.Mu(:,i) = Data * GAMMA2(i,:)';
+% 	DataTmp = Data - repmat(model.Mu(:,i),1,nbData*nbSamples);
+% 	model.Sigma(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp';
+% end
+
 %Refinement of parameters
 [model, H] = EM_GMM(Data, model);
 %Set list of states according to first demonstration (alternatively, an HSMM can be used)
 [~,qList] = max(H(:,1:nbData),[],1); %works also for nbStates=1
 
 
-%% Iterative LQR reproduction (finite horizon)
+%% Iterative LQR reproduction (finite horizon, discrete version)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 P = zeros(model.nbVar,model.nbVar,nbData);
 P(:,:,end) = inv(model.Sigma(:,:,qList(nbData)));
@@ -118,7 +137,7 @@ for t=nbData-1:-1:1
 end
 %Reproduction with feedback (FB) and feedforward (FF) terms
 for n=1:nbRepros
-	X = Data(:,1) + [randn(model.nbVarPos,1)*2E0; zeros(model.nbVarPos,1)];
+	X = Data(:,1) + [randn(model.nbVarPos,1)*2E0; zeros(model.nbVar-model.nbVarPos,1)];
 	r(n).X0 = X;
 	for t=1:nbData
 		r(n).Data(:,t) = X; %Log data
