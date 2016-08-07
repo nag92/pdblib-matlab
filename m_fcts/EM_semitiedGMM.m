@@ -35,6 +35,7 @@ function [model, LL] = EM_semitiedGMM(Data, model)
 % You should have received a copy of the GNU General Public License
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
+
 %Parameters of the EM algorithm
 nbData = size(Data,2);
 if ~isfield(model,'params_nbMinSteps')
@@ -55,20 +56,19 @@ end
 if ~isfield(model,'params_nbVariationSteps')
 	model.params_nbVariationSteps = 50;
 end
-if ~isfield(model,'params_alpha')
-	model.params_alpha = 0.99;
-end
 
 if ~isfield(model,'B')
 	model.B = eye(model.nbVar) * model.params_Bsf;
 	model.InitH = pinv(model.B) + eye(model.nbVar) * model.params_diagRegFact;
 	for i=1:model.nbStates
-		%model.InitSigmaDiag(:,:,i) = diag(diag(model.B*squeeze(model.Sigma(:,:,i))*model.B'));
-		[~,model.InitSigmaDiag(:,:,i)] = eig(squeeze(model.Sigma(:,:,i)));
+		%model.InitSigmaDiag(:,:,i) = diag(diag(model.B*model.Sigma(:,:,i)*model.B'));
+		[~,model.InitSigmaDiag(:,:,i)] = eig(model.Sigma(:,:,i));
 	end
 end
 
 for nbIter=1:model.params_nbMaxSteps
+	fprintf('.');
+	
 	%E-step
 	[L, GAMMA] = computeGamma(Data, model); %See 'computeGamma' function below
 	GAMMA2 = GAMMA ./ repmat(sum(GAMMA,2),1,nbData);
@@ -86,20 +86,21 @@ for nbIter=1:model.params_nbMaxSteps
 	%Update A matrix
 	for lp=1:model.params_nbVariationSteps
 		for i=1:model.nbStates
-			model.SigmaDiag(:,:,i) = diag(diag(model.B*squeeze(model.S(:,:,i))*model.B'));
+			model.SigmaDiag(:,:,i) = diag(diag(model.B * model.S(:,:,i) * model.B')); %Eq.(9)
 		end
 		for k=1:model.nbVar
-			C = pinv(model.B') * det(model.B); %C=cof(model.B);
-			G = sum(reshape(kron(squeeze(1/(model.SigmaDiag(k,k,:)))',ones(model.nbVar)) .* ...
-				reshape(model.S, [model.nbVar model.nbVar*model.nbStates]) .* ...
-				kron(sum(GAMMA,2)', ones(model.nbVar)), [model.nbVar model.nbVar model.nbStates]), 3);
-			model.B(k,:) = C(k,:) * pinv(G) * (sqrt(sum(sum(GAMMA,2) / (C(k,:) * pinv(G) * C(k,:)'))));
+			C = pinv(model.B') * det(model.B); %Or C=cof(model.B), Eq.(6)
+			G = zeros(model.nbVar);
+			for i=1:model.nbStates
+				G = G + model.S(:,:,i) * sum(GAMMA(i,:),2) / model.SigmaDiag(k,k,i); %Eq.(7)
+			end
+			model.B(k,:) = C(k,:) * pinv(G) * (sqrt(sum(sum(GAMMA,2) / (C(k,:) * pinv(G) * C(k,:)')))); %Eq.(5)
 		end
 	end
 	%Update Sigma
 	model.H = pinv(model.B) + eye(model.nbVar) * model.params_diagRegFact;
 	for i=1:model.nbStates
-		model.Sigma(:,:,i) = model.params_alpha * (model.H * model.SigmaDiag(:,:,i) * model.H') + (1-model.params_alpha) * model.S(:,:,i);
+		model.Sigma(:,:,i) = model.H * model.SigmaDiag(:,:,i) * model.H'; %Eq.(3)
 	end
 
 	%Compute average log-likelihood
