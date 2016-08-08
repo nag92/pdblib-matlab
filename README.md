@@ -39,6 +39,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 ```
 
 * Semi-tied covariances in mixture models:
+```
 @article{Tanwani16RAL,
   author="Tanwani, A. K. and Calinon, S.",
   title="Learning Robot Manipulation Tasks with Task-Parameterized Semi-Tied Hidden Semi-{M}arkov Model",
@@ -50,8 +51,10 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
   pages="235--242",
 	doi="10.1109/LRA.2016.2517825"
 }
+```
 
 * DP-means:
+```
 @article{Bruno16AURO,
   author="Bruno, D. and Calinon, S. and Caldwell, D. G.",
   title="Learning Autonomous Behaviours for the Body of a Flexible Surgical Robot",
@@ -62,6 +65,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
   pages="",
 	doi="10.1007/s10514-016-9544-6",
 }
+```
 
 ### Compatibility
 
