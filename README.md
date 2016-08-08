@@ -7,7 +7,7 @@ The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap 
 ### References
 
 Did you find PbDLib useful for your research? Please acknowledge the authors in any academic publications that used parts of these codes.
-
+<br>
 
 Tutorial (covers GMM, TP-GMM, MFA, MPPCA, GMR, LWR, GPR, MPC, LQR, trajGMM):
 ```
