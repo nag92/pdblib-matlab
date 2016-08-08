@@ -8,7 +8,8 @@ The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap 
 
 Did you find PbDLib useful for your research? Please acknowledge the authors in any academic publications that used parts of these codes.
 
-* Tutorial (covers GMM, TP-GMM, MFA, MPPCA, GMR, LWR, GPR, MPC, LQR, trajGMM):
+
+Tutorial (covers GMM, TP-GMM, MFA, MPPCA, GMR, LWR, GPR, MPC, LQR, trajGMM):
 ```
 @article{Calinon16JIST,
 	author="Calinon, S.",
@@ -23,7 +24,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-* HMM, HSMM:
+HMM, HSMM:
 ```
 @article{Rozo16Frontiers,
   author="Rozo, L. and Silv\'erio, J. and Calinon, S. and Caldwell, D. G.",
@@ -38,7 +39,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-* Semi-tied covariances in mixture models:
+Semi-tied covariances in mixture models:
 ```
 @article{Tanwani16RAL,
   author="Tanwani, A. K. and Calinon, S.",
@@ -53,7 +54,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-* DP-means:
+DP-means:
 ```
 @article{Bruno16AURO,
   author="Bruno, D. and Calinon, S. and Caldwell, D. G.",
