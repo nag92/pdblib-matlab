@@ -22,6 +22,8 @@ function demo_semitiedGMM01
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
 % Written by Ajay Tanwani and Sylvain Calinon
 %
+% Correspondence: Ajay Tanwani <http://www.ajaytanwani.com>
+%
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
 %
 % PbDlib is free software: you can redistribute it and/or modify
@@ -45,6 +47,7 @@ model.nbStates = 3; %Number of states in the GMM
 model.nbVar = 3; %Number of variables [x1,x2,x3]
 model.nbSamples = 5; %Number of demonstrations
 model.params_Bsf = 5E-2; %Initial variance of B in semi-tied GMM
+model.params_alpha = 1.0; % tying factor for the basis functions
 nbData = 300; %Length of each trajectory
 
 

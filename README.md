@@ -39,7 +39,7 @@ HMM, HSMM:
 }
 ```
 
-Semi-tied covariances in mixture models:
+Semi-tied GMMs/HSMMs, LQT:
 ```
 @article{Tanwani16RAL,
   author="Tanwani, A. K. and Calinon, S.",
