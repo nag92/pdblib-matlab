@@ -56,6 +56,10 @@ end
 if ~isfield(model,'params_nbVariationSteps')
 	model.params_nbVariationSteps = 50;
 end
+% if ~isfield(model,'params_alpha')
+%  	model.params_alpha = 1.0;
+% end
+
 if ~isfield(model,'B')
 	model.B = eye(model.nbVar) * model.params_Bsf;
 	model.InitH = pinv(model.B) + eye(model.nbVar) * model.params_diagRegFact;
@@ -100,6 +104,7 @@ for nbIter=1:model.params_nbMaxSteps
 	model.H = pinv(model.B) + eye(model.nbVar) * model.params_diagRegFact;
 	for i=1:model.nbStates
 		model.Sigma(:,:,i) = model.H * model.SigmaDiag(:,:,i) * model.H'; %Eq.(3)
+		%model.Sigma(:,:,i) = model.params_alpha*(model.H*model.SigmaDiag(:,:,i)*model.H') + (1 - model.params_alpha)*model.S(:,:,i); % Eq. (10)
 	end
 
 	%Compute average log-likelihood

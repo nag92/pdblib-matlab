@@ -77,6 +77,6 @@ view(-40,6); axis equal;
 
 
 %print('-dpng','graphs/demo_semitiedGMM01.png');
-pause;
-close all;
+%pause;
+%close all;
 
