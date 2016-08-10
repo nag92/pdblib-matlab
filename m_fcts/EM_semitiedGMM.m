@@ -51,7 +51,7 @@ if ~isfield(model,'params_diagRegFact')
 	model.params_diagRegFact = 1E-6; %Regularization term is optional
 end
 if ~isfield(model,'params_Bsf')
-	model.params_Bsf = 1E-1;
+	model.params_Bsf = 5E-2;
 end
 if ~isfield(model,'params_nbVariationSteps')
 	model.params_nbVariationSteps = 50;
