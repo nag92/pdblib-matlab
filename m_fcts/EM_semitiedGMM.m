@@ -58,9 +58,6 @@ end
 if ~isfield(model,'params_nbVariationSteps')
 	model.params_nbVariationSteps = 50;
 end
-if ~isfield(model,'params_nbVariationSteps')
-	model.params_nbVariationSteps = 50;
-end
 if ~isfield(model,'params_alpha')
 	model.params_alpha = 1.0;
 end
