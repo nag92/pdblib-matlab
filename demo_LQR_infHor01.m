@@ -18,16 +18,6 @@ function demo_LQR_infHor01
 %		number="1",
 %		pages="1--29"
 % }
-%
-% @inproceedings{Calinon14,
-%   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
-%   title="A task-parameterized probabilistic model with minimal intervention control",
-%   booktitle="Proc. {IEEE} Intl Conf. on Robotics and Automation ({ICRA})",
-%   year="2014",
-%   month="May-June",
-%   address="Hong Kong, China",
-%   pages="3339--3344"
-% }
 % 
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon (http://calinon.ch/) and Danilo Bruno (danilo.bruno@iit.it)
