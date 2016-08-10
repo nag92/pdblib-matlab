@@ -20,9 +20,7 @@ function demo_semitiedGMM01
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
-% Written by Ajay Tanwani and Sylvain Calinon
-%
-% Correspondence: Ajay Tanwani <http://www.ajaytanwani.com>
+% Written by Ajay Tanwani (http://www.ajaytanwani.com) and Sylvain Calinon (http://calinon.ch)
 %
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
 %

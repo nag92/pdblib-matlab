@@ -1,4 +1,4 @@
- function [model, LL] = EM_semitiedGMM(Data, model)
+function [model, LL] = EM_semitiedGMM(Data, model)
 % EM procedure to estimate parameters of a semi-tied Gaussian Mixture Model
 %
 % Writing code takes time. Polishing it and making it available to others takes longer!
@@ -19,9 +19,7 @@
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
-% Written by Ajay Tanwani and Sylvain Calinon
-%
-% Correspondence: Ajay Tanwani <http://www.ajaytanwani.com>
+% Written by Ajay Tanwani (http://www.ajaytanwani.com) and Sylvain Calinon (http://calinon.ch)
 %
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
 %
@@ -57,12 +55,6 @@ if ~isfield(model,'params_Bsf')
 end
 if ~isfield(model,'params_nbVariationSteps')
 	model.params_nbVariationSteps = 50;
-end
-if ~isfield(model,'params_nbVariationSteps')
-	model.params_nbVariationSteps = 50;
-end
-if ~isfield(model,'params_alpha')
-	model.params_alpha = 1.0;
 end
 if ~isfield(model,'B')
 	model.B = eye(model.nbVar) * model.params_Bsf;
@@ -107,8 +99,7 @@ for nbIter=1:model.params_nbMaxSteps
 	%Update Sigma
 	model.H = pinv(model.B) + eye(model.nbVar) * model.params_diagRegFact;
 	for i=1:model.nbStates
-% 		model.Sigma(:,:,i) = model.H * model.SigmaDiag(:,:,i) * model.H'; %Eq.(3)
-		model.Sigma(:,:,i) = model.params_alpha*(model.H*model.SigmaDiag(:,:,i)*model.H') + (1 - model.params_alpha)*model.S(:,:,i); % Eq. (10)
+		model.Sigma(:,:,i) = model.H * model.SigmaDiag(:,:,i) * model.H'; %Eq.(3)
 	end
 
 	%Compute average log-likelihood
