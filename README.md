@@ -139,8 +139,11 @@ All the examples are located in the main folder, and the functions are located i
 | demo_HMM01 | Hidden Markov model (HMM) with single Gaussian as emission distribution |
 | demo_HMM_Viterbi01 | Viterbi decoding in HMM to estimate best state sequence from observations |
 | demo_HSMM01 | Variable duration model implemented as a hidden semi-Markov model (HSMM), by encoding the state duration after EM |
-| demo_iterativeLQR01 | Controller retrieval through an iterative solution of linear quadratic optimal control (finite horizon, unconstrained linear MPC), by relying on a GMM encoding of position and velocity data (see also demo_batchLQR01) |
+| demo_iterativeLQR01 | Iterative solution of linear quadratic tracking problem (finite horizon, unconstrained linear MPC), by relying on a GMM encoding of position and velocity data (see also demo_batchLQR01) |
 | demo_iterativeLQR02 | Same as demo_iterativeLQR01 with only position data |
+| demo_iterativeLQR_augmSigma01 | Iterative LQR with augmented covariance to transform the tracking problem to a regulation problem |
+| demo_LQR_infHor01 | Continuous infinite horizon linear quadratic tracking, by relying on a GMM encoding of position and velocity data |
+| demo_LQR_infHor02 | Discrete infinite horizon linear quadratic tracking, by relying on a GMM encoding of position and velocity data |
 | demo_MFA01 | Mixture of factor analyzers (MFA) |
 | demo_MPPCA01 | Mixture of probabilistic principal component analyzers (MPPCA) |
 | demo_regularization01 | Regularization of GMM parameters with minimum admissible eigenvalue |
