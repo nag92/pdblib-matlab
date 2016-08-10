@@ -112,6 +112,7 @@ All the examples are located in the main folder, and the functions are located i
 | demo_batchLQR01 | Controller retrieval through a batch solution of linear quadratic optimal control (unconstrained linear MPC), by relying on a Gaussian mixture model (GMM) encoding of position and velocity data (see also demo_iterativeLQR01) |
 | demo_batchLQR02 | Same as demo_batchLQR01 but with only position data |
 | demo_batchLQR_augmSigma01 | Batch LQR with augmented covariance to transform a tracking problem to a regulation problem |
+| demo_batchLQR_online01 | Batch solution of linear quadratic optimal control (unconstrained linear MPC) computed in an online manner, by relying on a GMM encoding of position and velocity data |
 | demo_DMP01 | Dynamic movement primitive (DMP) encoding with radial basis functions |
 | demo_DMP02 | Generalization of dynamic movement primitive (DMP) with polynomial fitting using radial basis functions |
 | demo_DMP_GMR01 | Emulation of a standard dynamic movement primitive (DMP) by using a GMM with diagonal covariance matrix, and retrieval computed through Gaussian mixture regression (GMR) | 
@@ -142,6 +143,7 @@ All the examples are located in the main folder, and the functions are located i
 | demo_iterativeLQR01 | Iterative solution of linear quadratic tracking problem (finite horizon, unconstrained linear MPC), by relying on a GMM encoding of position and velocity data (see also demo_batchLQR01) |
 | demo_iterativeLQR02 | Same as demo_iterativeLQR01 with only position data |
 | demo_iterativeLQR_augmSigma01 | Iterative LQR with augmented covariance to transform the tracking problem to a regulation problem |
+| demo_iterativeLQR_augmSigma_online01 | Same as demo_iterativeLQR_augmSigma01 but recomputed in an online manner |
 | demo_LQR_infHor01 | Continuous infinite horizon linear quadratic tracking, by relying on a GMM encoding of position and velocity data |
 | demo_LQR_infHor02 | Discrete infinite horizon linear quadratic tracking, by relying on a GMM encoding of position and velocity data |
 | demo_MFA01 | Mixture of factor analyzers (MFA) |
