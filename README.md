@@ -139,6 +139,19 @@ All the examples are located in the main folder, and the functions are located i
 | demo_MPPCA01 | [1] | Mixture of probabilistic principal component analyzers (MPPCA) |
 | demo_regularization01 | [1] | Regularization of GMM parameters with minimum admissible eigenvalue |
 | demo_regularization02 | [1] | Regularization of GMM parameters with the addition of a small circular covariance |
+| demo_Riemannian_sphere_GaussProd01 | [3] | Product of Gaussians on a sphere by relying on Riemannian manifold |
+| demo_Riemannian_sphere_GMM01 | [3] | GMM for data on a sphere by relying on Riemannian manifold |
+| demo_Riemannian_sphere_GMR01 | [3] | GMR with input and output data on a sphere by relying on Riemannian manifold |
+| demo_Riemannian_sphere_GMR02 | [3] | GMR with time as input and spherical data as output by relying on Riemannian manifold |
+| demo_Riemannian_sphere_GMR03 | [3] | GMR with 3D Euclidean data as input and spherical data as output by relying on Riemannian manifold |
+| demo_Riemannian_sphere_GMR04 | [3] | GMR with input data on a sphere and output data in Eudlidean space by relying on Riemannian manifold |
+| demo_Riemannian_sphere_TPGMM01 | [3] | TP-GMM for data on a sphere by relying on Riemannian manifold (with single frame) |
+| demo_Riemannian_sphere_TPGMM02 | [3] | TP-GMM for data on a sphere by relying on Riemannian manifold (with two frames) |
+| demo_Riemannian_sphere_vecTransp01 | [3] | Parallel transport on a sphere |
+| demo_Riemannian_quat_GMM01 | [3] | GMM for unit quaternion data by relying on Riemannian manifold |
+| demo_Riemannian_quat_GMR01 | [3] | GMR with unit quaternions as input and output data by relying on Riemannian manifold |
+| demo_Riemannian_quat_GMR02 | [3] | GMR with time as input and unit quaternion as output by relying on Riemannian manifold |
+| demo_Riemannian_quat_vecTransp01 | [3] | Parallel transport for unit quaternions |
 | demo_SEDS01 | [1] | Continuous autonomous dynamical system with state-space encoding using GMM, with GMR used for reproduction by using a constrained optimization similar to the SEDS approach |
 | demo_SEDS_discrete01 | [1] | Discrete autonomous dynamical system with state-space encoding using GMM, with GMR used for reproduction by using a constrained optimization similar to the SEDS approach |
 | demo_semitiedGMM01 | [4] | Semi-tied Gaussian Mixture Model by tying the covariance matrices of a GMM with a set of common basis vectors |
