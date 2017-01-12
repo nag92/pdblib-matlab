@@ -11,12 +11,12 @@ function model = init_GMM_kbins(Data, model, nbSamples)
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 % 
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
@@ -37,20 +37,25 @@ function model = init_GMM_kbins(Data, model, nbSamples)
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 
-diagRegularizationFactor = 1E-8; %Optional regularization term to avoid numerical instability
+%Parameters 
 nbData = size(Data,2) / nbSamples;
+if ~isfield(model,'params_diagRegFact')
+	model.params_diagRegFact = 1E-4; %Optional regularization term to avoid numerical instability
+end
 
 %Delimit the cluster bins for the first demonstration
-tSep = round(linspace(1, nbData, model.nbStates+1)); 
+tSep = round(linspace(0, nbData, model.nbStates+1));
 
 %Compute statistics for each bin
 for i=1:model.nbStates
 	id=[];
 	for n=1:nbSamples
-		id = [id (n-1)*nbData+[tSep(i):tSep(i+1)]];
+		id = [id (n-1)*nbData+[tSep(i)+1:tSep(i+1)]];
 	end
 	model.Priors(i) = length(id);
 	model.Mu(:,i) = mean(Data(:,id),2);
-	model.Sigma(:,:,i) = cov(Data(:,id)') + eye(size(Data,1)) * diagRegularizationFactor;
+	model.Sigma(:,:,i) = cov(Data(:,id)') + eye(size(Data,1)) * model.params_diagRegFact;
 end
 model.Priors = model.Priors / sum(model.Priors);
+
+
