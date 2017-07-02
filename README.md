@@ -39,22 +39,35 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-[3] Riemannian manifolds:
+[3] Riemannian manifolds (S2,S3):
 ```
 @article{Zeestraten17RAL,
 	author="Zeestraten, M. J. A. and Havoutis, I. and Silv\'erio, J. and Calinon, S. and Caldwell, D. G.",
-	title="An Approach for Imitation Learning on Riemannian Manifolds",
+	title="An Approach for Imitation Learning on {R}iemannian Manifolds",
 	journal="{IEEE} Robotics and Automation Letters ({RA-L})",
-	doi="",
+	doi="10.1109/LRA.2017.2657001",
 	year="2017",
-	month="",
-	volume="",
-	number="",
+	month="June",
+	volume="2",
+	number="3",
+	pages="1240--1247"
+}
+```
+
+[4] Riemannian manifolds (S+):
+```
+@inproceedings{Jaquier17IROS,
+	author="Jaquier, N. and Calinon, S.", 
+	title="Gaussian Mixture Regression on Symmetric Positive Definite Matrices Manifolds: Application to Wrist Motion Estimation with {sEMG}",
+	booktitle="Proc. {IEEE/RSJ} Intl Conf. on Intelligent Robots and Systems ({IROS})",
+	year="2017",
+	month="September",
+	address="Vancouver, Canada",
 	pages=""
 }
 ```
 
-[4] Semi-tied GMM:
+[5] Semi-tied GMM:
 ```
 @article{Tanwani16RAL,
 	author="Tanwani, A. K. and Calinon, S.",
@@ -69,7 +82,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-[5] DP-means:
+[6] DP-means:
 ```
 @article{Bruno16AURO,
 	author="Bruno, D. and Calinon, S. and Caldwell, D. G.",
@@ -110,7 +123,7 @@ All the examples are located in the main folder, and the functions are located i
 | demo_DMP_GMR04 | [1] | Same as demo_DMP_GMR03 by using the task-parameterized model formalism | 
 | demo_DMP_GMR_LQR01 | [1] | Same as demo_DMP_GMR04 but with LQR used to refine the parameters of the spring-damper system | 
 | demo_DMP_GMR_LQR02 | [1] | Same as demo_DMP_GMR_LQR01 with perturbations added to show the benefit of full covariance to coordinate disturbance rejection | 
-| demo_DPMeans_Online01 | [5] | Online clustering with DP-means algorithm |
+| demo_DPMeans_Online01 | [6] | Online clustering with DP-means algorithm |
 | demo_DSGMR01 | [1] | Gaussian mixture model (GMM), with Gaussian mixture regression(GMR) and dynamical systems used for reproduction, with decay variable used as input (as in DMP) |
 | demo_DTW01 | [1] | Trajectory realignment through dynamic time warping (DTW) |
 | demo_GMM01 | [1] | Gaussian mixture model (GMM) parameters estimation |
@@ -139,6 +152,15 @@ All the examples are located in the main folder, and the functions are located i
 | demo_MPPCA01 | [1] | Mixture of probabilistic principal component analyzers (MPPCA) |
 | demo_regularization01 | [1] | Regularization of GMM parameters with minimum admissible eigenvalue |
 | demo_regularization02 | [1] | Regularization of GMM parameters with the addition of a small circular covariance |
+| demo_Riemannian_cov_GMM01 | [4] | GMM for covariance data by relying on Riemannian manifold |
+| demo_Riemannian_cov_GMR01 | [4] | GMR with time as input and covariance data as output by relying on Riemannian manifold |
+| demo_Riemannian_cov_GMR02 | [4] | GMR with time as input and position vector as output with comparison between computation in vector and matrix forms |
+| demo_Riemannian_cov_GMR03 | [4] | GMR with vector as input and covariance data as output by relying on Riemannian manifold |
+| demo_Riemannian_cov_interp01 | [4] | Covariance interpolation on Riemannian manifold |
+| demo_Riemannian_cov_interp02 | [4] | Covariance interpolation on Riemannian manifold from a GMM with augmented covariances |
+| demo_Riemannian_cov_interp03 | [4] | Trajectory morphing through covariance interpolation on Riemannian manifold (with augmented Gaussian trajectory distribution) |
+| demo_Riemannian_cov_search01 | [4] | EM-based stochastic optimization of covariance on Riemannian manifold |
+| demo_Riemannian_cov_vecTransp01 | [4] | Verification of angle conservation in parallel transport on the symmetric positive definite |
 | demo_Riemannian_sphere_GaussProd01 | [3] | Product of Gaussians on a sphere by relying on Riemannian manifold |
 | demo_Riemannian_sphere_GMM01 | [3] | GMM for data on a sphere by relying on Riemannian manifold |
 | demo_Riemannian_sphere_GMR01 | [3] | GMR with input and output data on a sphere by relying on Riemannian manifold |
@@ -154,7 +176,7 @@ All the examples are located in the main folder, and the functions are located i
 | demo_Riemannian_quat_vecTransp01 | [3] | Parallel transport for unit quaternions |
 | demo_SEDS01 | [1] | Continuous autonomous dynamical system with state-space encoding using GMM, with GMR used for reproduction by using a constrained optimization similar to the SEDS approach |
 | demo_SEDS_discrete01 | [1] | Discrete autonomous dynamical system with state-space encoding using GMM, with GMR used for reproduction by using a constrained optimization similar to the SEDS approach |
-| demo_semitiedGMM01 | [4] | Semi-tied Gaussian Mixture Model by tying the covariance matrices of a GMM with a set of common basis vectors |
+| demo_semitiedGMM01 | [5] | Semi-tied Gaussian Mixture Model by tying the covariance matrices of a GMM with a set of common basis vectors |
 | demo_stdPGMM01 | [1] | Parametric Gaussian mixture model (PGMM) used as a task-parameterized model, with DS-GMR employed to retrieve continuous movements |
 | demo_testDampingRatio01 | [1] | Test with critically damped system and ideal underdamped system |
 | demo_testLQR01 | [1] | Test of linear quadratic regulation (LQR) with different variance in the data |
@@ -179,7 +201,7 @@ All the examples are located in the main folder, and the functions are located i
 | demo_TPtrajGMM01 | [1] | Task-parameterized model with trajectory-GMM encoding |
 | demo_trajDistrib01 | [1] | Stochastic sampling with Gaussian trajectory distribution |
 | demo_trajGMM01 | [1] | Reproduction of trajectory with a GMM with dynamic features (trajectory-GMM) |
-| demo_trajHSMM01 | [1] | Trajectory synthesis with an HSMM with dynamic features (trajectory-HSMM) |
+| demo_trajHSMM01 | [2] | Trajectory synthesis with an HSMM with dynamic features (trajectory-HSMM) |
 | demo_trajMFA01 | [1] | Trajectory model with either a mixture of factor analysers (MFA), a mixture of probabilistic principal component analyzers (MPPCA), or a high-dimensional data clustering approach (HD-GMM) |
 | demoIK_nullspace_TPGMM01 | [1] | IK with nullspace treated with task-parameterized GMM (bimanual tracking task, version with 4 frames) |
 | demoIK_pointing_TPGMM01 | [1] | Task-parameterized GMM to encode pointing direction by considering nullspace constraint (4 frames) (example with two objects and robot frame, starting from the same initial pose (nullspace constraint), by using a single Euler orientation angle and 3 DOFs robot) |
