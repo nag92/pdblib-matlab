@@ -45,12 +45,12 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 	author="Zeestraten, M. J. A. and Havoutis, I. and Silv\'erio, J. and Calinon, S. and Caldwell, D. G.",
 	title="An Approach for Imitation Learning on {R}iemannian Manifolds",
 	journal="{IEEE} Robotics and Automation Letters ({RA-L})",
-	doi="10.1109/LRA.2017.2657001",
 	year="2017",
 	month="June",
 	volume="2",
 	number="3",
 	pages="1240--1247"
+	doi="10.1109/LRA.2017.2657001",
 }
 ```
 
@@ -84,15 +84,16 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 
 [6] DP-means:
 ```
-@article{Bruno16AURO,
+@article{Bruno17AURO,
 	author="Bruno, D. and Calinon, S. and Caldwell, D. G.",
 	title="Learning Autonomous Behaviours for the Body of a Flexible Surgical Robot",
 	journal="Autonomous Robots",
-	year="2016",
-	volume="",
-	number="",
-	pages="",
-	doi="10.1007/s10514-016-9544-6",
+	year="2017",
+	month="February",
+	volume="41",
+	number="2",
+	pages="333--347",
+	doi="10.1007/s10514-016-9544-6"
 }
 ```
 
