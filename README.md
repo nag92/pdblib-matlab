@@ -2,14 +2,16 @@
 
 PbDlib is a set of tools combining statistical learning, dynamical systems and optimal control approaches for programming-by-demonstration applications (see http://www.idiap.ch/software/pbdlib/ for details). 
 
-The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute. A C++ version of the library (with currently fewer functionalities) is available at https://gitlab.idiap.ch/rli/pbdlib
+The Matlab/GNU Octave version is currently maintained by Sylvain Calinon, Idiap Research Institute. 
+
+Other versions of the library (in C++ or Python, with currently fewer functionalities) are available at http://www.idiap.ch/software/pbdlib/
 
 ### References
 
 Did you find PbDLib useful for your research? Please acknowledge the authors in any academic publications that used parts of these codes.
 <br><br>
 
-[1] Tutorial (GMM, TP-GMM, MFA, MPPCA, GMR, LWR, GPR, MPC, LQR, trajGMM):
+[1] Tutorial (GMM, TP-GMM, MFA, MPPCA, GMR, LWR, GPR, MPC, LQR, trajGMM): [Link to publication](http://calinon.ch/papers/Calinon-JIST2015.pdf)
 ```
 @article{Calinon16JIST,
 	author="Calinon, S.",
@@ -24,7 +26,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-[2] HMM, HSMM:
+[2] HMM, HSMM: [Link to publication](http://calinon.ch/papers/Rozo-Frontiers2016.pdf)
 ```
 @article{Rozo16Frontiers,
 	author="Rozo, L. and Silv\'erio, J. and Calinon, S. and Caldwell, D. G.",
@@ -39,7 +41,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-[3] Riemannian manifolds (S2,S3):
+[3] Riemannian manifolds (S2,S3): [Link to publication](http://calinon.ch/papers/Zeestraten-RAL2017.pdf)
 ```
 @article{Zeestraten17RAL,
 	author="Zeestraten, M. J. A. and Havoutis, I. and Silv\'erio, J. and Calinon, S. and Caldwell, D. G.",
@@ -54,7 +56,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-[4] Riemannian manifolds (S+):
+[4] Riemannian manifolds (S+): [Link to publication](http://calinon.ch/papers/Jaquier-IROS2017.pdf)
 ```
 @inproceedings{Jaquier17IROS,
 	author="Jaquier, N. and Calinon, S.", 
@@ -67,7 +69,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-[5] Semi-tied GMM:
+[5] Semi-tied GMM: [Link to publication](http://calinon.ch/papers/Tanwani-RAL2016.pdf)
 ```
 @article{Tanwani16RAL,
 	author="Tanwani, A. K. and Calinon, S.",
@@ -82,7 +84,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
-[6] DP-means:
+[6] DP-means: [Link to publication](http://calinon.ch/papers/Bruno-AURO2017.pdf)
 ```
 @article{Bruno17AURO,
 	author="Bruno, D. and Calinon, S. and Caldwell, D. G.",
@@ -209,17 +211,13 @@ All the examples are located in the main folder, and the functions are located i
 
 ### Usage
 
-Examples starting with `demo_` can be run from Matlab/GNU Octave.
-
-### Compatibility
-
-The codes are compatible with both Matlab and GNU Octave.
+Examples starting with `demo_` can be run as examples. The codes are compatible with both Matlab and GNU Octave.
 
 ### License
 
-Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+The Matlab/GNU Octave version of PbDlib is currently maintained by Sylvain Calinon, Idiap Research Institute. 
 
-Maintained by Sylvain Calinon, http://calinon.ch/
+Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
 
 PbDlib is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as
