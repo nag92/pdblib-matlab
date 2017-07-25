@@ -107,6 +107,21 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
+#### Ref. [7] 
+**Manipulability ellispoids**<br>
+[Link to publication](http://calinon.ch/papers/Rozo-IROS2017.pdf)
+```
+@inproceedings{Rozo17IROS,
+	author="Rozo, L. and Jaquier, N. and Calinon, S. and Caldwell, D. G.", 
+	title="Learning Manipulability Ellipsoids for Task Compatibility in Robot Manipulation",
+	booktitle=IROS,
+	year="2017",
+	month="September",
+	address="Vancouver, Canada",
+	pages=""
+}
+```
+
 ### List of examples
 
 All the examples are located in the main folder, and the functions are located in the `m_fcts` folder.
@@ -159,6 +174,9 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_iterativeLQR_augmSigma_online01](./demos/demo_iterativeLQR_augmSigma_online01.m) | [[1]](#ref-1) | Same as demo_iterativeLQR_augmSigma01 but recomputed in an online manner |
 | [demo_LQR_infHor01](./demos/demo_LQR_infHor01.m) | [[1]](#ref-1) | Continuous infinite horizon linear quadratic tracking, by relying on a GMM encoding of position and velocity data |
 | [demo_LQR_infHor02](./demos/demo_LQR_infHor02.m) | [[1]](#ref-1) | Discrete infinite horizon linear quadratic tracking, by relying on a GMM encoding of position and velocity data |
+| [demo_manipulabilityTransfer01](./demos/demo_manipulabilityTransfer01.m) | [[7]](#ref-7) | Use of robot redundancy to track desired manipulability ellipsoid |
+| [demo_manipulabilityTransfer02](./demos/demo_manipulabilityTransfer02.m) | [[7]](#ref-7) | Learning and reproduction of manipulability ellipsoid profiles |
+| [demo_manipulabilityTransfer02b](./demos/demo_manipulabilityTransfer02b.m) | [[7]](#ref-7) | Learning and reproduction of manipulability ellipsoid profiles (numerical version) |
 | [demo_MFA01](./demos/demo_MFA01.m) | [[1]](#ref-1) | Mixture of factor analyzers (MFA) |
 | [demo_MPPCA01](./demos/demo_MPPCA01.m) | [[1]](#ref-1) | Mixture of probabilistic principal component analyzers (MPPCA) |
 | [demo_regularization01](./demos/demo_regularization01.m) | [[1]](#ref-1) | Regularization of GMM parameters with minimum admissible eigenvalue |
