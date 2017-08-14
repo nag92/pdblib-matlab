@@ -1,6 +1,6 @@
 function demo_TPbatchLQR01
-% Task-parameterized GMM encoding position and velocity data, combined with a batch solution 
-% of linear quadratic optimal control (unconstrained linear MPC).
+% Linear quadratic control (unconstrained linear MPC) acting in multiple frames,
+% which is equivalent to a product of Gaussian controllers through a TP-GMM representation
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
 % If some parts of the code were useful for your research of for a better understanding 
@@ -19,7 +19,7 @@ function demo_TPbatchLQR01
 %		pages="1--29"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2017 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -41,29 +41,33 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model.nbStates = 6; %Number of Gaussians in the GMM
+model.nbStates = 3; %Number of Gaussians in the GMM
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVarPos = 2; %Dimension of position data (here: x1,x2)
 model.nbDeriv = 2; %Number of static & dynamic features (D=2 for [x,dx])
 model.nbVar = model.nbVarPos * model.nbDeriv; %Dimension of state vector
-model.rfactor = 1E-1;	%Control cost in LQR
+model.rfactor = 1E-3;	%Control cost in LQR
 model.dt = 0.01; %Time step duration
 nbData = 200; %Number of datapoints in a trajectory
-nbRepros = 5; %Number of reproductions
-
-%Control cost matrix
-R = eye(model.nbVarPos) * model.rfactor;
-R = kron(eye(nbData-1),R);
+nbRepros = 5; %Number of reproductions in new situations
+nbStochRepros = 10; %Number of reproductions with stochastic sampling
 
 
 %% Dynamical System settings (discrete version)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % %Integration with Euler method 
 % Ac1d = diag(ones(model.nbDeriv-1,1),1); 
 % Bc1d = [zeros(model.nbDeriv-1,1); 1];
 % A = kron(eye(model.nbDeriv)+Ac1d*model.dt, eye(model.nbVarPos)); 
 % B = kron(Bc1d*model.dt, eye(model.nbVarPos));
+
+% %Conversion with control toolbox
+% Ac1d = diag(ones(model.nbDeriv-1,1),1); %Continuous 1D
+% Bc1d = [zeros(model.nbDeriv-1,1); 1]; %Continuous 1D
+% Cc1d = [1, zeros(1,model.nbDeriv-1)]; %Continuous 1D
+% sysd = c2d(ss(Ac1d,Bc1d,Cc1d,0), model.dt);
+% A = kron(sysd.a, eye(model.nbVarPos)); %Discrete nD
+% B = kron(sysd.b, eye(model.nbVarPos)); %Discrete nD
 
 %Integration with higher order Taylor series expansion
 A1d = zeros(model.nbDeriv);
@@ -77,16 +81,7 @@ end
 A = kron(A1d, eye(model.nbVarPos)); %Discrete nD
 B = kron(B1d, eye(model.nbVarPos)); %Discrete nD
 
-% %Conversion with control toolbox
-% Ac1d = diag(ones(model.nbDeriv-1,1),1); %Continuous 1D
-% Bc1d = [zeros(model.nbDeriv-1,1); 1]; %Continuous 1D
-% Cc1d = [1, zeros(1,model.nbDeriv-1)]; %Continuous 1D
-% sysd = c2d(ss(Ac1d,Bc1d,Cc1d,0), model.dt);
-% A = kron(sysd.a, eye(model.nbVarPos)); %Discrete nD
-% B = kron(sysd.b, eye(model.nbVarPos)); %Discrete nD
-
-
-%Construct Su and Sx matrices, see Eq. (35)
+%Construct Su and Sx matrices (transfer matrices in batch LQR)
 Su = zeros(model.nbVar*nbData, model.nbVarPos*(nbData-1));
 Sx = kron(ones(nbData,1),eye(model.nbVar)); 
 M = B;
@@ -101,10 +96,14 @@ for n=2:nbData
 	M = [A*M(:,1:model.nbVarPos), M];
 end
 
+%Control cost matrix in LQR
+R = eye(model.nbVarPos) * model.rfactor;
+R = kron(eye(nbData-1),R);
 
-%% Load 3rd order tensor data
+
+%% Create 3rd order tensor data (trajectories in multiple coordinate systems)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('Load 3rd order tensor data...');
+disp('Create 3rd order tensor data (trajectories in multiple coordinate systems)...');
 % The MAT file contains a structure 's' with the multiple demonstrations. 's(n).Data' is a matrix data for
 % sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
@@ -112,6 +111,22 @@ disp('Load 3rd order tensor data...');
 % datapoint, C=2 the number of derivatives (incl. position), P=2 the number of candidate frames, and N=TM 
 % the number of datapoints in a trajectory (T=200) multiplied by the number of demonstrations (M=5).
 load('data/DataWithDeriv01.mat');
+
+%Compute 3rd order tensor data (trajectories in multiple coordinate systems)
+D = (diag(ones(1,nbData-1),-1)-eye(nbData)) / model.dt;
+D(end,end) = 0;
+Data = zeros(model.nbVar, model.nbFrames, nbSamples*nbData);
+for n=1:nbSamples
+	s(n).Data = zeros(model.nbVar,model.nbFrames,nbData);
+	DataTmp = s(n).Data0;
+	for k=1:model.nbDeriv-1
+		DataTmp = [DataTmp; s(n).Data0*D^k]; %Compute derivatives
+	end
+	for m=1:model.nbFrames
+		s(n).Data(:,m,:) = s(n).p(m).A \ (DataTmp - repmat(s(n).p(m).b, 1, nbData));
+		Data(:,m,(n-1)*nbData+1:n*nbData) = s(n).Data(:,m,:);
+	end
+end
 
 
 %% TP-GMM learning
@@ -132,36 +147,61 @@ model = init_tensorGMM_kbins(s, model);
 % 		model.Sigma(:,:,m,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp';
 % 	end
 % end
-% [~, GAMMA] = computeGamma(Data, model); %See 'computeGamma' function below
-% model.Pix = GAMMA ./ repmat(sum(GAMMA,2),1,nbData*nbSamples);
-	
+
 model = EM_tensorGMM(Data, model);
 
+%Precomputation of eigendecompositions and inverses
+for m=1:model.nbFrames
+	for i=1:model.nbStates
+		[V,D] = eig(model.Sigma(1:model.nbVarPos,1:model.nbVarPos,m,i));
+		d = diag(D); 
+		[~,id] = sort(d,'descend');
+		model.V(:,:,m,i) = V(:,id);
+		model.D(:,:,m,i) = diag(d(id));
+		model.invSigma(:,:,m,i) = inv(model.Sigma(:,:,m,i));
+	end
+end
 
-%% Reproduction with LQR for the task parameters used to train the model
+
+%% Reproductions for the same situations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('Reproductions with batch LQR...');
+disp('Reproductions for the same situations...');
 for n=1:nbSamples
-	%Reconstruct GMM 
-	[s(n).Mu, s(n).Sigma] = productTPGMM0(model, s(n).p);
-	%Compute best path for the n-th demonstration
-	[~,s(n).q] = max(model.Pix(:,(n-1)*nbData+1:n*nbData),[],1); %works also for nbStates=1	
-	%Build stepwise reference trajectory, see Eq. (27)
-	MuQ = reshape(s(n).Mu(:,s(n).q), model.nbVar*nbData, 1); 
-	SigmaQ = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(s(n).Sigma(:,:,s(n).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
-	%Batch LQR (unconstrained linear MPC), see Eq. (37)
-	SuInvSigmaQ = Su' / SigmaQ;
-	Rq = SuInvSigmaQ * Su + R;
+	%GMM projection
+	for i=1:model.nbStates
+		for m=1:model.nbFrames
+			s(n).p(m).Mu(:,i) = s(n).p(m).A * model.Mu(:,m,i) + s(n).p(m).b;
+			s(n).p(m).invSigma(:,:,i) = s(n).p(m).A * model.invSigma(:,:,m,i) * s(n).p(m).A';
+		end
+	end
+	
+	%Compute best path for the n-th demonstration (an HSMM can alternatively be used here)
+	[~,s(n).q] = max(model.Pix(:,(n-1)*nbData+1:n*nbData),[],1); 
+	
+	%Build a reference trajectory for each frame
+	Q = zeros(model.nbVar*nbData);
+	for m=1:model.nbFrames
+		s(n).p(m).MuQ = reshape(s(n).p(m).Mu(:,s(n).q), model.nbVar*nbData, 1);  
+		s(n).p(m).Q = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(s(n).p(m).invSigma(:,:,s(n).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
+		Q = Q + s(n).p(m).Q;
+	end
+	
+	%Batch LQR (unconstrained linear MPC in multiple frames), corresponding to a product of Gaussian controllers
+	Rq = Su' * Q * Su + R;
 	X = [s(1).Data0(:,1) + randn(model.nbVarPos,1)*0E0; zeros(model.nbVarPos,1)];
- 	rq = SuInvSigmaQ * (MuQ-Sx*X);
+ 	rq = zeros(model.nbVar*nbData,1);
+	for m=1:model.nbFrames
+		rq = rq + s(n).p(m).Q * (s(n).p(m).MuQ - Sx*X);
+	end
+	rq = Su' * rq; 
  	u = Rq \ rq; %can also be computed with u = lscov(Rq, rq);
 	r(n).Data = reshape(Sx*X+Su*u, model.nbVar, nbData);
 end
 
 
-%% Reproduction with LQR for new task parameters
+%% Reproductions for new situations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('New reproductions with batch LQR...');
+disp('Reproductions for new situations...');
 for n=1:nbRepros
 	%Random generation of new task parameters
 	for m=1:model.nbFrames
@@ -170,34 +210,121 @@ for n=1:nbRepros
 		rnew(n).p(m).b = s(id(1)).p(m).b * w(1) + s(id(2)).p(m).b * w(2);
 		rnew(n).p(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
 	end
-	%Reconstruct GMM 
-	[rnew(n).Mu, rnew(n).Sigma] = productTPGMM0(model, rnew(n).p);
-	%Compute best path for the 1st demonstration (HSMM can alternatively be used here)
-	[~,rnew(n).q] = max(model.Pix(:,1:nbData),[],1); %works also for nbStates=1	
-	%Build stepwise reference trajectory, see Eq. (27)
-	MuQ = reshape(rnew(n).Mu(:,rnew(n).q), model.nbVar*nbData, 1); 
-	SigmaQ = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(rnew(n).Sigma(:,:,rnew(n).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
-	%Batch LQR (unconstrained linear MPC), see Eq. (37)
-	SuInvSigmaQ = Su' / SigmaQ;
-	Rq = SuInvSigmaQ * Su + R;
+	
+	%GMM projection
+	for i=1:model.nbStates
+		for m=1:model.nbFrames
+			rnew(n).p(m).Mu(:,i) = rnew(n).p(m).A * model.Mu(:,m,i) + rnew(n).p(m).b;
+			rnew(n).p(m).invSigma(:,:,i) = rnew(n).p(m).A * model.invSigma(:,:,m,i) * rnew(n).p(m).A';
+		end
+	end
+	
+	%Compute best path for the 1st demonstration (an HSMM can alternatively be used here)
+	[~,rnew(n).q] = max(model.Pix(:,1:nbData),[],1); 
+	
+	%Build a reference trajectory for each frame
+	Q = zeros(model.nbVar*nbData);
+	for m=1:model.nbFrames
+		rnew(n).p(m).MuQ = reshape(rnew(n).p(m).Mu(:,rnew(n).q), model.nbVar*nbData, 1);  
+		rnew(n).p(m).Q = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(rnew(n).p(m).invSigma(:,:,rnew(n).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
+		Q = Q + rnew(n).p(m).Q;
+	end
+	
+	%Batch LQR (unconstrained linear MPC in multiple frames), corresponding to a product of Gaussian controllers
+	Rq = Su' * Q * Su + R;
 	X = [s(1).Data0(:,1) + randn(model.nbVarPos,1)*0E0; zeros(model.nbVarPos,1)];
- 	rq = SuInvSigmaQ * (MuQ-Sx*X);
+ 	rq = zeros(model.nbVar*nbData,1);
+	for m=1:model.nbFrames
+		rq = rq + rnew(n).p(m).Q * (rnew(n).p(m).MuQ - Sx*X);
+	end
+	rq = Su' * rq; 
  	u = Rq \ rq; %can also be computed with u = lscov(Rq, rq);
 	rnew(n).Data = reshape(Sx*X+Su*u, model.nbVar, nbData);
 end
 
 
+%% Reproductions with stochastic sampling
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+disp('Reproductions with stochastic sampling...');
+nbEigs = 2; %Number of principal eigencomponents to keep
+for n=1:nbStochRepros
+	rsto(n).p = rnew(1).p;
+	rsto(n).q = rnew(1).q;
+	
+	%GMM projection by moving centers randomly
+	N = randn(nbEigs, model.nbFrames, model.nbStates) * 1E0; %Noise on all components in all frames
+	rsto(n).Mu = model.Mu;
+	for m=1:model.nbFrames
+		for i=1:model.nbStates
+			rsto(n).Mu(1:model.nbVarPos,m,i) = model.Mu(1:model.nbVarPos,m,i) + model.V(:,1:nbEigs,m,i) * model.D(1:nbEigs,1:nbEigs,m,i).^.5 * N(:,m,i);
+			rsto(n).p(m).Mu(:,i) = rsto(n).p(m).A * rsto(n).Mu(:,m,i) + rsto(n).p(m).b;
+			rsto(n).p(m).invSigma(:,:,i) = rsto(n).p(m).A * model.invSigma(:,:,m,i) * rsto(n).p(m).A';
+		end
+	end
+	
+	%Build a reference trajectory for each frame
+	Q = zeros(model.nbVar*nbData);
+	for m=1:model.nbFrames
+		rsto(n).p(m).MuQ = reshape(rsto(n).p(m).Mu(:,rsto(n).q), model.nbVar*nbData, 1);  
+		rsto(n).p(m).Q = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(rsto(n).p(m).invSigma(:,:,rsto(n).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
+		Q = Q + rsto(n).p(m).Q;
+	end
+	
+	%Batch LQR (unconstrained linear MPC in multiple frames), corresponding to a product of Gaussian controllers
+	Rq = Su' * Q * Su + R;
+	X = [s(1).Data0(:,1) + randn(model.nbVarPos,1)*0E0; zeros(model.nbVarPos,1)];
+ 	rq = zeros(model.nbVar*nbData,1);
+	for m=1:model.nbFrames
+		rq = rq + rsto(n).p(m).Q * (rsto(n).p(m).MuQ - Sx*X);
+	end
+	rq = Su' * rq; 
+ 	u = Rq \ rq; %can also be computed with u = lscov(Rq, rq);
+	rsto(n).Data = reshape(Sx*X+Su*u, model.nbVar, nbData);
+end
+
+
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,1300,500]);
+%Model
+figure('position',[20,650,1000,500]); hold on;
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
 limAxes = [-1.2 0.8 -1.1 0.9];
 colPegs = [[.9,.5,.9];[.5,.9,.5]];
+for m=1:model.nbFrames
+	subplot(1,model.nbFrames,m); hold on; grid on; box on; title(['Model - Frame ' num2str(m)]);
+	plotGMM(squeeze(model.Mu(1:2,m,:)), squeeze(model.Sigma(1:2,1:2,m,:)), [.5 .5 .5],.2);
+	for n=1:nbSamples
+		plot(squeeze(Data(1,m,(n-1)*s(1).nbData+1)), squeeze(Data(2,m,(n-1)*s(1).nbData+1)), '.','markersize',15,'color',clrmap(n,:));
+		plot(squeeze(Data(1,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), squeeze(Data(2,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), '-','linewidth',1.5,'color',clrmap(n,:));
+	end
+	axis square; set(gca,'xtick',[0],'ytick',[0]);
+end
 
-%DEMOS
-subplot(1,3,1); hold on; box on; title('Demonstrations');
+%Model after stochastic sampling
+figure('position',[1050,650,1000,500]); hold on;
+xx = round(linspace(1,64,nbSamples));
+clrmap = colormap('jet');
+clrmap = min(clrmap(xx,:),.95);
+limAxes = [-1.2 0.8 -1.1 0.9];
+colPegs = [[.9,.5,.9];[.5,.9,.5]];
+for m=1:model.nbFrames
+	subplot(1,model.nbFrames,m); hold on; grid on; box on; title(['Stochastic model - Frame ' num2str(m)]);
+	plotGMM(squeeze(model.Mu(1:2,m,:)), squeeze(model.Sigma(1:2,1:2,m,:)), [.5 .5 .5],.2);
+	for n=1:nbSamples
+		plot(squeeze(Data(1,m,(n-1)*s(1).nbData+1)), squeeze(Data(2,m,(n-1)*s(1).nbData+1)), '.','markersize',15,'color',clrmap(n,:));
+		plot(squeeze(Data(1,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), squeeze(Data(2,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), '-','linewidth',1.5,'color',clrmap(n,:));
+	end
+	for n=1:nbStochRepros
+		plotGMM(squeeze(rsto(n).Mu(1:2,m,:)), squeeze(model.Sigma(1:2,1:2,m,:)), [0 .8 0],.1);
+	end
+	axis square; set(gca,'xtick',[0],'ytick',[0]);
+end
+
+%Demonstrations
+figure('position',[20,50,2200,500]);
+subplot(1,4,1); hold on; box on; title('Demonstrations');
 for n=1:nbSamples
 	%Plot frames
 	for m=1:model.nbFrames
@@ -210,8 +337,8 @@ for n=1:nbSamples
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
-%REPROS
-subplot(1,3,2); hold on; box on; title('Reproductions');
+%Reproductions in same situations
+subplot(1,4,2); hold on; box on; title('Reproductions');
 for n=1:nbSamples
 	%Plot frames
 	for m=1:model.nbFrames
@@ -224,14 +351,10 @@ for n=1:nbSamples
 	plot(r(n).Data(1,1), r(n).Data(2,1),'.','markersize',12,'color',clrmap(n,:));
 	plot(r(n).Data(1,:), r(n).Data(2,:),'-','linewidth',1.5,'color',clrmap(n,:));
 end
-for n=1:nbSamples
-	%Plot Gaussians
-	plotGMM(s(n).Mu(1:2,:), s(n).Sigma(1:2,1:2,:), [.5 .5 .5], .4);
-end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
-%NEW REPROS
-subplot(1,3,3); hold on; box on; title('New reproductions');
+%Reproductions in new situations 
+subplot(1,4,3); hold on; box on; title('Reproductions in new situations');
 for n=1:nbRepros
 	%Plot frames
 	for m=1:model.nbFrames
@@ -244,63 +367,60 @@ for n=1:nbRepros
 	plot(rnew(n).Data(1,1), rnew(n).Data(2,1),'.','markersize',12,'color',[.2 .2 .2]);
 	plot(rnew(n).Data(1,:), rnew(n).Data(2,:),'-','linewidth',1.5,'color',[.2 .2 .2]);
 end
-for n=1:nbRepros
-	%Plot Gaussians
-	plotGMM(rnew(n).Mu(1:2,:), rnew(n).Sigma(1:2,1:2,:), [.5 .5 .5], .4);
+axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
+
+%Reproductions with stochastic sampling
+subplot(1,4,4); hold on; box on; title('Stochastic reproductions');
+%Plot frames
+for m=1:model.nbFrames
+	plot([rsto(1).p(m).b(1) rsto(1).p(m).b(1)+rnew(1).p(m).A(1,2)], [rsto(1).p(m).b(2) rsto(1).p(m).b(2)+rsto(1).p(m).A(2,2)], '-','linewidth',6,'color',colPegs(m,:));
+	plot(rsto(1).p(m).b(1), rsto(1).p(m).b(2), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+end
+for n=1:nbStochRepros
+	%Plot trajectories
+	%plot(rsto(n).Data(1,1), rsto(n).Data(2,1),'.','markersize',12,'color',[.9 .9 .9]*rand(1));
+	plot(rsto(n).Data(1,:), rsto(n).Data(2,:),'-','linewidth',1.5,'color',[.9 .9 .9]*rand(1));
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
-%Plot position
-figure; 
-subplot(2,1,1); hold on;
-m=1;
-for n=1:1 %nbSamples
-	msh=[]; x0=[];
-	for t=1:nbData-1
-		if size(msh,2)==0
-			msh(:,1) = [t; s(n).Mu(m,s(n).q(t))];
+%Timeline plot
+qList = s(1).q;
+figure('position',[1250,650,1000,500]); hold on;
+for m=1:model.nbFrames
+	labList = {['$x^{(' num2str(m) ')}_1$'], ['$x^{(' num2str(m) ')}_2$'], ['$\dot{x}^{(' num2str(m) ')}_1$'], ['$\dot{x}^{(' num2str(m) ')}_2$']};
+	for j=1:model.nbVar
+		subplot(model.nbVar, model.nbFrames, (j-1)*model.nbFrames+m); hold on;
+		limAxes = [1, nbData, min(Data(j,m,:))-4E0, max(Data(j,m,:))+4E0];
+		msh=[]; x0=[];
+		for t=1:nbData-1
+			if size(msh,2)==0
+				msh(:,1) = [t; model.Mu(j,m,qList(t))];
+			end
+			if t==nbData-1 || qList(t+1)~=qList(t)
+				i = qList(t);
+				msh(:,2) = [t+1; model.Mu(j,m,i)];
+				sTmp = model.Sigma(j,j,m,qList(t))^.5;
+				msh2 = [msh(:,1)+[0;sTmp], msh(:,2)+[0;sTmp], msh(:,2)-[0;sTmp], msh(:,1)-[0;sTmp], msh(:,1)+[0;sTmp]];
+				patch(msh2(1,:), msh2(2,:), [.7 .7 .7],'edgecolor',[.6 .6 .6],'facealpha', .4, 'edgealpha', .4);
+				plot(msh(1,:), msh(2,:), '-','linewidth',1,'color',[.6 .6 .6]);
+				if msh(1,1)>1
+					plot([msh(1,1) msh(1,1)], limAxes(3:4), ':','linewidth',1,'color',[.5 .5 .5]);
+				end
+				x0 = [x0 msh];
+				msh=[];
+			end
 		end
-		if t==nbData-1 || s(n).q(t+1)~=s(n).q(t)
-			msh(:,2) = [t+1; s(n).Mu(m,s(n).q(t))];
-			sTmp = s(n).Sigma(m,m,s(n).q(t))^.5;
-			msh2 = [msh(:,1)+[0;sTmp], msh(:,2)+[0;sTmp], msh(:,2)-[0;sTmp], msh(:,1)-[0;sTmp], msh(:,1)+[0;sTmp]];
-			patch(msh2(1,:), msh2(2,:), [.85 .85 .85],'edgecolor',[.7 .7 .7]);
-			plot(msh(1,:), msh(2,:), '-','linewidth',3,'color',[.7 .7 .7]);
-			x0 = [x0 msh];
-			msh=[];
+		for n=1:nbSamples
+			plot(1:nbData, squeeze(s(n).Data(j,m,:)), '-','linewidth',.5,'color',[.6 .6 .6]);
 		end
+		if j<7
+			ylabel(labList{j},'fontsize',14,'interpreter','latex');
+		end
+		axis(limAxes);
 	end
-	plot(s(n).Data0(m,:),':');
-	plot(r(n).Data(m,:),'-');
+	xlabel('$t$','fontsize',14,'interpreter','latex');
 end
-xlabel('t'); ylabel('x_1');
-
-%Plot velocity
-subplot(2,1,2); hold on;
-m=3;
-for n=1:1 %nbSamples
-	msh=[]; x0=[];
-	for t=1:nbData-1
-		if size(msh,2)==0
-			msh(:,1) = [t; s(n).Mu(m,s(n).q(t))];
-		end
-		if t==nbData-1 || s(n).q(t+1)~=s(n).q(t)
-			msh(:,2) = [t+1; s(n).Mu(m,s(n).q(t))];
-			sTmp = s(n).Sigma(m,m,s(n).q(t))^.5;
-			msh2 = [msh(:,1)+[0;sTmp], msh(:,2)+[0;sTmp], msh(:,2)-[0;sTmp], msh(:,1)-[0;sTmp], msh(:,1)+[0;sTmp]];
-			patch(msh2(1,:), msh2(2,:), [.85 .85 .85],'edgecolor',[.7 .7 .7]);
-			plot(msh(1,:), msh(2,:), '-','linewidth',3,'color',[.7 .7 .7]);
-			x0 = [x0 msh];
-			msh=[];
-		end
-	end
-	%plot(s(n).Data0(m,:),':');
-	plot(r(n).Data(m,:),'-');
-end
-xlabel('t'); ylabel('dx_1');
-
 
 %print('-dpng','graphs/demo_TPbatchLQR01.png');
-%pause;
-%close all;
-
+pause;
+close all;

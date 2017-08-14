@@ -212,8 +212,7 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_testLQR02](./demos/demo_testLQR02.m) | [[1]](#ref-1) | Test of LQR with evaluation of the damping ratio found by the system |
 | [demo_testLQR03](./demos/demo_testLQR03.m) | [[1]](#ref-1) | Comparison of LQR with finite and infinite time horizons |
 | [demo_testLQR04](./demos/demo_testLQR04.m) | [[1]](#ref-1) | Demonstration of the coordination capability of linear quadratic optimal control (unconstrained linear MPC) when combined with full precision matrices |
-| [demo_TPbatchLQR01](./demos/demo_TPbatchLQR01.m) | [[1]](#ref-1) | Task-parameterized GMM encoding position and velocity data, combined with a batch solution of linear quadratic optimal control (unconstrained linear MPC) |
-| [demo_TPbatchLQR02](./demos/demo_TPbatchLQR02.m) | [[1]](#ref-1) | Batch solution of a linear quadratic optimal control acting in multiple frames, which is equivalent to TP-GMM combined with LQR |
+| [demo_TPbatchLQR01](./demos/demo_TPbatchLQR01.m) | [[1]](#ref-1) | Linear quadratic control (unconstrained linear MPC) acting in multiple frames, which is equivalent to a product of Gaussian controllers through a TP-GMM representation |
 | [demo_TPGMM01](./demos/demo_TPGMM01.m) | [[1]](#ref-1) | Task-parameterized Gaussian mixture model (TP-GMM) encoding |
 | [demo_TPGMR01](./demos/demo_TPGMR01.m) | [[1]](#ref-1) | TP-GMM with GMR used for reproduction (without dynamical system) |
 | [demo_TPGMR_DS01](./demos/demo_TPGMR_DS01.m) | [[1]](#ref-1) | Dynamical system with constant gains used with a task-parameterized model |
