@@ -422,5 +422,5 @@ for m=1:model.nbFrames
 end
 
 %print('-dpng','graphs/demo_TPbatchLQR01.png');
-pause;
-close all;
+%pause;
+%close all;
