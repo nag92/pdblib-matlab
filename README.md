@@ -152,6 +152,9 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_DPMeans_Online01](./demos/demo_DPMeans_Online01.m) | [[6]](#ref-6) | Online clustering with DP-means algorithm |
 | [demo_DSGMR01](./demos/demo_DSGMR01.m) | [[1]](#ref-1) | Gaussian mixture model (GMM), with Gaussian mixture regression(GMR) and dynamical systems used for reproduction, with decay variable used as input (as in DMP) |
 | [demo_DTW01](./demos/demo_DTW01.m) | [[1]](#ref-1) | Trajectory realignment through dynamic time warping (DTW) |
+| [demo_Gaussian01](./demos/demo_Gaussian01.m) | [[1]](#ref-1) | Use of Chi-square values to determine the percentage of data within the contour of a multivariate normal distribution |
+| [demo_Gaussian02](./demos/demo_Gaussian02.m) | [[1]](#ref-1) | Conditional probability with a multivariate normal distribution |
+| [demo_Gaussian03](./demos/demo_Gaussian03.m) | [[1]](#ref-1) | Gaussian conditioning with uncertain inputs |
 | [demo_GMM01](./demos/demo_GMM01.m) | [[1]](#ref-1) | Gaussian mixture model (GMM) parameters estimation |
 | [demo_GMM02](./demos/demo_GMM02.m) | [[1]](#ref-1) | GMM with different covariance structures |
 | [demo_GMR01](./demos/demo_GMR01.m) | [[1]](#ref-1) | GMM and time-based Gaussian mixture regression (GMR) used for reproduction |
