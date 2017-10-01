@@ -69,7 +69,7 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 	year="2017",
 	month="September",
 	address="Vancouver, Canada",
-	pages=""
+	pages="59--64"
 }
 ```
 
@@ -114,13 +114,30 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 @inproceedings{Rozo17IROS,
 	author="Rozo, L. and Jaquier, N. and Calinon, S. and Caldwell, D. G.", 
 	title="Learning Manipulability Ellipsoids for Task Compatibility in Robot Manipulation",
-	booktitle=IROS,
+	booktitle="Proc. {IEEE/RSJ} Intl Conf. on Intelligent Robots and Systems ({IROS})",
 	year="2017",
 	month="September",
 	address="Vancouver, Canada",
-	pages=""
+	pages="3183--3189"
 }
 ```
+
+#### Ref. [8] 
+**Keypoint-based motion through MPC**<br>
+[Link to publication](http://calinon.ch/papers/Berio-GI2017.pdf)
+```
+@inproceedings{Berio17GI,
+	author="Berio, D. and Calinon, S. and Fol Leymarie, F.",
+	title="Generating Calligraphic Trajectories with Model Predictive Control",
+	booktitle="Proc. 43rd Conf. on Graphics Interface",
+	year="2017",
+	month="May",
+	address="Edmonton, AL, Canada",
+	pages="132--139",
+	doi="10.20380/GI2017.17"
+}
+```
+
 
 ### List of examples
 
@@ -141,6 +158,8 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_batchLQR02](./demos/demo_batchLQR02.m) | [[1]](#ref-1) | Same as demo_batchLQR01 but with only position data |
 | [demo_batchLQR_augmSigma01](./demos/demo_batchLQR_augmSigma01.m) | [[1]](#ref-1) | Batch LQR with augmented covariance to transform a tracking problem to a regulation problem |
 | [demo_batchLQR_online01](./demos/demo_batchLQR_online01.m) | [[1]](#ref-1) | Batch solution of linear quadratic optimal control (unconstrained linear MPC) computed in an online manner, by relying on a GMM encoding of position and velocity data |
+| [demo_batchLQR_viapoints01](./demos/demo_batchLQR_viapoints01.m) | [[8]](#ref-8) | Keypoint-based motion through MPC, with a GMM encoding of position and velocity |
+| [demo_batchLQR_viapoints02](./demos/demo_batchLQR_viapoints02.m) | [[8]](#ref-8) | Same as demo_batchLQR_viapoints01 with only position encoding |
 | [demo_DMP01](./demos/demo_DMP01.m) | [[1]](#ref-1) | Dynamic movement primitive (DMP) encoding with radial basis functions |
 | [demo_DMP02](./demos/demo_DMP02.m) | [[1]](#ref-1) | Generalization of dynamic movement primitive (DMP) with polynomial fitting using radial basis functions |
 | [demo_DMP_GMR01](./demos/demo_DMP_GMR01.m) | [[1]](#ref-1) | Emulation of a standard dynamic movement primitive (DMP) by using a GMM with diagonal covariance matrix, and retrieval computed through Gaussian mixture regression (GMR) | 
