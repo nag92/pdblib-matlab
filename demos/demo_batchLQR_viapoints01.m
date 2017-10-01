@@ -124,14 +124,15 @@ end
 MuQ = zeros(model.nbVar*nbData, 1); 
 Q = zeros(model.nbVar*nbData);
 qCurr = qList(1);
-qT = [];
+xDes = []; 
 for t=1:nbData
 	if qCurr~=qList(t) || t==nbData
 		id = (t-1)*model.nbVar+1:t*model.nbVar;
 		MuQ(id) = model.Mu(:,qCurr); 
 		Q(id,id) = model.invSigma(:,:,qCurr);
+		%List of viapoints with time and error information (for plots)
+		xDes = [xDes, [t; model.Mu(:,qCurr); diag(model.Sigma(:,:,qCurr)).^.5]];	
 		qCurr = qList(t);
-		qT = [qT, t];
 	end
 end	
 
@@ -154,6 +155,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure('position',[10 10 700 700],'color',[1 1 1]); hold on; axis off;
 plotGMM(model.Mu(1:2,:), model.Sigma(1:2,1:2,:), [.5 .5 .5], .5);
+plot(model.Mu(1,:), model.Mu(2,:), '.','markersize',15,'color',[.5 .5 .5]);
 for n=1:nbRepros
 	plot(r(n).Data(1,:), r(n).Data(2,:), '-','linewidth',2,'color',[.8 0 0]);
 end
@@ -164,13 +166,14 @@ axis equal;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 labList = {'$x_1$','$x_2$','$\dot{x}_1$','$\dot{x}_2$'};
 figure('position',[710 10 600 700],'color',[1 1 1]); 
-for j=1:4
-	subplot(4,1,j); hold on;
+for j=1:model.nbVar
+	subplot(model.nbVar,1,j); hold on;
 	for n=1:nbRepros
 		plot(r(n).Data(j,:), '-','linewidth',1,'color',[.8 0 0]);
 	end
-	for t=1:length(qT)
-		plot([qT(t),qT(t)], [min(Data(j,:)),max(Data(j,:))], '-','color',[.5 .5 .5]);
+	for t=1:size(xDes,2)
+		errorbar(xDes(1,t), xDes(1+j,t), xDes(1+model.nbVar+j,t), 'color',[.5 .5 .5]);
+		plot(xDes(1,t), xDes(1+j,t), '.','markersize',15,'color',[.5 .5 .5]);
 	end
 	ylabel(labList{j},'fontsize',14,'interpreter','latex');
 end
