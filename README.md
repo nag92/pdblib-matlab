@@ -160,6 +160,7 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_batchLQR_online01](./demos/demo_batchLQR_online01.m) | [[1]](#ref-1) | Batch solution of linear quadratic optimal control (unconstrained linear MPC) computed in an online manner, by relying on a GMM encoding of position and velocity data |
 | [demo_batchLQR_viapoints01](./demos/demo_batchLQR_viapoints01.m) | [[8]](#ref-8) | Keypoint-based motion through MPC, with a GMM encoding of position and velocity |
 | [demo_batchLQR_viapoints02](./demos/demo_batchLQR_viapoints02.m) | [[8]](#ref-8) | Same as demo_batchLQR_viapoints01 with only position encoding |
+| [demo_batchLQR_viapoints03](./demos/demo_batchLQR_viapoints03.m) | [[8]](#ref-8) | Equivalence between cubic Bezier curve and batch LQR with double integrator |
 | [demo_DMP01](./demos/demo_DMP01.m) | [[1]](#ref-1) | Dynamic movement primitive (DMP) encoding with radial basis functions |
 | [demo_DMP02](./demos/demo_DMP02.m) | [[1]](#ref-1) | Generalization of dynamic movement primitive (DMP) with polynomial fitting using radial basis functions |
 | [demo_DMP_GMR01](./demos/demo_DMP_GMR01.m) | [[1]](#ref-1) | Emulation of a standard dynamic movement primitive (DMP) by using a GMM with diagonal covariance matrix, and retrieval computed through Gaussian mixture regression (GMR) | 
