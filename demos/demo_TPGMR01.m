@@ -1,5 +1,5 @@
 function demo_TPGMR01
-% Task-parameterized Gaussian mixture model (TP-GMM), with time-based GMR used for reproduction. 
+% Task-parameterized Gaussian mixture model (TP-GMM), with time-based GMR used for reproduction.
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
 % If some parts of the code were useful for your research of for a better understanding 
@@ -43,19 +43,31 @@ addpath('./m_fcts/');
 model.nbStates = 3; %Number of Gaussians in the GMM
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVar = 3; %Dimension of the datapoints in the dataset (here: t,x1,x2)
-nbRepros = 8; %Number of reproductions with new situations randomly generated
+model.dt = 1E-2; %Time step duration
+model.params_diagRegFact = 1E-8; %Optional regularization term
+nbData = 200; %Number of datapoints in a trajectory
+nbRepros = 4; %Number of reproductions with new situations randomly generated
 
 
-%% Load 3rd order tensor data
+%% Load data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('Load 3rd order tensor data...');
-% The MAT file contains a structure 's' with the multiple demonstrations. 's(n).Data' is a matrix data for
-% sample n (with 's(n).nbData' datapoints). 's(n).p(m).b' and 's(n).p(m).A' contain the position and
-% orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
-% in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a
-% datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
-% multiplied by the number of demonstrations (M=5).
+% s(n).Data0 is the n-th demonstration of a trajectory of s(n).nbData datapoints, with s(n).p(m).b and 's(n).p(m).A describing
+% the context in which this demonstration takes place (position and orientation of the m-th candidate coordinate system)
 load('data/Data02.mat');
+
+
+%% Observations from the perspective of each candidate coordinate system
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Data' contains the observations in the different coordinate systems: it is a 3rd order tensor of dimension D x P x N, 
+% with D=3 the dimension of a datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a 
+% trajectory (T=200) multiplied by the number of demonstrations (M=5)
+Data = zeros(model.nbVar, model.nbFrames, nbSamples*nbData);
+for n=1:nbSamples
+	for m=1:model.nbFrames
+		Data(:,m,(n-1)*nbData+1:n*nbData) = s(n).p(m).A \ (s(n).Data0 - repmat(s(n).p(m).b, 1, nbData));
+	end
+end
 
 
 %% TP-GMM learning
@@ -65,41 +77,91 @@ fprintf('Parameters estimation of TP-GMM with EM:');
 model = init_tensorGMM_timeBased(Data, model); 
 model = EM_tensorGMM(Data, model);
 
-
-%% Reproduction with GMR for the task parameters used to train the model
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('Reproductions with GMR...');
-DataIn = s(1).Data(1,:);
-for n=1:nbSamples
-	[r(n).Mu, r(n).Sigma] = productTPGMM0(model, s(n).p); %See Eq. (6)
-	r(n).Priors = model.Priors;
-	r(n).nbStates = model.nbStates;
-	r(n).Data = [DataIn; GMR(r(n), DataIn, 1, 2:model.nbVar)]; %See Eq. (17)-(19)
+%Precomputation of covariance inverses
+for m=1:model.nbFrames 
+	for i=1:model.nbStates
+		model.invSigma(:,:,m,i) = inv(model.Sigma(:,:,m,i));
+	end
 end
 
 
-%% Reproduction with GMR for new task parameters
+%% Reproductions 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('New reproductions with GMR...');
-for n=1:nbRepros
-	for m=1:model.nbFrames
-		%Random generation of new task parameters
-		id=ceil(rand(2,1)*nbSamples);
-		w=rand(2); w=w/sum(w);
-		rnew(n).p(m).b = s(id(1)).p(m).b * w(1) + s(id(2)).p(m).b * w(2);
-		rnew(n).p(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
+disp('Reproductions with GMR...');
+DataIn(1,:) = s(1).Data(1,:); %1:nbData;
+in = 1;
+out = 2:model.nbVar;
+MuGMR = zeros(length(out), nbData, model.nbFrames);
+SigmaGMR = zeros(length(out), length(out), nbData, model.nbFrames);
+		
+%Gaussian mixture regression
+for m=1:model.nbFrames 
+	%Compute activation weights
+	for i=1:model.nbStates
+		H(i,:) = model.Priors(i) * gaussPDF(DataIn, model.Mu(in,m,i), model.Sigma(in,in,m,i));
 	end
-	%Retrieval of attractor path through task-parameterized GMR
-	[rnew(n).Mu, rnew(n).Sigma] = productTPGMM0(model, rnew(n).p); %See Eq. (6)
-	rnew(n).Priors = model.Priors;
-	rnew(n).nbStates = model.nbStates;
-	rnew(n).Data = [DataIn; GMR(rnew(n), DataIn, 1, 2:model.nbVar)]; %See Eq. (17)-(19)
+	H = H ./ (repmat(sum(H),model.nbStates,1)+realmin);
+
+	for t=1:nbData
+		%Compute conditional means
+		for i=1:model.nbStates
+			MuTmp(:,i) = model.Mu(out,m,i) + model.Sigma(out,in,m,i) / model.Sigma(in,in,m,i) * (DataIn(:,t) - model.Mu(in,m,i));
+			MuGMR(:,t,m) = MuGMR(:,t,m) + H(i,t) * MuTmp(:,i);
+		end
+		%Compute conditional covariances
+		for i=1:model.nbStates
+			SigmaTmp = model.Sigma(out,out,m,i) - model.Sigma(out,in,m,i) / model.Sigma(in,in,m,i) * model.Sigma(in,out,m,i);
+			SigmaGMR(:,:,t,m) = SigmaGMR(:,:,t,m) + H(i,t) * (SigmaTmp + MuTmp(:,i)*MuTmp(:,i)');
+		end
+		SigmaGMR(:,:,t,m) = SigmaGMR(:,:,t,m) - MuGMR(:,t,m) * MuGMR(:,t,m)' + eye(length(out)) * model.params_diagRegFact; 
+	end
+end
+
+for n=1:nbSamples+nbRepros
+	MuTmp = zeros(length(out), nbData, model.nbFrames);
+	SigmaTmp = zeros(length(out), length(out), nbData, model.nbFrames);
+	
+	%Set context parameters
+	if n<=nbSamples
+		%Reproductions for the task parameters used to train the model
+		pTmp = s(n).p;
+	else
+		%Reproductions for new random task parameters
+		for m=1:model.nbFrames
+			id = ceil(rand(2,1)*nbSamples);
+			w = rand(2); 
+			w = w / sum(w);
+			pTmp(m).b = s(id(1)).p(m).b * w(1) + s(id(2)).p(m).b * w(2);
+			pTmp(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
+		end
+	end
+	r(n).p = pTmp;
+
+	%Linear transformation of the retrieved Gaussians
+	for m=1:model.nbFrames
+		MuTmp(:,:,m) = pTmp(m).A(2:end,2:end) * MuGMR(:,:,m) + repmat(pTmp(m).b(2:end),1,nbData);
+		for t=1:nbData
+			SigmaTmp(:,:,t,m) = pTmp(m).A(2:end,2:end) * SigmaGMR(:,:,t,m) * pTmp(m).A(2:end,2:end)';
+		end
+	end
+	
+	%Product of Gaussians (fusion of information from the different coordinate systems)
+	for t=1:nbData
+		SigmaP = zeros(length(out));
+		MuP = zeros(length(out), 1);
+		for m=1:model.nbFrames
+			SigmaP = SigmaP + inv(SigmaTmp(:,:,t,m));
+			MuP = MuP + SigmaTmp(:,:,t,m) \ MuTmp(:,t,m);
+		end
+		r(n).Sigma(:,:,t) = inv(SigmaP);
+		r(n).Data(:,t) = r(n).Sigma(:,:,t) * MuP;
+	end
 end
 
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,1300,500]);
+figure('position',[20,50,2300,900]);
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
@@ -125,18 +187,18 @@ subplot(1,3,2); hold on; box on; title('Reproductions with GMR');
 for n=1:nbSamples
 	%Plot frames
 	for m=1:model.nbFrames
-		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+		plot([r(n).p(m).b(2) r(n).p(m).b(2)+r(n).p(m).A(2,3)], [r(n).p(m).b(3) r(n).p(m).b(3)+r(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+		plot(r(n).p(m).b(2), r(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
 	end
 end
 for n=1:nbSamples
-	%Plot trajectories
-	plot(r(n).Data(2,1), r(n).Data(3,1),'.','markersize',12,'color',clrmap(n,:));
-	plot(r(n).Data(2,:), r(n).Data(3,:),'-','linewidth',1.5,'color',clrmap(n,:));
+	%Plot Gaussians
+	plotGMM(r(n).Data(:,1:5:end), r(n).Sigma(:,:,1:5:end), clrmap(n,:), .05);
 end
 for n=1:nbSamples
-	%Plot Gaussians
-	plotGMM(r(n).Mu(2:3,:,1), r(n).Sigma(2:3,2:3,:,1), [.5 .5 .5],.8);
+	%Plot trajectories
+	plot(r(n).Data(1,1), r(n).Data(2,1),'.','markersize',12,'color',clrmap(n,:));
+	plot(r(n).Data(1,:), r(n).Data(2,:),'-','linewidth',1.5,'color',clrmap(n,:));
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
@@ -145,23 +207,24 @@ subplot(1,3,3); hold on; box on; title('New reproductions with GMR');
 for n=1:nbRepros
 	%Plot frames
 	for m=1:model.nbFrames
-		plot([rnew(n).p(m).b(2) rnew(n).p(m).b(2)+rnew(n).p(m).A(2,3)], [rnew(n).p(m).b(3) rnew(n).p(m).b(3)+rnew(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-		plot(rnew(n).p(m).b(2), rnew(n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+		plot([r(nbSamples+n).p(m).b(2) r(nbSamples+n).p(m).b(2)+r(nbSamples+n).p(m).A(2,3)], [r(nbSamples+n).p(m).b(3) r(nbSamples+n).p(m).b(3)+r(nbSamples+n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+		plot(r(nbSamples+n).p(m).b(2), r(nbSamples+n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
 	end
 end
 for n=1:nbRepros
 	%Plot trajectories
-	plot(rnew(n).Data(2,1), rnew(n).Data(3,1),'.','markersize',12,'color',[.2 .2 .2]);
-	plot(rnew(n).Data(2,:), rnew(n).Data(3,:),'-','linewidth',1.5,'color',[.2 .2 .2]);
+	plot(r(nbSamples+n).Data(1,1), r(nbSamples+n).Data(2,1),'.','markersize',12,'color',[.2 .2 .2]);
+	plot(r(nbSamples+n).Data(1,:), r(nbSamples+n).Data(2,:),'-','linewidth',1.5,'color',[.2 .2 .2]);
 end
 for n=1:nbRepros
 	%Plot Gaussians
-	plotGMM(rnew(n).Mu(2:3,:,1), rnew(n).Sigma(2:3,2:3,:,1), [.5 .5 .5],.8);
+	plotGMM(r(nbSamples+n).Data(:,1:5:end), r(nbSamples+n).Sigma(:,:,1:5:end), [.2 .2 .2], .05);
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
+
 %print('-dpng','graphs/demo_TPGMR01.png');
-%pause;
-%close all;
+pause;
+close all;
 
 
