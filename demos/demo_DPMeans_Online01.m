@@ -1,20 +1,21 @@
 function demo_DPMeans_Online01
-%Online clustering with DP-Means algorithm
+% Online clustering with DP-Means algorithm
 % 
 % Writing code takes time. Polishing it and making it available to others takes longer! 
 % If some parts of the code were useful for your research of for a better understanding 
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @article{Bruno16AURO,
-%   author="Bruno, D. and Calinon, S. and Caldwell, D. G.",
-%   title="Learning Autonomous Behaviours for the Body of a Flexible Surgical Robot",
-%   journal="Autonomous Robots",
-%   year="2016",
-%   volume="",
-%   number="",
-%   pages="",
-% 	doi="10.1007/s10514-016-9544-6",
+% @article{Bruno17AURO,
+% 	author="Bruno, D. and Calinon, S. and Caldwell, D. G.",
+% 	title="Learning Autonomous Behaviours for the Body of a Flexible Surgical Robot",
+% 	journal="Autonomous Robots",
+% 	year="2017",
+% 	month="February",
+% 	volume="41",
+% 	number="2",
+% 	pages="333--347",
+% 	doi="10.1007/s10514-016-9544-6"
 % }
 % 
 % Written by Danilo Bruno and Sylvain Calinon, 2015
@@ -43,6 +44,7 @@ exitFlag = 0;
 runningFlag = 0;
 N = 0;
 lambda = 0.04;
+
 
 %% Online GMM parameters estimation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
