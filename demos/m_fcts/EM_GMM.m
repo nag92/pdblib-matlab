@@ -6,11 +6,16 @@ function [model, GAMMA2, LL] = EM_GMM(Data, model)
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 % 
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
@@ -43,11 +48,10 @@ if ~isfield(model,'params_maxDiffLL')
 	model.params_maxDiffLL = 1E-4; %Likelihood increase threshold to stop the algorithm
 end
 if ~isfield(model,'params_diagRegFact')
-	%model.params.diagRegFact = 1E-8; %Regularization term is optional
 	model.params_diagRegFact = 1E-4; %Regularization term is optional
 end
 if ~isfield(model,'params_updateComp')
-	model.params_updateComp = ones(3,1);
+	model.params_updateComp = ones(3,1); %pi,Mu,Sigma
 end	
 
 for nbIter=1:model.params_nbMaxSteps
