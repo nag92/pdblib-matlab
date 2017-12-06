@@ -10,12 +10,12 @@ function demo_GMR_polyFit02
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%	  publisher="Springer Berlin Heidelberg",
-%	  doi="10.1007/s11370-015-0187-9",
-%	  year="2016",
-%	  volume="9",
-%	  number="1",
-%	  pages="1--29"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 % 
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
