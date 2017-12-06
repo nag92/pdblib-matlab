@@ -182,6 +182,7 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_GMR03](./demos/demo_GMR03.m) | [[1]](#ref-1) | Chain rule with Gaussian conditioning |
 | [demo_GMR_3Dviz01](./demos/demo_GMR_3Dviz01.m) | [[1]](#ref-1) | 3D visualization of a GMM with time-based GMR used for reproduction |
 | [demo_GMR_polyFit01](./demos/demo_GMR_polyFit01.m) | [[1]](#ref-1) | Polynomial fitting with multivariate GMR |
+| [demo_GMR_polyFit02](./demos/demo_GMR_polyFit02.m) | [[1]](#ref-1) | Polynomial fitting of handwriting motion with multivariate GMR |
 | [demo_GPR01](./demos/demo_GPR01.m) | [[1]](#ref-1) | Gaussian process regression (GPR) |
 | [demo_GPR02](./demos/demo_GPR02.m) | [[1]](#ref-1) | GPR with stochastic samples from the prior and the posterior |
 | [demo_GPR03](./demos/demo_GPR03.m) | [[1]](#ref-1) | GPR with periodic kernel function |
