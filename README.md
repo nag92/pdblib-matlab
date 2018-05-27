@@ -138,6 +138,18 @@ Did you find PbDLib useful for your research? Please acknowledge the authors in 
 }
 ```
 
+#### Ref. [9] 
+**Manipulability ellipsoids tracking**<br>
+[Link to publication](http://calinon.ch/paper3066.htm)
+```
+@incollection{@article{Jaquier18RSS,
+  	author="Jaquier, N and Rozo, L. and Caldwell, D. G. and Calinon, S.",
+  	title="Geometry-aware Tracking of Manipulability Ellipsoids",
+  	year="2018",
+	booktitle = "Robotics: Science and Systems ({R:SS})",
+	address = "Pittsburgh, USA"
+}
+```
 
 ### List of examples
 
@@ -198,6 +210,9 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_iterativeLQR_augmSigma_online01](./demos/demo_iterativeLQR_augmSigma_online01.m) | [[1]](#ref-1) | Same as demo_iterativeLQR_augmSigma01 but recomputed in an online manner |
 | [demo_LQR_infHor01](./demos/demo_LQR_infHor01.m) | [[1]](#ref-1) | Continuous infinite horizon linear quadratic tracking, by relying on a GMM encoding of position and velocity data |
 | [demo_LQR_infHor02](./demos/demo_LQR_infHor02.m) | [[1]](#ref-1) | Discrete infinite horizon linear quadratic tracking, by relying on a GMM encoding of position and velocity data |
+| [demo_manipulabilityTracking_mainTask01](./demos/demo_manipulabilityControl_mainTask01.m) | [[9]](#ref-9) | Tracking of a desired manipulability ellipsoid as the main task |
+| [demo_manipulabilityTracking_mainTask02](./demos/demo_manipulabilityControl_mainTask02.m) | [[9]](#ref-9) | Tracking of a desired manipulability ellipsoid as the main task using precision matrice as controller gain |
+| [demo_manipulabilityTracking_secondaryTask01](./demos/demo_manipulabilityControl_secondTask01.m) | [[9]](#ref-9) | Tracking of a desired manipulability ellipsoid as the secondary task with position tracking as main task |
 | [demo_manipulabilityTransfer01](./demos/demo_manipulabilityTransfer01.m) | [[7]](#ref-7) | Use of robot redundancy to track desired manipulability ellipsoid |
 | [demo_manipulabilityTransfer02](./demos/demo_manipulabilityTransfer02.m) | [[7]](#ref-7) | Learning and reproduction of manipulability ellipsoid profiles |
 | [demo_manipulabilityTransfer02b](./demos/demo_manipulabilityTransfer02b.m) | [[7]](#ref-7) | Learning and reproduction of manipulability ellipsoid profiles (numerical version) |
