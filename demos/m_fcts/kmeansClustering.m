@@ -6,11 +6,16 @@ function [idList, Mu] = kmeansClustering(Data, nbStates)
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
@@ -48,7 +53,7 @@ while 1
 	%E-step %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	for i=1:nbStates
 		%Compute distances
-		distTmp(:,i) = sum((Data-repmat(Mu(:,i),1,nbData)).^2);
+		distTmp(:,i) = sum((Data-repmat(Mu(:,i),1,nbData)).^2, 1);
 	end
 	[vTmp,idList] = min(distTmp,[],2);
 	cumdist = sum(vTmp);
