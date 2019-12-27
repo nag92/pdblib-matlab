@@ -6,25 +6,20 @@ function [r,P] = reproduction_LQR_infiniteHorizon(model, r, currPos, rFactor)
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @inproceedings{Calinon14ICRA,
-%   author="Calinon, S. and Bruno, D. and Caldwell, D. G.",
-%   title="A task-parameterized probabilistic model with minimal intervention control",
-%   booktitle="Proc. {IEEE} Intl Conf. on Robotics and Automation ({ICRA})",
-%   year="2014",
-%   month="May-June",
-%   address="Hong Kong, China",
-%   pages="3339--3344"
-% }
-%
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
-% Written by Sylvain Calinon (http://calinon.ch/), Danilo Bruno (danilo.bruno@iit.it)
+% Written by Sylvain Calinon (http://calinon.ch/) and Danilo Bruno 
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
 % 
@@ -76,10 +71,10 @@ for t=1:nbData
 	
 	%Alternatively, the function below can be used for an implementation based on Eigendecomposition
 	%-> the only operator is eig([A -B/R*B'; -Q -A'])
-	P = solveAlgebraicRiccati_eig(A, B/R*B', (Q+Q')/2); %See Eq. (5.1.27) and Sec. (5.2) in doc/TechnicalReport.pdf
+	P = solveAlgebraicRiccati_eig(A, B/R*B', (Q+Q')/2);
 	
 	%Variable for feedforward term computation (optional for movements with low dynamics)
-	d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t)); %See Eq. (5.1.28) with d_dot=0 in doc/TechnicalReport.pdf
+	d = (P*B*(R\B')-A') \ (P*dtar(:,t) - P*A*tar(:,t)); 
 	
 	%Feedback term
 	L = R\B'*P; 
@@ -91,7 +86,7 @@ for t=1:nbData
 	ddx =  -L * [x-r.currTar(:,t); dx];
 	
 	%Compute acceleration (with feedback and feedforward terms)
-	%ddx =  -L * [x-r.currTar(:,t); dx] + M; 
+% 	ddx =  -L * [x-r.currTar(:,t); dx] + M; 
 	
 	%Update velocity and position
 	dx = dx + ddx * model.dt;
@@ -99,9 +94,10 @@ for t=1:nbData
 	
 	%Log data (with additional variables collected for analysis purpose)
 	r.Data(:,t) = x;
+	r.ddx(:,t) = ddx;
 	r.ddxNorm(t) = norm(ddx);
-	%r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
-	%r.FF(:,t) = M;
+	r.FB(:,t) = -L * [x-r.currTar(:,t); dx];
+	r.FF(:,t) = M;
 	%r.Kp(:,:,t) = L(:,1:nbVarOut);
 	%r.Kv(:,:,t) = L(:,nbVarOut+1:end);
 	r.kpDet(t) = det(L(:,1:nbVarOut));

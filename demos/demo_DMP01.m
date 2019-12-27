@@ -1,24 +1,19 @@
 function demo_DMP01
 % Dynamical movement primitive (DMP) with locally weighted regression (LWR). 
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19chapter,
+% 	author="Calinon, S. and Lee, D.",
+% 	title="Learning Control",
+% 	booktitle="Humanoid Robotics: a Reference",
+% 	publisher="Springer",
+% 	editor="Vadakkepat, P. and Goswami, A.", 
+% 	year="2019",
+% 	doi="10.1007/978-94-007-7194-9_68-1",
+% 	pages="1--52"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -45,7 +40,7 @@ model.nbVar = 1; %Number of variables for the radial basis functions [s] (decay 
 model.nbVarPos = 2; %Number of motion variables [x1,x2] 
 model.kP = 50; %Stiffness gain
 model.kV = (2*model.kP)^.5; %Damping gain (with ideal underdamped damping ratio)
-model.alpha = 1.0; %Decay factor
+model.alpha = 1; %Decay factor
 model.dt = 0.01; %Duration of time step
 nbData = 200; %Length of each trajectory
 nbSamples = 4; %Number of demonstrations
@@ -57,10 +52,12 @@ L = [eye(model.nbVarPos)*model.kP, eye(model.nbVarPos)*model.kV]; %Feedback term
 posId=[1:model.nbVarPos]; velId=[model.nbVarPos+1:2*model.nbVarPos]; accId=[2*model.nbVarPos+1:3*model.nbVarPos]; 
 demos=[];
 load('data/2Dletters/G.mat');
-sIn(1) = 1; %Initialization of decay term
-for t=2:nbData
-	sIn(t) = sIn(t-1) - model.alpha * sIn(t-1) * model.dt; %Update of decay term (ds/dt=-alpha s)
-end
+% sIn(1) = 1; %Initialization of decay term
+% for t=2:nbData
+% 	sIn(t) = sIn(t-1) - model.alpha * sIn(t-1) * model.dt; %Update of decay term (ds/dt=-alpha s)
+% end
+sIn = exp(-model.alpha * [0:nbData-1]*model.dt);
+
 xTar = demos{1}.pos(:,end);
 Data=[];
 DataDMP=[];
@@ -71,8 +68,7 @@ for n=1:nbSamples
 	s(n).Data = [s(n).Data; gradient(s(n).Data(end-model.nbVarPos+1:end,:))/model.dt]; %Acceleration computation
 	Data = [Data s(n).Data]; %Concatenation of the multiple demonstrations
 	%Nonlinear forcing term
-	DataDMP = [DataDMP, (s(n).Data(accId,:) - ...
-		(repmat(xTar,1,nbData)-s(n).Data(posId,:))*model.kP + s(n).Data(velId,:)*model.kV) ./ repmat(sIn,model.nbVarPos,1)];
+	DataDMP = [DataDMP, (s(n).Data(accId,:) - (repmat(xTar,1,nbData)-s(n).Data(posId,:))*model.kP + s(n).Data(velId,:)*model.kV) ./ repmat(sIn,model.nbVarPos,1)];
 end
 
 
@@ -84,7 +80,7 @@ model = init_GMM_timeBased(sIn, model);
 
 %Set Sigma as diagonal matrices (i.e., inpedendent systems synchronized by the s variable)
 for i=1:model.nbStates
-	model.Sigma(:,:,i) = 2E-3; %Setting of covariance
+	model.Sigma(:,:,i) = 2E-3; %Heuristic setting of covariance
 end
 
 %Compute activation
@@ -95,15 +91,15 @@ end
 H = H ./ repmat(sum(H),model.nbStates,1);
 H2 = repmat(H,1,nbSamples);
 
-% %Nonlinear force profile retrieval (as in RBFN)
+% %Nonlinear force profile retrieval (as in RBFN, see eq. 39 in Stulp)
 % MuF = DataDMP * pinv(H2);
 
-%Nonlinear force profile retrieval (as in LWR)
+%Nonlinear force profile retrieval - Version 2 (as in LWR, see eq. 32 in Stulp)
 X = ones(nbSamples*nbData,1);
 Y = DataDMP';
 for i=1:model.nbStates
 	W = diag(H2(i,:));
-	MuF(:,i) = (X'*W*X \ X'*W * Y)';
+	MuF(:,i) = (X' * W * X \ X' * W * Y)';
 end
 
 %Motion retrieval with DMP
@@ -139,7 +135,7 @@ for n=1:nbSamples
 end
 [~,id] = max(H);
 for i=1:model.nbStates
-	plot(sIn(id==i), repmat(MuF(1,i),1,sum(id==i)), '-','linewidth',6,'color',min(clrmap(i,:)+0.5,1));
+	plot(sIn(id==i), repmat(MuF(1,i),1,sum(id==i)), '-','linewidth',2,'color',min(clrmap(i,:)+0.5,1));
 end
 plot(sIn, currF(1,:), '-','linewidth',2,'color',[.8 0 0]);
 axis([min(sIn) max(sIn) min(DataDMP(1,:)) max(DataDMP(1,:))]);
@@ -157,6 +153,6 @@ xlabel('$s$','fontsize',16,'interpreter','latex');
 ylabel('$h$','fontsize',16,'interpreter','latex');
 view(180,-90);
 
-%print('-dpng','graphs/demo_DMP01.png');
-%pause;
-%close all;
+%print('-dpng','-r600','graphs/demo_DMP01.png');
+pause;
+close all;

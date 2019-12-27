@@ -1,24 +1,17 @@
 function demo_GMR02
 % GMR computed with precision matrices instead of covariances
 % 
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19MM,
 %   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+%   title="Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series",
+%   booktitle="Mixture Models and Applications",
+%   publisher="Springer",
+%   editor="Bouguila, N. and Fan, W.", 
+%   year="2019"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -62,6 +55,8 @@ end
 model = init_GMM_timeBased(Data, model);
 model = EM_GMM(Data, model);
 in=1; out=2:3;
+%[DataOut, SigmaOut] = GMR(model, DataIn, in, out);
+%DataOut
 DataIn = Data(in,:);
 t=1;
 for i=1:model.nbStates
@@ -73,4 +68,3 @@ for i=1:model.nbStates
 	MuOut = model.Mu(out,i) - model.P(out,out,i)\model.P(out,in,i) * (DataIn(:,t)-model.Mu(in,i))
 	SigmaOut = inv(model.P(out,out,i))
 end
-

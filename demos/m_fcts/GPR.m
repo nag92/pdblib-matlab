@@ -6,11 +6,16 @@ function [yd, SigmaOut] = GPR(q, y, qd, p, covopt)
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
@@ -69,7 +74,7 @@ if nargout>1
 	if covopt==0
 		%Evaluate Sigma as in Rasmussen, 2006
 		Mdd = pdist2(qd',qd');
-		Kdd = exp(-Mdd.^2);
+		Kdd = p(1) * exp(-p(2) * Mdd.^2);
 		S = Kdd - Kd * invK * Kd';
 		for t=1:size(yd,2)
 			SigmaOut(:,:,t) = eye(size(yd,1)) * S(t,t); 

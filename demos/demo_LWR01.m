@@ -1,24 +1,19 @@
 function demo_LWR01
-% Polynomial fitting with locally weighted regression (LWR). 
+% Locally weighted regression (LWR) with radial basis functions and local polynomial fitting
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19MM,
+% 	author="Calinon, S.",
+% 	title="Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series",
+% 	booktitle="Mixture Models and Applications",
+% 	publisher="Springer",
+% 	editor="Bouguila, N. and Fan, W.", 
+% 	year="2019",
+% 	pages="39--57",
+% 	doi="10.1007/978-3-030-23876-6_3"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -35,133 +30,86 @@ function demo_LWR01
 % You should have received a copy of the GNU General Public License
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
-addpath('./m_fcts/');
+% addpath('./m_fcts/');
 
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model.nbStates = 3; %Number of activation functions (i.e., number of states in the GMM)
-model.nbVarIn = 2; %Degree of the polynomial (based on time input)
-model.nbVarOut = 2; %Number of motion variables [x1,x2] 
+nbStates = 8; %Number of radial basis functions 
 nbData = 200; %Length of a trajectory
-nbSamples = 5; %Number of demonstrations
-tIn = linspace(0,1,nbData);
+polDeg = 3; %Degree of polynomial 
 
 
 %% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
 load('data/2Dletters/G.mat');
-Data=[];
-for n=1:nbSamples
-	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
-	Data = [Data s(n).Data]; %Concatenation of the multiple demonstrations
-end
+Data = spline(1:size(demos{1}.pos,2), demos{1}.pos, linspace(1,size(demos{1}.pos,2),nbData)); %Resampling
+t = linspace(0,1,nbData); %Time range
 
 
-%% Setting of the basis functions and reproduction
+%% LWR with radial basis functions and local polynomail fitting
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MuRBF = linspace(t(1), t(end), nbStates); %Set centroids equally spread in time
+SigmaRBF = 5E-3; %Set constant shared bandwidth
+phi = zeros(nbStates, nbData);
+for i=1:nbStates
+	tc = t - repmat(MuRBF(:,i),1,nbData); %Centered data
+	phi(i,:) = exp(-0.5 .* sum( (SigmaRBF .\ tc) .* tc, 1)); %Eq.(2)
+end
+phi = phi ./ repmat(sum(phi,1),nbStates,1); %Rescaling (Eq.(3), optional)
 
-%Set centroids equally spread in time
-model = init_GMM_timeBased(tIn, model);
-
-%Set constant shared covariance
-for i=1:model.nbStates
-	model.Sigma(:,:,i) = 1E-2; 
+%Locally weighted regression 
+X = zeros(nbData,polDeg+1);
+for d=0:polDeg 
+	X(:,d+1) = t'.^d; %Input
+end
+Y = Data'; %Output
+A = zeros(polDeg+1, size(Y,2), nbStates);
+for i=1:nbStates
+	W = diag(phi(i,:)); %Eq.(4)
+	A(:,:,i) = X' * W * X \ X' * W * Y; %Weighted least squares estimate (Eq.(1))
 end
 
-%Compute activation weights
-H = zeros(model.nbStates,nbData);
-for i=1:model.nbStates
-	H(i,:) = gaussPDF(tIn, model.Mu(:,i), model.Sigma(:,:,i));
+%Reconstruction of signal
+Yr = zeros(size(Y));
+for i=1:nbStates
+	W = diag(phi(i,:)); %Eq.(4)
+	Yr = Yr + W * X * A(:,:,i); %Eq.(5)
 end
-H = H ./ repmat(sum(H,1),model.nbStates,1);
-H2 = repmat(H,1,nbSamples);
-
-%Nonlinear profile retrieval - LWR version 1
-X = [];
-Xr = [];
-for d=0:model.nbVarIn
-	X = [X, repmat(tIn.^d,1,nbSamples)'];
-	Xr = [Xr, tIn.^d'];
-end
-Y = Data';
-for i=1:model.nbStates
-	W = diag(H2(i,:));
-	MuP(:,:,i) = X'*W*X \ X'*W * Y; %Weighted least squares
-end
-Yr = zeros(nbData,model.nbVarOut);
-for t=1:nbData
-	for i=1:model.nbStates
-		Yr(t,:) = Yr(t,:) + H(i,t) * Xr(t,:) * MuP(:,:,i);
-	end
-end
-
-% %Nonlinear profile retrieval - LWR version 2
-% for i=1:model.nbStates
-% 	st(i).X = [];
-% 	st(i).Xr = [];
-% 	for d=0:model.polDeg 
-% 		st(i).X = [st(i).X, repmat((tIn-model.Mu(1,i)).^d,1,nbSamples)'];
-% 		st(i).Xr = [st(i).Xr, (tIn-model.Mu(1,i)).^d'];
-% 	end
-% end
-% Y = DataDMP';
-% for i=1:model.nbStates
-% 	W = diag(H2(i,:));
-% 	MuP(:,:,i) = st(i).X' * W * st(i).X \ st(i).X' * W * Y; %Weighted least squares
-% end
-% Yr = zeros(nbData,model.nbVarPos);
-% for t=1:nbData
-% 	for i=1:model.nbStates
-% 		Yr(t,:) = Yr(t,:) + H(i,t) * st(i).Xr(t,:) * MuP(:,:,i);
-% 	end
-% end
-
 r(1).Data = Yr';
 
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('PaperPosition',[0 0 16 4],'position',[10,10,1300,500],'color',[1 1 1]); 
-xx = round(linspace(1,64,model.nbStates));
-clrmap = colormap('jet')*0.5;
-clrmap = min(clrmap(xx,:),.9);
+figure('PaperPosition',[0 0 16 4],'position',[10,10,2300,600],'color',[1 1 1]); 
+clrmap = lines(nbStates);
 
 %Spatial plot
-axes('Position',[0 0 .2 1]); hold on; axis off;
-plot(Data(1,:),Data(2,:),'.','markersize',8,'color',[.7 .7 .7]);
-plot(r(1).Data(1,:),r(1).Data(2,:),'.','markersize',16,'linewidth',3,'color',[.8 0 0]);
-axis square; axis equal;  
+subplot(2,4,[1,5]); hold on; axis off;
+plot(Data(1,:), Data(2,:), '-','linewidth',3,'color',[.7 .7 .7]);
+plot(r(1).Data(1,:), r(1).Data(2,:), '-','linewidth',3,'color',[0 0 0]);
+axis equal; axis tight;
 
 %Timeline plot 
-axes('Position',[.25 .58 .7 .4]); hold on; 
-for n=1:nbSamples
-	plot(tIn, Data(1,(n-1)*nbData+1:n*nbData), '-','linewidth',1,'color',[.7 .7 .7]);
+subplot(2,4,2:4); hold on; 
+[~,id] = max(phi,[],1);
+for i=1:nbStates
+	plot(t(id==i), X(id==i,:) * A(:,1,i), '-','linewidth',8,'color',clrmap(i,:)); %Local polynomials
 end
-[~,id] = max(H,[],1);
-for i=1:model.nbStates
-	Xr = [];
-	for d=0:model.nbVarIn 
-		Xr = [Xr, tIn(id==i).^d']; %Version 1
-		%Xr = [Xr, (tIn(id==i)-model.Mu(1,i)).^d']; %Version 2
-	end
-	plot(tIn(id==i), Xr*MuP(:,1,i), '.','linewidth',6,'markersize',26,'color',min(clrmap(i,:)+0.5,1));
-end
-plot(tIn, Yr(:,1), '-','linewidth',2,'color',[.8 0 0]);
-axis([min(tIn) max(tIn) min(Data(1,:))-1 max(Data(1,:))+1]);
-ylabel('$y_{t,1}$','fontsize',16,'interpreter','latex');
+plot(t, Data(1,:), '-','linewidth',3,'color',[.7 .7 .7]);
+plot(t, r(1).Data(1,:), '-','linewidth',3,'color',[0 0 0]);
+axis([t(1), t(end), min([Data(1,:) r(1).Data(1,:)])-1, max([Data(1,:) r(1).Data(1,:)])+1]);
+xlabel('t','fontsize',16); ylabel('x_1','fontsize',16);
 
-%Timeline plot of the basis functions activation
-axes('Position',[.25 .12 .7 .4]); hold on; 
-for i=1:model.nbStates
-	patch([tIn(1), tIn, tIn(end)], [0, H(i,:), 0], min(clrmap(i,:)+0.5,1), 'EdgeColor', min(clrmap(i,:)+0.2,1), ...
-		'linewidth',2,'facealpha', .4, 'edgealpha', .4);
+%RBFs
+subplot(2,4,6:8); hold on; 
+for i=1:nbStates
+	patch([t(1), t, t(end)], [0, phi(i,:), 0], clrmap(i,:), 'EdgeColor', clrmap(i,:), 'linewidth',2,'facealpha', .3, 'edgealpha', .3);
 end
-axis([min(tIn) max(tIn) 0 1.1]);
-xlabel('$t$','fontsize',16,'interpreter','latex'); 
-ylabel('$\phi(x_t)$','fontsize',16,'interpreter','latex');
+axis([t(1), t(end), 0, max(phi(:))]);
+xlabel('t','fontsize',16); ylabel('\phi_k','fontsize',16);
 
-%print('-dpng','-r300','graphs/demo_LWR01.png');
-%pause;
-%close all;
+%print('-dpng','graphs/demo_LWR01.png');
+pause;
+close all;

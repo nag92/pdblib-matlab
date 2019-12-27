@@ -1,24 +1,20 @@
 function demo_grabData01
-% Collect movement data from mouse cursor.
+% Collect movement data from mouse cursor
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% 	author="Calinon, S.",
+% 	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+% 	journal="Intelligent Service Robotics",
+% 	publisher="Springer Berlin Heidelberg",
+% 	year="2016",
+% 	volume="9",
+% 	number="1",
+% 	pages="1--29",
+% 	doi="10.1007/s11370-015-0187-9",
 % }
-% 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+%
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -43,11 +39,11 @@ addpath('./m_fcts/');
 model.nbVar = 2; %Number of variables [x1,x2]
 model.dt = 0.01; %Duration of time step
 nbData = 200; %Length of each trajectory
-
+nbSamples = 5;
 
 %% Collect data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-disp('Left mouse button to collect data, right mouse button to quit');
+disp('Ude left mouse button to draw trajectories, use right mouse button to quit');
 Data = grabDataFromCursor(nbData);
 nbSamples = size(Data,2) / nbData;
 for n=1:nbSamples
@@ -55,7 +51,7 @@ for n=1:nbSamples
 	demos{n}.vel = gradient(demos{n}.pos) / model.dt;
 	demos{n}.acc = gradient(demos{n}.vel) / model.dt;
 end
-%save('data/2Dletters/tmp.mat','demos');
+% save('data/2Dletters/tmp.mat','demos');
 
 Data=[];
 for n=1:nbSamples
@@ -71,5 +67,5 @@ plot(Data(1,:),Data(2,:),'.','markersize',8,'color',[.7 .7 .7]);
 axis equal; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 
 %print('-dpng','graphs/demo_grabData01.png');
-%pause;
-%close all;
+pause;
+close all;

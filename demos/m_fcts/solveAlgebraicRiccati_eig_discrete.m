@@ -11,12 +11,12 @@ function X = solveAlgebraicRiccati_eig_discrete(A, G, Q)
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2016 Idiap Research Institute, http://idiap.ch/
@@ -40,7 +40,8 @@ n = size(A,1);
 
 %Symplectic matrix (see https://en.wikipedia.org/wiki/Algebraic_Riccati_equation)
 %Z = [A+B*(R\B')/A'*Q, -B*(R\B')/A'; -A'\Q, A'^-1]; 
-Z = [A+G/A'*Q, -G/A'; -A'\Q, A'^-1]; 
+Z = [A+G/A'*Q, -G/A'; -A'\Q, inv(A')]; 
+
 
 %Since Z is symplectic, if it does not have any eigenvalues on the unit circle, 
 %then exactly half of its eigenvalues are inside the unit circle. 
@@ -49,7 +50,7 @@ U = [];
 for j=1:2*n
 	if norm(D(j,j)) < 1 %inside unit circle
 		U = [U V(:,j)];
-	end
+    end
 end
-X = U(n+1:end,1:n) / U(1:n,1:n); 
-X = real(X);
+
+X = real(U(n+1:end,:) / U(1:n,:));

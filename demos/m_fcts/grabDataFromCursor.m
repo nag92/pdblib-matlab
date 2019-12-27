@@ -1,6 +1,4 @@
-function Data = grabDataFromCursor(nbData)
-% Collect movement data from mouse cursor
-% Sylvain Calinon, 2015
+function [Data, nbSamples] = grabDataFromCursor(nbData)
 
 nbSamples = 0;
 exitFlag = 0;
@@ -38,8 +36,8 @@ while exitFlag==0
 			%motion = interp1(1:nbDataTmp, motion', xx)';
 			motion_smooth = motion;
 			for n=1:1
-				motion_smooth(1,:) = smooth(motion_smooth(1,:),1);
-				motion_smooth(2,:) = smooth(motion_smooth(2,:),1);
+				motion_smooth(1,:) = smooth(motion_smooth(1,:),10);
+				motion_smooth(2,:) = smooth(motion_smooth(2,:),10);
 			end
 			plot(motion_smooth(1,:),motion_smooth(2,:), 'r', 'lineWidth', 1);
 			nbSamples = nbSamples + 1;

@@ -16,11 +16,16 @@ function model = init_GMM_kmeans(Data, model)
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
@@ -40,9 +45,11 @@ function model = init_GMM_kmeans(Data, model)
 % You should have received a copy of the GNU General Public License
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
-
-[nbVar, nbData] = size(Data);
-diagRegularizationFactor = 1E-2; %Optional regularization term
+%Parameters 
+nbVar = size(Data,1);
+if ~isfield(model,'params_diagRegFact')
+	model.params_diagRegFact = 1E-4; %Optional regularization term to avoid numerical instability
+end
 
 [Data_id, model.Mu] = kmeansClustering(Data, model.nbStates);
 
@@ -51,6 +58,6 @@ for i=1:model.nbStates
 	model.Priors(i) = length(idtmp);
 	model.Sigma(:,:,i) = cov([Data(:,idtmp) Data(:,idtmp)]');
 	%Optional regularization term to avoid numerical instability
-	model.Sigma(:,:,i) = model.Sigma(:,:,i) + eye(nbVar)*diagRegularizationFactor;
+	model.Sigma(:,:,i) = model.Sigma(:,:,i) + eye(nbVar) * model.params_diagRegFact;
 end
 model.Priors = model.Priors / sum(model.Priors);

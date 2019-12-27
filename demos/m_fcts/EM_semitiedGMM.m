@@ -15,11 +15,11 @@ function [model, LL] = EM_semitiedGMM(Data, model)
 %   volume="1",
 %   number="1",
 %   pages="235--242",
-% 	doi="10.1109/LRA.2016.2517825"
+%   doi="10.1109/LRA.2016.2517825"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
-% Written by Ajay Tanwani (http://www.ajaytanwani.com) and Sylvain Calinon (http://calinon.ch)
+% Written by Ajay Tanwani and Sylvain Calinon
 %
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
 %
@@ -51,14 +51,11 @@ if ~isfield(model,'params_diagRegFact')
 	model.params_diagRegFact = 1E-6; %Regularization term is optional
 end
 if ~isfield(model,'params_Bsf')
-	model.params_Bsf = 5E-2;
+	model.params_Bsf = 1E-1;
 end
 if ~isfield(model,'params_nbVariationSteps')
 	model.params_nbVariationSteps = 50;
 end
-% if ~isfield(model,'params_alpha')
-%  	model.params_alpha = 1.0;
-% end
 
 if ~isfield(model,'B')
 	model.B = eye(model.nbVar) * model.params_Bsf;
@@ -82,11 +79,11 @@ for nbIter=1:model.params_nbMaxSteps
 		model.Priors(i) = sum(GAMMA(i,:)) / nbData;
 		%Update Mu
 		model.Mu(:,i) = Data * GAMMA2(i,:)';
-		%Update sample covariance
+		%Compute sample covariance
 		DataTmp = Data - repmat(model.Mu(:,i),1,nbData);
 		model.S(:,:,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(model.nbVar) * model.params_diagRegFact;
 	end
-	%Update A matrix
+	%Update SigmaDiag and compute B
 	for lp=1:model.params_nbVariationSteps
 		for i=1:model.nbStates
 			model.SigmaDiag(:,:,i) = diag(diag(model.B * model.S(:,:,i) * model.B')); %Eq.(9)
@@ -100,11 +97,10 @@ for nbIter=1:model.params_nbMaxSteps
 			model.B(k,:) = C(k,:) * pinv(G) * (sqrt(sum(sum(GAMMA,2) / (C(k,:) * pinv(G) * C(k,:)')))); %Eq.(5)
 		end
 	end
-	%Update Sigma
+	%Update H and compute Sigma
 	model.H = pinv(model.B) + eye(model.nbVar) * model.params_diagRegFact;
 	for i=1:model.nbStates
 		model.Sigma(:,:,i) = model.H * model.SigmaDiag(:,:,i) * model.H'; %Eq.(3)
-		%model.Sigma(:,:,i) = model.params_alpha*(model.H*model.SigmaDiag(:,:,i)*model.H') + (1 - model.params_alpha)*model.S(:,:,i); % Eq. (10)
 	end
 
 	%Compute average log-likelihood

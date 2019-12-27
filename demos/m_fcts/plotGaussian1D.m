@@ -1,4 +1,4 @@
-function plotGaussian1D(Mu, Sigma, boundbox, color, valAlpha, orient_option)
+function [P,h] = plotGaussian1D(Mu, Sigma, boundbox, color, valAlpha, orient_option)
 % Plot Gaussian profile horizontally or vertically
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
@@ -36,7 +36,7 @@ function plotGaussian1D(Mu, Sigma, boundbox, color, valAlpha, orient_option)
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 if nargin<3
-	boundbox = [-1,1,0,1];
+	boundbox = [-1,0,2,1];
 end
 if nargin<4
 	color = [0,0,0];
@@ -48,25 +48,25 @@ if nargin<6
 	orient_option = 'h';
 end
 
-nbData = 100; 
+nbData = 400; 
 darkcolor = color * 0.5;
 
 if orient_option=='h'
 	Xin(1,:) = linspace(boundbox(1), boundbox(1)+boundbox(3), nbData);
-	X = [Xin; gaussPDF(Xin, Mu(1), Sigma(1,1))'];
+	X = [Xin; gaussPDF(Xin, Mu(1), Sigma(1,1))];
 	Xout = sum(reshape(X(2,:),nbData,1),2)';
 	Xout = Xout / max(Xout);
 	P = [Xin; boundbox(2)+boundbox(4)*Xout]; 
-	patch([P(1,1) P(1,:) P(1,end)], [boundbox(2) P(2,:) boundbox(2)], ...
+	h(1) = patch([P(1,1) P(1,:) P(1,end)], [boundbox(2) P(2,:) boundbox(2)], ...
 		color, 'lineWidth', 1, 'EdgeColor', darkcolor, 'facealpha', valAlpha,'edgealpha', valAlpha);
-	plot([Mu(1) Mu(1)], [boundbox(2) max(P(2,:))], '-','linewidth',1,'color',min(darkcolor+0.3,1));
+	h(2) = plot([Mu(1) Mu(1)], [boundbox(2) max(P(2,:))], '-','linewidth',1,'color',min(darkcolor+0.3,1));
 else
 	Xin(1,:) = linspace(boundbox(2), boundbox(2)+boundbox(4), nbData);
-	X = [gaussPDF(Xin, Mu(1), Sigma(1,1))'; Xin];
+	X = [gaussPDF(Xin, Mu(1), Sigma(1,1)); Xin];
 	Xout = sum(reshape(X(1,:),nbData,1),2)';
 	Xout = Xout / max(Xout);
 	P = [boundbox(1)+boundbox(3)*Xout; Xin]; 
-	patch([boundbox(1) P(1,:) boundbox(1)], [P(2,1) P(2,:) P(2,end)], ...
+	h(1) = patch([boundbox(1) P(1,:) boundbox(1)], [P(2,1) P(2,:) P(2,end)], ...
 		color, 'lineWidth', 1, 'EdgeColor', darkcolor, 'facealpha', valAlpha,'edgealpha', valAlpha);
-	plot([boundbox(1) max(P(1,:))], [Mu(1) Mu(1)], '-','linewidth',1,'color',min(darkcolor+0.3,1));
+	h(2) = plot([boundbox(1) max(P(1,:))], [Mu(1) Mu(1)], '-','linewidth',1,'color',min(darkcolor+0.3,1));
 end

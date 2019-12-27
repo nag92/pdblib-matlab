@@ -7,24 +7,19 @@ function demo_DMP_GMR_LQR01
 % nonlinear force profile. The gains of the spring-damper system are further refined by LQR 
 % based on the retrieved covariance information.  
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19chapter,
+% 	author="Calinon, S. and Lee, D.",
+% 	title="Learning Control",
+% 	booktitle="Humanoid Robotics: a Reference",
+% 	publisher="Springer",
+% 	editor="Vadakkepat, P. and Goswami, A.", 
+% 	year="2019",
+% 	doi="10.1007/978-94-007-7194-9_68-1",
+% 	pages="1--52"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/

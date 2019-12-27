@@ -1,11 +1,7 @@
 function demo_TPGMM01
 % Task-parameterized Gaussian mixture model (TP-GMM) encoding.
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
@@ -18,7 +14,7 @@ function demo_TPGMM01
 %		pages="1--29"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -53,17 +49,18 @@ disp('Load 3rd order tensor data...');
 % orientation of the m-th candidate coordinate system for this demonstration. 'Data' contains the observations
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=2 the dimension of a
 % datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
-% multiplied by the number of demonstrations (M=5).
+% multiplied by the number of demonstrations (M=4).
 load('data/Data01.mat');
 
-% %Regenerate data
-% Data = zeros(model.nbVar, model.nbFrames, nbSamples*nbData);
-% for n=1:nbSamples
-% 	s(n).Data0 = s(n).Data0(2:end,:); %Remove time
-% 	for m=1:model.nbFrames
-% 		Data(:,m,(n-1)*nbData+1:n*nbData) = s(n).p(m).A \ (s(n).Data0 - repmat(s(n).p(m).b, 1, nbData));
-% 	end
-% end
+%Regenerate data
+nbData = size(s(1).Data0,2);
+Data = zeros(model.nbVar, model.nbFrames, nbSamples*nbData);
+for n=1:nbSamples
+	s(n).Data0 = s(n).Data0(2:end,:); %Remove time
+	for m=1:model.nbFrames
+		Data(:,m,(n-1)*nbData+1:n*nbData) = s(n).p(m).A \ (s(n).Data0 - repmat(s(n).p(m).b, 1, nbData));
+	end
+end
 
 
 %% TP-GMM learning
@@ -96,7 +93,7 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,1300,500]);
+figure('position',[20,50,2200,800]);
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
@@ -131,6 +128,7 @@ for m=1:model.nbFrames
 	plotGMM(squeeze(model.Mu(:,m,:)), squeeze(model.Sigma(:,:,m,:)), [.5 .5 .5],.8);
 	axis square; set(gca,'xtick',[0],'ytick',[0]);
 end
+%print('-dpng','graphs/demo_TPGMM01.png');
 
 
 % %% Saving of data for C++ version of pbdlib
@@ -155,9 +153,5 @@ end
 % 	save(['data/Params' num2str(m) '.txt'], 'Ab', '-ascii');
 % end
 
-
-%print('-dpng','graphs/demo_TPGMM01.png');
-%pause;
-%close all;
-
-
+pause;
+close all;

@@ -1,15 +1,11 @@
 function demo_GMM02
 % GMM with different covariance structures.
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
+% 	author="Calinon, S.",
+% 	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+% 	journal="Intelligent Service Robotics",
 %		publisher="Springer Berlin Heidelberg",
 %		doi="10.1007/s11370-015-0187-9",
 %		year="2016",
@@ -17,8 +13,8 @@ function demo_GMM02
 %		number="1",
 %		pages="1--29"
 % }
-% 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+%
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -51,6 +47,12 @@ nbMaxSteps = 200; %Maximum number of iterations allowed
 maxDiffLL = 1E-5; %Likelihood increase threshold to stop the algorithm
 diagRegularizationFactor = 1E-2; %Regularization term is optional
 
+
+% %% Load  data
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% load('data/faithful.mat');
+% Data = faithful';
+% nbData = size(Data,2); 
 
 %% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -196,9 +198,9 @@ plotGMM(m4.Mu, m4.Sigma, [.8 0 0], .5);
 plot(Data(1,:),Data(2,:),'.','markersize',12,'color',[.5 .5 .5]);
 axis([min(Data(1,:))-1E0 max(Data(1,:))+1E0 min(Data(2,:))-1E0 max(Data(2,:))+1E0]); axis equal;
 
-%print('-dpng','graphs/demo_GMM02.png');
-%pause;
-%close all;
+%print('-dpng','-r300','graphs/demo_GMM02.png');
+pause;
+close all;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

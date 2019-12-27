@@ -1,13 +1,8 @@
 function demo_stdPGMM01
-% Parametric Gaussian mixture model (PGMM) used for task adaptation, with DS-GMR employed 
-% to retrieve continuous movements. The approach is inspired by Wilson and Bobick (1999), 
-% with an implementation applied to the special case of Gaussian mixture models (GMM).
+% Parametric Gaussian mixture model (PGMM) used for task adaptation, with DS-GMR employed  to retrieve continuous movements. 
+% The approach is inspired by Wilson and Bobick (1999), with an implementation applied to the special case of Gaussian mixture models (GMM).
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
@@ -19,7 +14,6 @@ function demo_stdPGMM01
 %		number="1",
 %		pages="1--29"
 % }
-%
 % @article{Wilson99,
 %   author="Wilson, A. D. and Bobick, A. F.",
 %   title="Parametric Hidden {M}arkov Models for Gesture Recognition",
@@ -96,10 +90,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fprintf('Parameters estimation of PGMM with EM:');
 for n=1:nbSamples	
-	%Task parameters rearranged as a vector (position and orientation), see Eq. (48)
+	%Task parameters rearranged as a vector (position and orientation)
 	s(n).OmegaMu = [s(n).p(1).b(2:3); s(n).p(1).A(2:3,3); s(n).p(2).b(2:3); s(n).p(2).A(2:3,3); 1];
 	
-% 	%Task parameters rearranged as a vector (position only), see Eq. (48)
+% 	%Task parameters rearranged as a vector (position only)
 % 	s(n).OmegaMu = [s(n).p(1).b(2:3); s(n).p(2).b(2:3); 1];
 end
 
@@ -130,10 +124,10 @@ L = [eye(nbVarOut)*model.kP, eye(nbVarOut)*model.kV];
 for n=1:nbSamples
 	%Computation of the resulting Gaussians (for display purpose)
 	for i=1:model.nbStates
-		model.Mu(:,i) = model.ZMu(:,:,i) * s(n).OmegaMu; %Temporary Mu variable, see Eq. (48)
+		model.Mu(:,i) = model.ZMu(:,:,i) * s(n).OmegaMu; %Temporary Mu variable
 	end
 	r(n).Mu = model.Mu;
-	%Retrieval of attractor path through GMR, see Eq. (17)-(19)
+	%Retrieval of attractor path through GMR
 	currTar = GMR(model, DataIn, 1, [2:model.nbVar]); 
 	%Motion retrieval with spring-damper system
 	x = s(n).p(1).b(2:model.nbVar);
@@ -160,25 +154,25 @@ for n=1:nbRepros
 		rnew(n).p(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
 	end
 	
-	%Task parameters re-arranged as a vector (position and orientation), see Eq. (48) 
+	%Task parameters re-arranged as a vector (position and orientation)
 	rnew(n).OmegaMu = [rnew(n).p(1).b(2:3); rnew(n).p(1).A(2:3,3); rnew(n).p(2).b(2:3); rnew(n).p(2).A(2:3,3); 1];
 	
-% 	%Task parameters re-arranged as a vector (position only), see Eq. (48) 
+% 	%Task parameters re-arranged as a vector (position only)
 % 	rnew(n).OmegaMu = [rnew(n).p(1).b(2:3); rnew(n).p(2).b(2:3); 1];
 	
 	%Computation of the resulting Gaussians (for display purpose)
 	for i=1:model.nbStates
-		model.Mu(:,i) = model.ZMu(:,:,i) * rnew(n).OmegaMu; %Temporary Mu variable, see Eq. (48)
+		model.Mu(:,i) = model.ZMu(:,:,i) * rnew(n).OmegaMu; %Temporary Mu variable
 	end
 	rnew(n).Mu = model.Mu;
-	%Retrieval of attractor path through GMR, see Eq. (17)-(19)
+	%Retrieval of attractor path through GMR
 	currTar = GMR(model, DataIn, 1, [2:model.nbVar]); 
 	%Motion retrieval with spring-damper system
 	x = rnew(n).p(1).b(2:model.nbVar);
 	dx = zeros(nbVarOut,1);
 	for t=1:nbD
 		%Compute acceleration, velocity and position
-		ddx =  -L * [x-currTar(:,t); dx]; %See Eq. (4.0.1) in doc/TechnicalReport.pdf
+		ddx =  -L * [x-currTar(:,t); dx]; 
 		dx = dx + ddx * model.dt;
 		x = x + dx * model.dt;
 		rnew(n).Data(:,t) = x;
@@ -188,7 +182,7 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,1300,500]);
+figure('position',[10,10,2300,800]);
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
@@ -250,7 +244,5 @@ end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %print('-dpng','graphs/demo_stdPGMM01.png');
-%pause;
-%close all;
-
-
+pause;
+close all;

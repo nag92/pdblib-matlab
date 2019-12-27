@@ -1,24 +1,19 @@
 function demo_DMP02
 % Generalization of dynamical movement primitive (DMP) with polynomial fitting using locally weighted regression (LWR). 
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19chapter,
+% 	author="Calinon, S. and Lee, D.",
+% 	title="Learning Control",
+% 	booktitle="Humanoid Robotics: a Reference",
+% 	publisher="Springer",
+% 	editor="Vadakkepat, P. and Goswami, A.", 
+% 	year="2019",
+% 	doi="10.1007/978-94-007-7194-9_68-1",
+% 	pages="1--52"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -47,7 +42,7 @@ model.kP = 50; %Stiffness gain
 model.kV = (2*model.kP)^.5; %Damping gain (with ideal underdamped damping ratio)
 model.alpha = 1.0; %Decay factor
 model.dt = 0.01; %Duration of time step
-model.polDeg = 4; %Degree of polynomial fit
+model.polDeg = 3; %Degree of polynomial fit
 nbData = 200; %Length of each trajectory
 nbSamples = 5; %Number of demonstrations
 L = [eye(model.nbVarPos)*model.kP, eye(model.nbVarPos)*model.kV]; %Feedback term
@@ -85,7 +80,7 @@ model = init_GMM_timeBased(sIn, model);
 
 %Set Sigma 
 for i=1:model.nbStates
-	model.Sigma(:,:,i) = 1E-2; %Setting of covariance
+	model.Sigma(:,:,i) = 1E-2; %Heuristic setting of covariance
 end
 
 %Compute activation
@@ -96,24 +91,99 @@ end
 H = H ./ repmat(sum(H,1),model.nbStates,1);
 H2 = repmat(H,1,nbSamples);
 
-%Nonlinear force profile retrieval (WLS version with polynomial)
-X = [];
-Xr = [];
-for d=0:model.polDeg 
-	X = [X, repmat(sIn.^d,1,nbSamples)'];
-	Xr = [Xr, sIn.^d'];
-end
+% %Nonlinear force profile retrieval (as in standard DMP)
+% MuF = X * pinv(H2);
+% currF = MuF * H; 
+
+
+% %Nonlinear force profile retrieval for polynomial of degree 0
+% X = ones(nbSamples*nbData,1); 
+% Xr = ones(nbData,1); 
+% Y = DataDMP';
+% for i=1:model.nbStates
+% 	W = diag(H2(i,:));
+% 	MuF(:,i) = X'*W*X \ X'*W * Y; %Weighted least squares
+% end
+% Yr = (MuF * H)'; 
+
+
+%Nonlinear force profile retrieval (as in Ijspeert'13, but without (g-y0) modulation)
+X = repmat(sIn',nbSamples,1);
 Y = DataDMP';
 for i=1:model.nbStates
 	W = diag(H2(i,:));
-	MuF(:,:,i) = X'*W*X \ X'*W * Y; %Weighted least squares
+	MuF(:,i) = X'*W*X \ X'*W * Y; %Weighted least squares
 end
+Xr = sIn';
 Yr = zeros(nbData,model.nbVarPos);
-for t=1:nbData
-	for i=1:model.nbStates
-		Yr(t,:) = Yr(t,:) + H(i,t) * Xr(t,:) * MuF(:,:,i);
-	end
+for i=1:model.nbStates
+	Yr = Yr + diag(H(i,:)) * Xr * MuF(:,i)';
 end
+% for t=1:nbData
+% 	for i=1:model.nbStates
+% 		Yr(t,:) = Yr(t,:) + H(i,t) * Xr(t,:) * MuF(:,i)';
+% 	end
+% end
+
+
+% %Nonlinear force profile retrieval (as in Ijspeert'13, including (g-y0) modulation)
+% G = xTar - Data(1:model.nbVarPos,1);
+% Yr = zeros(nbData,model.nbVarPos);
+% for j=1:model.nbVarPos
+% 	X = repmat(sIn',nbSamples,1) .* repmat(G(j),1,nbData*nbSamples)';
+% 	Y = DataDMP(j,:)';
+% 	for i=1:model.nbStates
+% 		W = diag(H2(i,:));
+% 		MuF(j,i) = X'*W*X \ X'*W * Y; %Weighted least squares
+% 	end
+% 	Xr = sIn' .* repmat(G(j),1,nbData)';
+% 	for i=1:model.nbStates
+% 		Yr(:,j) = Yr(:,j) + diag(H(i,:)) * Xr * MuF(j,i)';
+% 	end
+% end
+
+
+% %Nonlinear force profile retrieval - WLS version 1 (with polynomial)
+% X = [];
+% Xr = [];
+% for d=0:model.polDeg 
+% 	X = [X, repmat(sIn.^d,1,nbSamples)'];
+% 	Xr = [Xr, sIn.^d'];
+% end
+% Y = DataDMP';
+% for i=1:model.nbStates
+% 	W = diag(H2(i,:));
+% 	MuF(:,:,i) = X'*W*X \ X'*W * Y; %Weighted least squares
+% end
+% Yr = zeros(nbData,model.nbVarPos);
+% for t=1:nbData
+% 	for i=1:model.nbStates
+% 		Yr(t,:) = Yr(t,:) + H(i,t) * Xr(t,:) * MuF(:,:,i);
+% 	end
+% end
+
+
+% %Nonlinear force profile retrieval - WLS version 2 (with polynomial)
+% for i=1:model.nbStates
+% 	st(i).X = [];
+% 	st(i).Xr = [];
+% 	for d=0:model.polDeg 
+% 		st(i).X = [st(i).X, repmat((sIn-model.Mu(1,i)).^d,1,nbSamples)'];
+% 		st(i).Xr = [st(i).Xr, (sIn-model.Mu(1,i)).^d'];
+% 	end
+% end
+% Y = DataDMP';
+% for i=1:model.nbStates
+% 	W = diag(H2(i,:));
+% 	MuF(:,:,i) = st(i).X' * W * st(i).X \ st(i).X' * W * Y; %Weighted least squares
+% end
+% Yr = zeros(nbData,model.nbVarPos);
+% for t=1:nbData
+% 	for i=1:model.nbStates
+% 		Yr(t,:) = Yr(t,:) + H(i,t) * st(i).Xr(t,:) * MuF(:,:,i);
+% 	end
+% end
+
 
 %Motion retrieval with DMP
 x = Data(1:model.nbVarPos,1);
@@ -147,11 +217,13 @@ for n=1:nbSamples
 end
 [~,id] = max(H,[],1);
 for i=1:model.nbStates
-	Xr = [];
-	for d=0:model.polDeg 
-		Xr = [Xr, sIn(id==i).^d']; 
-	end
-	plot(sIn(id==i), Xr*MuF(:,1,i), '-','linewidth',6,'color',min(clrmap(i,:)+0.5,1));
+	plot(sIn(id==i), Xr(id==i)*MuF(1,i), '-','linewidth',6,'color',min(clrmap(i,:)+0.5,1));
+% 	Xr = [];
+% 	for d=0:model.polDeg 
+% 		Xr = [Xr, sIn(id==i).^d']; %Version 1
+% 		%Xr = [Xr, (sIn(id==i)-model.Mu(1,i)).^d']; %Version 2
+% 	end
+% 	plot(sIn(id==i), Xr*MuF(:,1,i), '-','linewidth',6,'color',min(clrmap(i,:)+0.5,1));
 end
 plot(sIn, Yr(:,1), '-','linewidth',2,'color',[.8 0 0]);
 axis([min(sIn) max(sIn) min(DataDMP(1,:)) max(DataDMP(1,:))]);
@@ -169,6 +241,6 @@ xlabel('$s$','fontsize',16,'interpreter','latex');
 ylabel('$h$','fontsize',16,'interpreter','latex');
 view(180,-90);
 
-%print('-dpng','graphs/demo_DMP02.png');
-%pause;
-%close all;
+%print('-dpng','-r100','graphs/demo_DMP02.png');
+pause;
+close all;

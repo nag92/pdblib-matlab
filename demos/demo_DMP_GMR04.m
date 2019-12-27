@@ -6,24 +6,19 @@ function demo_DMP_GMR04
 % regression (GMR) is used to regenerate the path of a spring-damper system, resulting in a 
 % nonlinear force profile. 
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19chapter,
+% 	author="Calinon, S. and Lee, D.",
+% 	title="Learning Control",
+% 	booktitle="Humanoid Robotics: a Reference",
+% 	publisher="Springer",
+% 	editor="Vadakkepat, P. and Goswami, A.", 
+% 	year="2019",
+% 	doi="10.1007/978-94-007-7194-9_68-1",
+% 	pages="1--52"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -56,7 +51,7 @@ model.nbVarPos = model.nbVar-1; %Dimension of spatial variables
 nbData = 200; %Length of each trajectory
 nbSamples = 4; %Number of demonstrations
 L = [eye(model.nbVarPos)*model.kP, eye(model.nbVarPos)*model.kV]; %Feedback term
-%Create transformation matrix to compute r(1).currTar = x + dx*kV/kP + ddx/kP, see Eq. (4.0.2) in doc/TechnicalReport.pdf
+%Create transformation matrix to compute r(1).currTar = x + dx*kV/kP + ddx/kP
 K1d = [1, model.kV/model.kP, 1/model.kP];
 K = kron(K1d,eye(model.nbVarPos));
 
@@ -95,10 +90,10 @@ model = EM_tensorGMM(DataDMP, model);
 %Task-adaptive spring-damper attractor path retrieval
 r(n).p(1).A = eye(model.nbVar);
 r(n).p(1).b = s(n).p(1).b + [0; 0; 5]; %Offset added to test generalization capability
-[r(n).Mu, r(n).Sigma] = productTPGMM0(model, r(n).p); %See Eq. (6.0.5), (6.0.6) and (6.0.7) in doc/TechnicalReport.pdf
+[r(n).Mu, r(n).Sigma] = productTPGMM0(model, r(n).p); 
 r(n).Priors = model.Priors;
 r(n).nbStates = model.nbStates;
-r(1).currTar = GMR(r(n), sIn, 1, 2:model.nbVar); %See Eq. (3.0.2) to (3.0.5) in doc/TechnicalReport.pdf
+r(1).currTar = GMR(r(n), sIn, 1, 2:model.nbVar);
 	
 %Motion retrieval with DMP
 x = Data(1:model.nbVarPos,1);

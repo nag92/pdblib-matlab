@@ -8,11 +8,16 @@ function [model, GAMMA0, GAMMA2] = EM_tensorGMM(Data, model)
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
@@ -34,15 +39,24 @@ function [model, GAMMA0, GAMMA2] = EM_tensorGMM(Data, model)
 
 
 %Parameters of the EM algorithm
-nbMinSteps = 5; %Minimum number of iterations allowed
-nbMaxSteps = 100; %Maximum number of iterations allowed
-maxDiffLL = 1E-5; %Likelihood increase threshold to stop the algorithm
 nbData = size(Data,3);
+if ~isfield(model,'params_nbMinSteps')
+	model.params_nbMinSteps = 5; %Minimum number of iterations allowed
+end
+if ~isfield(model,'params_nbMaxSteps')
+	model.params_nbMaxSteps = 100; %Maximum number of iterations allowed
+end
+if ~isfield(model,'params_maxDiffLL')
+	model.params_maxDiffLL = 1E-5; %Likelihood increase threshold to stop the algorithm
+end
+if ~isfield(model,'params_diagRegFact')
+	model.params_diagRegFact = 1E-8; %Regularization term is optional
+end
+if isfield(model,'params_updateComp')==0
+	model.params_updateComp = ones(3,1);
+end	
 
-%diagRegularizationFactor = 1E-2; %Optional regularization term
-diagRegularizationFactor = 1E-8; %Optional regularization term
-
-for nbIter=1:nbMaxSteps
+for nbIter=1:model.params_nbMaxSteps
 	fprintf('.');
 	
 	%E-step
@@ -54,32 +68,38 @@ for nbIter=1:nbMaxSteps
 	for i=1:model.nbStates
 		
 		%Update Priors
-		model.Priors(i) = sum(sum(GAMMA(i,:))) / nbData;
+		if model.params_updateComp(1)
+			model.Priors(i) = sum(sum(GAMMA(i,:))) / nbData;
+		end
 		
 		for m=1:model.nbFrames
 			%Matricization/flattening of tensor
 			DataMat(:,:) = Data(:,m,:);
 			
 			%Update Mu
-			model.Mu(:,m,i) = DataMat * GAMMA2(i,:)';
+			if model.params_updateComp(2)
+				model.Mu(:,m,i) = DataMat * GAMMA2(i,:)';
+			end
 			
 			%Update Sigma (regularization term is optional)
-			DataTmp = DataMat - repmat(model.Mu(:,m,i),1,nbData);
-			model.Sigma(:,:,m,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(size(DataTmp,1)) * diagRegularizationFactor;
+			if model.params_updateComp(3)
+				DataTmp = DataMat - repmat(model.Mu(:,m,i),1,nbData);
+				model.Sigma(:,:,m,i) = DataTmp * diag(GAMMA2(i,:)) * DataTmp' + eye(size(DataTmp,1)) * model.params_diagRegFact;
+			end
 		end
 	end
 	
 	%Compute average log-likelihood
 	LL(nbIter) = sum(log(sum(L,1))) / size(L,2);
 	%Stop the algorithm if EM converged (small change of LL)
-	if nbIter>nbMinSteps
-		if LL(nbIter)-LL(nbIter-1)<maxDiffLL || nbIter==nbMaxSteps-1
+	if nbIter>model.params_nbMinSteps
+		if LL(nbIter)-LL(nbIter-1)<model.params_maxDiffLL || nbIter==model.params_nbMaxSteps-1
 			disp(['EM converged after ' num2str(nbIter) ' iterations.']);
 			return;
 		end
 	end
 end
-disp(['The maximum number of ' num2str(nbMaxSteps) ' EM iterations has been reached.']);
+disp(['The maximum number of ' num2str(model.params_nbMaxSteps) ' EM iterations has been reached.']);
 end
 
 

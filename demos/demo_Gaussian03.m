@@ -1,11 +1,7 @@
 function demo_Gaussian03
 % Gaussian conditioning with uncertain inputs
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
 % 	author="Calinon, S.",
 % 	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
@@ -18,7 +14,7 @@ function demo_Gaussian03
 %		pages="1--29"
 % }
 %
-% Copyright (c) 2017 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -52,7 +48,7 @@ Data(1,:) = Data(1,:)*1E1;
 
 
 %% Gaussian conditioning with uncertain inputs
-%% (see for example section "2.3.1 Conditional Gaussian distributions" in Bishop's book, 
+%% (For Gaussian conditioning, see for example section "2.3.1 Conditional Gaussian distributions" in Bishop's book, 
 %% or the "Conditional distribution" section on the multivariate normal distribution wikipedia page)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model.Mu = mean(Data,2);
@@ -75,21 +71,50 @@ MuTmp = SigmaIn \ DataIn + model.Sigma(in,in) \ model.Mu(in);
 SigmaP = inv(SigmaTmp);
 xP = SigmaP * MuTmp;
 
-%Stochastic sampling on the input
-[V,D] = eig(SigmaP);
-xIn = repmat(xP,1,nbSamples) + V*D^.5* randn(1,nbSamples);
+% %Stochastic sampling on the input
+% [V,D] = eig(SigmaP);
+% xIn = repmat(xP,1,nbSamples) + V * D^.5 * randn(1,nbSamples);
 
-%Regression
-xMuOut = repmat(model.Mu(out),1,nbSamples) + model.Sigma(out,in) / model.Sigma(in,in) * (xIn - repmat(model.Mu(in),1,nbSamples));
+% %Regression
+% xMuOut = repmat(model.Mu(out),1,nbSamples) + model.Sigma(out,in) / model.Sigma(in,in) * (xIn - repmat(model.Mu(in),1,nbSamples));
 xSigmaOut = model.Sigma(out,out) - model.Sigma(out,in) / model.Sigma(in,in) * model.Sigma(in,out);
 
-%Stochastic sampling on the output
-[V,D] = eig(xSigmaOut);
-xOut = xMuOut + V * D^.5 * randn(1,nbSamples);
 
-%Gaussian fit on the stochastic samples
-MuOut2 = mean(xOut,2);
-SigmaOut2 = cov(xOut');
+% %Stochastic sampling on the output
+% [V,D] = eig(xSigmaOut);
+% xOut = xMuOut + V * D^.5 * randn(1,nbSamples);
+% 
+% %Gaussian fit on the stochastic samples
+% MuOut2 = mean(xOut,2);
+% SigmaOut2 = cov(xOut');
+
+%Regression
+A = model.Sigma(out,in) / model.Sigma(in,in);
+MuOut2 = repmat(model.Mu(out),1,nbSamples) + A * (xP - repmat(model.Mu(in),1,nbSamples));
+SigmaOut2 = xSigmaOut + A * SigmaP * A';
+
+
+% %% Gaussian conditioning with uncertain inputs, via sampling
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %Stochastic sampling on the input
+% [V,D] = eig(SigmaIn);
+% xIn = repmat(DataIn,1,nbSamples) + V * D^.5 * randn(1,nbSamples);
+% 
+% %Regression
+% xMuOut = repmat(model.Mu(out),1,nbSamples) + model.Sigma(out,in) / model.Sigma(in,in) * (xIn - repmat(model.Mu(in),1,nbSamples));
+% xSigmaOut = model.Sigma(out,out) - model.Sigma(out,in) / model.Sigma(in,in) * model.Sigma(in,out);
+% 
+% %Stochastic sampling on the output
+% [V,D] = eig(xSigmaOut);
+% xOut = xMuOut + V * D^.5 * randn(1,nbSamples);
+% 
+% %Gaussian fit on the stochastic samples
+% MuOut3 = mean(xOut,2);
+% SigmaOut3 = cov(xOut');
+
+A = model.Sigma(out,in) / model.Sigma(in,in);
+MuOut3 = repmat(model.Mu(out),1,nbSamples) + A * (DataIn - repmat(model.Mu(in),1,nbSamples));
+SigmaOut3 = xSigmaOut + A * SigmaIn * A';
 
 
 %% Plot
@@ -114,6 +139,8 @@ plotGaussian1D(DataIn, SigmaIn, [limAxes(1) limAxes(3) limAxes(2)-limAxes(1) 10]
 plotGaussian1D(MuOut, SigmaOut, [limAxes(1) limAxes(3) 10 limAxes(4)-limAxes(3)], [0 0 .8], .4, 'v');
 %Plot estimated output distribution from stochastic sampling
 plotGaussian1D(MuOut2, SigmaOut2, [limAxes(1) limAxes(3) 10 limAxes(4)-limAxes(3)], [0 .8 0], .4, 'v');
+%Plot Gaussian conditioning with uncertain inputs, via sampling
+plotGaussian1D(MuOut3, SigmaOut3, [limAxes(1) limAxes(3) 10 limAxes(4)-limAxes(3)], [.5 .5 .5], .4, 'v');
 
 plot(DataIn,MuOut,'.','markersize',12,'color',[.7 .3 .3]);
 plot(DataIn,limAxes(3),'.','markersize',12,'color',[.7 .3 .3]);
@@ -128,5 +155,5 @@ xlabel('$x_1$','fontsize',16,'interpreter','latex');
 ylabel('$x_2$','fontsize',16,'interpreter','latex');
 
 %print('-dpng','-r600','graphs/demo_Gaussian03.png');
-%pause;
-%close all;
+pause;
+close all;

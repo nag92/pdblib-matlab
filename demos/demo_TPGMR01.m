@@ -1,11 +1,7 @@
 function demo_TPGMR01
 % Task-parameterized Gaussian mixture model (TP-GMM), with time-based GMR used for reproduction.
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
@@ -18,7 +14,7 @@ function demo_TPGMR01
 %		pages="1--29"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -43,8 +39,8 @@ addpath('./m_fcts/');
 model.nbStates = 3; %Number of Gaussians in the GMM
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVar = 3; %Dimension of the datapoints in the dataset (here: t,x1,x2)
-model.dt = 1E-2; %Time step duration
-model.params_diagRegFact = 1E-8; %Optional regularization term
+% model.dt = 1E-2; %Time step duration
+model.params_diagRegFact = 1E-4; %Optional regularization term
 nbData = 200; %Number of datapoints in a trajectory
 nbRepros = 4; %Number of reproductions with new situations randomly generated
 
@@ -64,6 +60,7 @@ load('data/Data02.mat');
 % trajectory (T=200) multiplied by the number of demonstrations (M=5)
 Data = zeros(model.nbVar, model.nbFrames, nbSamples*nbData);
 for n=1:nbSamples
+	s(n).Data0(1,:) = s(n).Data0(1,:) * 1E-1;
 	for m=1:model.nbFrames
 		Data(:,m,(n-1)*nbData+1:n*nbData) = s(n).p(m).A \ (s(n).Data0 - repmat(s(n).p(m).b, 1, nbData));
 	end
@@ -88,7 +85,7 @@ end
 %% Reproductions 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('Reproductions with GMR...');
-DataIn(1,:) = s(1).Data(1,:); %1:nbData;
+DataIn(1,:) = s(1).Data0(1,:); %1:nbData;
 in = 1;
 out = 2:model.nbVar;
 MuGMR = zeros(length(out), nbData, model.nbFrames);
@@ -134,6 +131,7 @@ for n=1:nbSamples+nbRepros
 			pTmp(m).b = s(id(1)).p(m).b * w(1) + s(id(2)).p(m).b * w(2);
 			pTmp(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
 		end
+		%pTmp(2).b = pTmp(2).b + 1; %test further extrapolation
 	end
 	r(n).p = pTmp;
 
@@ -221,10 +219,40 @@ for n=1:nbRepros
 	plotGMM(r(nbSamples+n).Data(:,1:5:end), r(nbSamples+n).Sigma(:,:,1:5:end), [.2 .2 .2], .05);
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
+%axis equal;
 
 
-%print('-dpng','graphs/demo_TPGMR01.png');
+% %Reproductions in the same situations
+% figure('position',[20,50,500,500]); hold on; axis off;
+% for n=1:nbSamples
+% 	%Plot frames
+% 	for m=1:model.nbFrames
+% 		plot([r(n).p(m).b(2) r(n).p(m).b(2)+r(n).p(m).A(2,3)], [r(n).p(m).b(3) r(n).p(m).b(3)+r(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+% 		plot(r(n).p(m).b(2), r(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+% 	end
+% 	%Plot trajectories
+% 	plot(r(n).Data(1,1), r(n).Data(2,1),'.','markersize',12,'color',clrmap(n,:));
+% 	plot(r(n).Data(1,:), r(n).Data(2,:),'-','linewidth',1.5,'color',clrmap(n,:));
+% end
+% axis square; axis(limAxes); 
+% print('-dpng','graphs/TP_GMR01.png');
+% 
+% %Reproductions in new situations 
+% figure('position',[20,50,500,500]); hold on; axis off;
+% for n=1:nbRepros
+% 	%Plot frames
+% 	for m=1:model.nbFrames
+% 		plot([r(nbSamples+n).p(m).b(2) r(nbSamples+n).p(m).b(2)+r(nbSamples+n).p(m).A(2,3)], [r(nbSamples+n).p(m).b(3) r(nbSamples+n).p(m).b(3)+r(nbSamples+n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+% 		plot(r(nbSamples+n).p(m).b(2), r(nbSamples+n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+% 	end
+% 	%Plot trajectories
+% 	plot(r(nbSamples+n).Data(1,1), r(nbSamples+n).Data(2,1),'.','markersize',12,'color',[.2 .2 .2]);
+% 	plot(r(nbSamples+n).Data(1,:), r(nbSamples+n).Data(2,:),'-','linewidth',1.5,'color',[.2 .2 .2]);
+% end
+% axis square; axis(limAxes); 
+% print('-dpng','graphs/TP_GMR02.png');
+
+
+% print('-dpng','graphs/demo_TPGMR01.png');
 pause;
 close all;
-
-

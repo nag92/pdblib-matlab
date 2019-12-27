@@ -158,3 +158,4 @@ end
 disp(['The maximum number of ' num2str(model.params_nbMaxSteps) ' EM iterations has been reached.']);
 
 
+

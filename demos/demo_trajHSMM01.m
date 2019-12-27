@@ -1,24 +1,19 @@
 function demo_trajHSMM01
 % Trajectory synthesis with an HSMM with dynamic features (trajectory-HSMM).
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19chapter,
+% 	author="Calinon, S. and Lee, D.",
+% 	title="Learning Control",
+% 	booktitle="Humanoid Robotics: a Reference",
+% 	publisher="Springer",
+% 	editor="Vadakkepat, P. and Goswami, A.", 
+% 	year="2019",
+% 	pages="1261--1312",
+% 	doi="10.1007/978-94-007-6046-2_68"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -34,6 +29,7 @@ function demo_trajHSMM01
 % 
 % You should have received a copy of the GNU General Public License
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
+
 
 addpath('./m_fcts/');
 
@@ -102,6 +98,8 @@ model.Trans(model.nbStates,model.nbStates) = 1.0;
 model.StatesPriors = zeros(model.nbStates,1);
 model.StatesPriors(1) = 1;
 model.Priors = ones(model.nbStates,1);
+
+model.params_updateComp
 
 [model, H] = EM_HMM(s, model);
 %Removal of self-transition (for HSMM representation) and normalization
@@ -177,14 +175,15 @@ h = h ./ repmat(sum(h,1),model.nbStates,1);
 %Create single Gaussian N(MuQ,SigmaQ) based on optimal state sequence q
 MuQ = reshape(model.Mu(:,r(1).q), model.nbVar*nbData, 1); 
 %MuQ = zeros(model.nbVar*nbData,1);
-SigmaQ = zeros(model.nbVar*nbData);
-for t=1:nbData
-	id = (t-1)*model.nbVar+1:t*model.nbVar;
-	%MuQ(id) = model.Mu(:,r(1).q(t)); 
-	SigmaQ(id,id) = model.Sigma(:,:,r(1).q(t));
-end
-%SigmaQ can alternatively be computed with:
-%SigmaQ = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(model.Sigma(:,:,r(1).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
+
+SigmaQ = (kron(ones(nbData,1), eye(model.nbVar)) * reshape(model.Sigma(:,:,r(1).q), model.nbVar, model.nbVar*nbData)) .* kron(eye(nbData), ones(model.nbVar));
+
+% SigmaQ = zeros(model.nbVar*nbData);
+% for t=1:nbData
+% 	id = (t-1)*model.nbVar+1:t*model.nbVar;
+% 	%MuQ(id) = model.Mu(:,r(1).q(t)); 
+% 	SigmaQ(id,id) = model.Sigma(:,:,r(1).q(t));
+% end
 
 %Least squares computation method 1 using lscov Matlab function (with Octave, use method 2 below)
 [xhat,~,~,S] = lscov(PHI1, MuQ, SigmaQ, 'chol'); %Retrieval of data with weighted least squares solution
@@ -242,7 +241,7 @@ for m=1:model.nbVarPos
 	ylabel(['$x_' num2str(m) '$'],'interpreter','latex','fontsize',18);
 	axis(limAxes);
 end
-%print('-dpng','graphs/demo_trajHSMM01_1D.png');
+%print('-dpng','graphs/demo_trajHSMM01a.png');
 
 
 %% Plot 2D
@@ -258,7 +257,7 @@ plot(r(1).Data(1,:), r(1).Data(2,:), '-','lineWidth',3.5,'color',[.8 0 0]);
 set(gca,'xtick',[],'ytick',[]); axis equal; axis square;
 xlabel(['$x_1$'],'interpreter','latex','fontsize',18);
 ylabel(['$x_2$'],'interpreter','latex','fontsize',18);
-%print('-dpng','graphs/demo_trajHSMM01_2D.png');
+%print('-dpng','graphs/demo_trajHSMM01b.png');
 
 pause;
 close all;

@@ -1,4 +1,4 @@
-function plotHSMM(Trans, StatesPriors, Pd)
+function plotHSMM(Trans, StatesPriors, Pd, currState)
 % Plot the transition graph and the state duration distribution of an HSMM
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
@@ -35,7 +35,6 @@ function plotHSMM(Trans, StatesPriors, Pd)
 % You should have received a copy of the GNU General Public License
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
-
 nbStates = size(Trans,1);
 nbD = size(Pd,2);
 valAlpha = 1;
@@ -49,6 +48,8 @@ for i=1:nbStates
 	nodePos(:,i) = [cos(nodeAngle(i)); sin(nodeAngle(i))] * graphRadius;
 end
 clrmap = lines(nbStates);
+%clrmap = ones(nbStates,3) * 0.7;
+
 ff = .8 / max(max(Trans-diag(diag(Trans))));
 
 for i=1:nbStates
@@ -81,16 +82,23 @@ end
 for i=1:nbStates
 	a = linspace(0,2*pi,nodePts);
 	meshTmp = [cos(a); sin(a)] * nodeRadius + repmat(nodePos(:,i),1,nodePts);
-	patch(meshTmp(1,:), meshTmp(2,:), clrmap(i,:),'edgecolor',clrmap(i,:)*0.5, 'facealpha', valAlpha,'edgealpha', valAlpha);
-	text(nodePos(1,i),nodePos(2,i),num2str(i),'HorizontalAlignment','center','FontWeight','bold','fontsize',16);
-end
+	%Plot current state
+	if nargin>3 && i==currState
+		%patch(meshTmp(1,:), meshTmp(2,:), clrmap(i,:),'edgecolor',[0 0 0], 'facealpha', valAlpha,'linewidth',2);
+		%text(nodePos(1,i),nodePos(2,i),num2str(i),'HorizontalAlignment','center','FontWeight','bold','fontsize',16,'color',[0 0 0]);
+		patch(meshTmp(1,:), meshTmp(2,:), [0 0 0],'edgecolor',[0 0 0], 'facealpha', valAlpha,'linewidth',2);
+	else
+		patch(meshTmp(1,:), meshTmp(2,:), clrmap(i,:),'edgecolor',clrmap(i,:), 'facealpha', valAlpha,'edgealpha', valAlpha);
+	end
+	text(nodePos(1,i),nodePos(2,i),num2str(i),'HorizontalAlignment','center','FontWeight','bold','fontsize',16,'color',[1 1 1]);
+end	
 
 %Plot Pd
 for i=1:nbStates
 	posTmp = [cos(nodeAngle(i)); sin(nodeAngle(i))] * graphRadius * 1.6;
 	yTmp = Pd(i,:) / max(Pd(i,:));
 	meshTmp = ([[0, linspace(0,1,nbD), 1]; [0, yTmp, 0]]-0.5) * szPd + repmat(posTmp,1,nbD+2);
-	patch(meshTmp(1,:), meshTmp(2,:), clrmap(i,:), 'edgecolor',clrmap(i,:)*0.5, 'facealpha', valAlpha,'edgealpha', valAlpha);
+	patch(meshTmp(1,:), meshTmp(2,:), clrmap(i,:), 'edgecolor',clrmap(i,:), 'facealpha', valAlpha,'edgealpha', valAlpha);
 	meshTmp = ([[0, 0, 1]; [1, 0, 0]]-0.5) * szPd + repmat(posTmp,1,3);
 	plot(meshTmp(1,:), meshTmp(2,:), 'color',[0 0 0]);
 end

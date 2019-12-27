@@ -1,11 +1,7 @@
 function demo_Gaussian02
 % Conditional probability with a multivariate normal distribution.
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
 % 	author="Calinon, S.",
 % 	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
@@ -18,7 +14,7 @@ function demo_Gaussian02
 %		pages="1--29"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -98,5 +94,5 @@ xlabel('$x_1$','fontsize',16,'interpreter','latex');
 ylabel('$x_2$','fontsize',16,'interpreter','latex');
 
 %print('-dpng','-r600','graphs/demo_Gaussian02.png');
-%pause;
-%close all;
+pause;
+close all;

@@ -1,12 +1,20 @@
 function demo_TPproMP01
 % Task-parameterized probabilistic movement primitives (TP-ProMP)
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
+% If this code is useful for your research, please cite the related publication:
+% @article{Calinon16JIST,
+%   author="Calinon, S.",
+%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
+%   journal="Intelligent Service Robotics",
+%		publisher="Springer Berlin Heidelberg",
+%		doi="10.1007/s11370-015-0187-9",
+%		year="2016",
+%		volume="9",
+%		number="1",
+%		pages="1--29"
+% }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -25,12 +33,14 @@ function demo_TPproMP01
 
 addpath('./m_fcts/');
 
+
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model.nbStates = 10; %Number of Gaussians in the GMM
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVar = 3; %Dimension of the datapoints in the dataset (here: t,x1,x2)
 nbData = 200; %Number of datapoints in a trajectory
+nbRepros = 4; %Number of reproductions with new situations randomly generated
 
 
 %% Load 3rd order tensor data
@@ -47,7 +57,6 @@ load('data/Data02.mat');
 
 %% TP-GMM learning
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 model = init_tensorGMM_timeBased(Data, model); 
 %model = EM_tensorGMM(Data, model); 
 model.Sigma(1,:,:,:) = model.Sigma(1,:,:,:) * 3;
@@ -78,6 +87,8 @@ for m=1:model.nbFrames
 	end
 	Mu_w = mean(w,2);
 	Sigma_w = cov(w') + eye(model.nbVar*model.nbStates) * 1E-2;
+	%mBlock.Mu(:,m,1) = Psi * Mu_w;
+	%mBlock.Sigma(:,:,m,1) = Psi * Sigma_w * Psi' + eye(model.nbVar*nbD) * 1E1;
 	mBlock.Mu(:,m,1) = Mu_w;
 	mBlock.Sigma(:,:,m,1) = Sigma_w;
 	%Compute block version of task parameters 
@@ -87,13 +98,16 @@ for m=1:model.nbFrames
 	end
 end
 
-%For display
+%For plot 
 for i=1:model.nbStates
 	id = (i-1)*model.nbVar+1:i*model.nbVar;
 	model.Mu2(:,:,i) = mBlock.Mu(id,:);
 	model.Sigma2(:,:,:,i) = mBlock.Sigma(id,id,:);
 end
+
 	
+%% Reproduction for the task parameters used to train the model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Reconstruct GMM for each demonstration
 for n=1:nbSamples
 	[s(n).MuBlock, s(n).SigmaBlock] = productTPGMM0(mBlock, s(n).pBlock);
@@ -107,17 +121,42 @@ for n=1:nbSamples
 end
 
 
+%% Reproduction for new task parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+disp('New reproductions...');
+for n=1:nbRepros
+	for m=1:model.nbFrames
+		%Random generation of new task parameters
+		id=ceil(rand(2,1)*nbSamples);
+		w=rand(2); w=w/sum(w);
+		rnew(n).p(m).b = s(id(1)).p(m).b * w(1) + s(id(2)).p(m).b * w(2);
+		rnew(n).p(m).A = s(id(1)).p(m).A * w(1) + s(id(2)).p(m).A * w(2);
+		%Compute block version of task parameters 
+		rnew(n).pBlock(m).A = kron(eye(model.nbStates), rnew(n).p(m).A);
+		rnew(n).pBlock(m).b = kron(ones(model.nbStates,1), rnew(n).p(m).b);
+	end
+	[rnew(n).MuBlock, rnew(n).SigmaBlock] = productTPGMM0(mBlock, rnew(n).pBlock);
+	rnew(n).Mu = reshape(rnew(n).MuBlock, model.nbVar, model.nbStates);
+	for i=1:model.nbStates
+		id = (i-1)*model.nbVar+1:i*model.nbVar;
+		rnew(n).Sigma(:,:,i) = rnew(n).SigmaBlock(id,id);
+	end
+	rnew(n).MuTraj = reshape(rnew(n).Mu*H, model.nbVar*nbData, 1);
+	rnew(n).SigmaTraj = Psi * rnew(n).SigmaBlock * Psi' + eye(model.nbVar*nbData) * 0;
+end
+
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,1300,500]);
+figure('position',[20,50,2300,500]);
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
 limAxes = [-1.2 0.8 -1.1 0.9];
 colPegs = [[.9,.5,.9];[.5,.9,.5]];
 
-subplot(1,model.nbFrames+1,1); hold on; box on; title('Demonstrations and reproductions');
+%DEMO
+subplot(1,model.nbFrames+3,1); hold on; box on; title('Demonstrations');
 for n=1:nbSamples
 	%Plot frames
 	for m=1:model.nbFrames
@@ -127,28 +166,79 @@ for n=1:nbSamples
 	%Plot demonstrations
 	plot(s(n).Data(2,1), s(n).Data(3,1),'.','markersize',15,'color',clrmap(n,:));
 	plot(s(n).Data(2,:), s(n).Data(3,:),'-','linewidth',1.5,'color',clrmap(n,:));
+end
+axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
+
+%REPRO
+subplot(1,model.nbFrames+3,2); hold on; box on; title('Reproductions');
+for n=1:nbSamples
+	%Plot frames
+	for m=1:model.nbFrames
+		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+	end
 	%Plot Gaussians
-	%plotGMM(s(n).Mu(2:3,:), s(n).Sigma(2:3,2:3,:), [.5 .5 .5], .3);
+	plotGMM(s(n).Mu(2:3,:), s(n).Sigma(2:3,2:3,:), [.5 .5 .5], .3);
 	%Plot reproductions
-	plot(s(n).MuTraj(2:model.nbVar:end), s(n).MuTraj(3:model.nbVar:end), '.','lineWidth',2,'color',[0 0 0]);
+	plot(s(n).MuTraj(2:model.nbVar:end), s(n).MuTraj(3:model.nbVar:end), '-','lineWidth',2,'color',[0 0 0]);
+end
+axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
+
+%NEW REPRO
+subplot(1,model.nbFrames+3,3); hold on; box on; title('New reproductions');
+for n=1:nbRepros
+	%Plot frames
+	for m=1:model.nbFrames
+		plot([rnew(n).p(m).b(2) rnew(n).p(m).b(2)+rnew(n).p(m).A(2,3)], [rnew(n).p(m).b(3) rnew(n).p(m).b(3)+rnew(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+		plot(rnew(n).p(m).b(2), rnew(n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+	end
+	%Plot trajectories
+	plot(rnew(n).MuTraj(2), rnew(n).MuTraj(3), '.','markersize',12,'color',clrmap(n,:));
+	plot(rnew(n).MuTraj(2:model.nbVar:end), rnew(n).MuTraj(3:model.nbVar:end), '-','lineWidth',1.5,'color',clrmap(n,:));
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %FRAMES
 for m=1:model.nbFrames
-	subplot(1,model.nbFrames+1,1+m); hold on; grid on; box on; title(['Frame ' num2str(m)]);
+	subplot(1,model.nbFrames+3,3+m); hold on; grid on; box on; title(['Frame ' num2str(m)]);
 	for n=1:nbSamples
-		plot(squeeze(Data(2,m,(n-1)*s(1).nbData+1)), ...
-			squeeze(Data(3,m,(n-1)*s(1).nbData+1)), '.','markersize',15,'color',clrmap(n,:));
-		plot(squeeze(Data(2,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), ...
-			squeeze(Data(3,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), '-','linewidth',1.5,'color',clrmap(n,:));
+		plot(squeeze(Data(2,m,(n-1)*s(1).nbData+1)), squeeze(Data(3,m,(n-1)*s(1).nbData+1)), '.','markersize',15,'color',clrmap(n,:));
+		plot(squeeze(Data(2,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), squeeze(Data(3,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), '-','linewidth',1.5,'color',clrmap(n,:));
 	end
 	plotGMM(squeeze(model.Mu2(2:end,m,:)), squeeze(model.Sigma2(2:end,2:end,m,:)), [.5 .5 .5], .3);
 	axis square; set(gca,'xtick',[0],'ytick',[0]);
 end
 
-%print('-dpng','graphs/demo_TPproMP01.png');
-%pause;
-%close all;
+% %Reproductions in same situations
+% figure('position',[20,50,500,500]); hold on; axis off;
+% for n=1:nbSamples
+% 	%Plot frames
+% 	for m=1:model.nbFrames
+% 		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+% 		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+% 	end
+% 	%Plot trajectories
+% 	plot(s(n).MuTraj(2), s(n).MuTraj(3), '.','markersize',12,'color',clrmap(n,:));
+% 	plot(s(n).MuTraj(2:model.nbVar:end), s(n).MuTraj(3:model.nbVar:end), '-','lineWidth',1.5,'color',clrmap(n,:));
+% end
+% axis square; axis(limAxes); 
+% print('-dpng','graphs/TP_ProMP01.png');
+% 
+% %Reproductions in new situations 
+% figure('position',[20,50,500,500]); hold on; axis off;
+% for n=1:nbRepros
+% 	%Plot frames
+% 	for m=1:model.nbFrames
+% 		plot([rnew(n).p(m).b(2) rnew(n).p(m).b(2)+rnew(n).p(m).A(2,3)], [rnew(n).p(m).b(3) rnew(n).p(m).b(3)+rnew(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
+% 		plot(rnew(n).p(m).b(2), rnew(n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+% 	end
+% 	%Plot trajectories
+% 	plot(rnew(n).MuTraj(2), rnew(n).MuTraj(3), '.','markersize',12,'color',clrmap(n,:));
+% 	plot(rnew(n).MuTraj(2:model.nbVar:end), rnew(n).MuTraj(3:model.nbVar:end), '-','lineWidth',1.5,'color',[.2 .2 .2]);
+% end
+% axis square; axis(limAxes); 
+% print('-dpng','graphs/TP_ProMP02.png');
 
-
+% print('-dpng','graphs/demo_TPproMP01.png');
+pause;
+close all;

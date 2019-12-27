@@ -1,24 +1,19 @@
 function demo_GPR01
-% Gaussian process regression (GPR) 
+% Gaussian process regression (GPR) with RBF kernel
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19chapter,
+% 	author="Calinon, S. and Lee, D.",
+% 	title="Learning Control",
+% 	booktitle="Humanoid Robotics: a Reference",
+% 	publisher="Springer",
+% 	editor="Vadakkepat, P. and Goswami, A.", 
+% 	year="2019",
+% 	doi="10.1007/978-94-007-7194-9_68-1",
+% 	pages="1--52"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -55,29 +50,24 @@ Data=[];
 for n=1:nbSamples
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
 	tt = [1:nbData/2,3*nbData/4:nbData];  %Simulate missing data
-	%tt = 1:nbData;
+% 	tt = 1:nbData;
 	s(n).Data = [tt; s(n).Data(:,tt)];
 	Data = [Data s(n).Data]; 
 end
-%GPR precomputation
 xIn = Data(1,:);
 xOut = Data(2:end,:);
-M = pdist2(xIn', xIn');
-K = p(1) * exp(-p(2)^-1 * M.^2);
-invK = pinv(K + p(3) * eye(size(K))); 
-
-
-%% Reproduction with GPR
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 xInHat = linspace(1,nbData,nbDataRepro);
-Md = pdist2(xInHat', xIn');
-Kd = p(1) * exp(-p(2)^-1 * Md.^2);
-r(1).Data = [xInHat; (Kd * invK * xOut')']; 
+
+
+%% GPR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+K = p(1) .* exp(-p(2).^-1 .* pdist2(xIn', xIn').^2) + p(3) .* eye(size(xIn,2)); 
+Kd = p(1) .* exp(-p(2).^-1 .* pdist2(xInHat', xIn').^2);
+r(1).Data = [xInHat; (Kd * (K \ xOut'))']; 
 %Covariance computation
-Mdd = pdist2(xInHat',xInHat');
-Kdd = p(1) * exp(-p(2)^-1 * Mdd.^2);
-S = Kdd - Kd * invK * Kd';
-r(1).SigmaOut = zeros(nbVar-1,nbVar-1,nbData);
+Kdd = p(1) * exp(-p(2).^-1 .* pdist2(xInHat', xInHat').^2);
+S = Kdd - Kd * (K \ Kd');
+r(1).SigmaOut = zeros(nbVar-1,nbVar-1,nbDataRepro);
 for t=1:nbDataRepro
 	r(1).SigmaOut(:,:,t) = eye(nbVar-1) * S(t,t); 
 end
@@ -86,7 +76,7 @@ end
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure('position',[10 10 1300 600]);
-%Plots 1D
+%Plot 1D
 for m=2:nbVar
 	limAxes = [1, nbData, min(Data(m,:))-1E0, max(Data(m,:))+1E0];
 	subplot(nbVar-1,2,(m-2)*2+1); hold on;
@@ -99,7 +89,7 @@ for m=2:nbVar
 	end
 	set(gca,'xtick',[],'ytick',[]);
 	xlabel('$t$','interpreter','latex','fontsize',18);
-	ylabel(['$x_' num2str(m) '$'],'interpreter','latex','fontsize',18);
+	ylabel(['$x_' num2str(m-1) '$'],'interpreter','latex','fontsize',18);
 	axis(limAxes);
 end
 %Plot 2D
@@ -114,6 +104,5 @@ xlabel(['$x_1$'],'interpreter','latex','fontsize',18);
 ylabel(['$x_2$'],'interpreter','latex','fontsize',18);
 
 %print('-dpng','graphs/demo_GPR01.png');
-%pause;
-%close all;
-
+pause;
+close all;

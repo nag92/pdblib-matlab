@@ -1,8 +1,6 @@
 function [bmx, ALPHA, S, alpha] = hsmm_fwd_init_hsum(Data, m,varargin)
-% Forward variable initialization
-% Implementation based on Yu and Kobayashi, IEEE Trans. on Signal Processing, 2010
-%	
-% Sylvain Calinon, 2014 
+%Forward variable initialization
+%Sylvain Calinon, 2014 
 
 
 % Check if we need to evaluate marginal probability:
@@ -18,10 +16,10 @@ end
 Btmp = Btmp / sum(Btmp);
 
 ALPHA = repmat(m.StatesPriors, 1, size(m.Pd,2)) .* m.Pd;	% Equation (13)
-r = Btmp' * sum(ALPHA,2); % Equation (3) 
-bmx(:,1) = Btmp ./ r; % Equation (2)
-E = bmx .* ALPHA(:,1); % Equation (5)
-S = m.Trans' * E; % Equation (6)
+r = Btmp' * sum(ALPHA,2);    % Equation (3) 
+bmx(:,1) = Btmp ./ r;        % Equation (2)
+E = bmx .* ALPHA(:,1);       % Equation (5)
+S = m.Trans' * E;            % Equation (6)
 
 alpha = Btmp .* sum(ALPHA,2);% Forward variable
 

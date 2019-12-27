@@ -1,11 +1,7 @@
 function demo_TPtrajGMM01
 % Task-parameterized model with trajectory-GMM encoding (GMM with dynamic features).
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
@@ -18,7 +14,7 @@ function demo_TPtrajGMM01
 %		pages="1--29"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -86,14 +82,14 @@ load('data/DataWithDeriv02.mat');
 % save('data/DataWithDeriv02.mat', 'Data','s','nbSamples');
 
 %Construct PHI operator (big sparse matrix)
-[PHI,PHI1] = constructPHI(model, nbData, nbSamples); 
+[PHI, PHI1] = constructPHI(model, nbData, nbSamples); 
 
 
 %% TP-GMM learning
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 fprintf('Parameters estimation of TP-GMM with EM...');
-%model = init_tensorGMM_timeBased(Data, model); %Initialization
-%model = init_tensorGMM_kmeans(Data, model); %Initialization
+% model = init_tensorGMM_timeBased(Data, model); %Initialization
+% model = init_tensorGMM_kmeans(Data, model); %Initialization
 
 %Initialization based on position data
 model0 = init_tensorGMM_kmeans(Data(1:model.nbVarPos,:,:), model);
@@ -130,6 +126,7 @@ for n=1:nbSamples
 	end
 	%Create single Gaussian N(MuQ,SigmaQ) based on state sequence q, see Eq. (27)
 	[~,r(n).q] = max(model.Pix(:,(n-1)*nbData+1:n*nbData),[],1); %works also for nbStates=1
+	r(n).q
 	r(n).MuQ = reshape(r(n).Mu(:,r(n).q), model.nbVarPos*model.nbDeriv*nbData, 1);
 	r(n).SigmaQ = zeros(model.nbVarPos*model.nbDeriv*nbData);
 	for t=1:nbData
@@ -186,7 +183,7 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,1300,500]);
+figure('position',[20,50,2300,900]);
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
@@ -248,7 +245,5 @@ end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %print('-dpng','graphs/demo_TPtrajGMM01.png');
-%pause;
-%close all;
-
-
+pause;
+close all;

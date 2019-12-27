@@ -2,24 +2,27 @@ function demo_HSMM01
 % Variable duration model implemented as a hidden semi-Markov model 
 % (simplified version by encoding the state duration after EM).
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Rozo16Frontiers,
-%   author="Rozo, L. and Silv\'erio, J. and Calinon, S. and Caldwell, D. G.",
-%   title="Learning Controllers for Reactive and Proactive Behaviors in Human-Robot Collaboration",
-%   journal="Frontiers in Robotics and {AI}",
-%   year="2016",
-%   month="June",
-%   volume="3",
-%   number="30",
-%   pages="1--11",
-%   doi="10.3389/frobt.2016.00030"
+% If this code is useful for your research, please cite the related publications:
+% @incollection{Calinon19chapter,
+% 	author="Calinon, S. and Lee, D.",
+% 	title="Learning Control",
+% 	booktitle="Humanoid Robotics: a Reference",
+% 	publisher="Springer",
+% 	editor="Vadakkepat, P. and Goswami, A.", 
+% 	year="2019",
+% 	doi="10.1007/978-94-007-7194-9_68-1",
+% 	pages="1--52"
+% }
+% @inproceedings{Calinon11IROS,
+%   author="Calinon, S. and Pistillo, A. and Caldwell, D. G.",
+%   title="Encoding the time and space constraints of a task in explicit-duration hidden {M}arkov model",
+%   booktitle="Proc.\ {IEEE/RSJ} Intl Conf.\ on Intelligent Robots and Systems ({IROS})",
+%   year="2011",
+%   month="September",
+%   pages="3413--3418"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -41,7 +44,7 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model.nbStates = 2; %Number of hidden states in the HSMM
+model.nbStates = 5; %Number of hidden states in the HSMM
 nbData = 100; %Length of each trajectory
 nbSamples = 10; %Number of demonstrations
 minSigmaPd = 1E1; %Minimum variance of state duration (regularization term)
@@ -82,9 +85,21 @@ model.StatesPriors(1) = 1;
 model.Priors = ones(model.nbStates,1);
 
 [model, H] = EM_HMM(s, model);
+
 %Removal of self-transition (for HSMM representation) and normalization
 model.Trans = model.Trans - diag(diag(model.Trans)) + eye(model.nbStates)*realmin;
 model.Trans = model.Trans ./ repmat(sum(model.Trans,2),1,model.nbStates);
+
+
+% %% Set state duration manually (for HSMM representation)
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %Test with cyclic data
+% model.Trans = [0, 1, 0; 0, 0, 1; 1, 0, 0];
+% %model.Trans = [0, .5, .5; 1, 0, 0; 1, 0, 0];
+% model.Mu_Pd = [10,30,50];
+% for i=1:model.nbStates
+% 	model.Sigma_Pd(1,1,i) = 1E1;
+% end
 
 
 %% Post-estimation of the state duration from data (for HSMM representation)
@@ -112,6 +127,12 @@ for i=1:model.nbStates
 	model.Sigma_Pd(1,1,i) = cov(st(i).d) + minSigmaPd;
 end
 
+% %dm=P(d) for each state can be computed with:
+% rho = (nbData - sum(squeeze(model.Mu_Pd))) / sum(squeeze(model.Sigma_Pd));
+% dm = squeeze(model.Mu_Pd) + (squeeze(model.Sigma_Pd)' * rho);
+
+% model.Sigma_Pd(1,1,2:3) = 1E-1;
+
 
 %% Reconstruction of states probability sequence
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,21 +150,21 @@ end
 %(in the iteration, a scaling factor c is used to avoid numerical underflow issues in HSMM, see Levinson'1986) 
 h = zeros(model.nbStates,nbData);
 c = zeros(nbData,1); %scaling factor to avoid numerical issues
-c(1)=1; %Initialization of scaling factor
+c(1) = 1; %Initialization of scaling factor
 for t=1:nbData
 	for i=1:model.nbStates
 		if t<=nbD
 % 			oTmp = 1; %Observation probability for generative purpose
-			oTmp = prod(c(1:t) .* gaussPDF(s(1).Data(:,1:t), model.Mu(:,i), model.Sigma(:,:,i))); %Observation probability for standard HSMM
+			oTmp = prod(c(1:t) .* gaussPDF(s(1).Data(:,1:t), model.Mu(:,i), model.Sigma(:,:,i))'); %Observation probability for standard HSMM
 			h(i,t) = model.StatesPriors(i) * model.Pd(i,t) * oTmp;
 		end
 		for d=1:min(t-1,nbD)
 % 			oTmp = 1; %Observation probability for generative purpose
-			oTmp = prod(c(t-d+1:t) .* gaussPDF(s(1).Data(:,t-d+1:t), model.Mu(:,i), model.Sigma(:,:,i))); %Observation probability for standard HSMM	
+			oTmp = prod(c(t-d+1:t) .* gaussPDF(s(1).Data(:,t-d+1:t), model.Mu(:,i), model.Sigma(:,:,i))'); %Observation probability for standard HSMM	
 			h(i,t) = h(i,t) + h(:,t-d)' * model.Trans(:,i) * model.Pd(i,d) * oTmp;
 		end
 	end
-	c(t+1) = 1/sum(h(:,t)); %Update of scaling factor
+	c(t+1) = 1/sum(h(:,t)+realmin); %Update of scaling factor
 end
 h = h ./ repmat(sum(h,1),model.nbStates,1);
 
@@ -289,13 +310,6 @@ set(gca,'xtick',[10:10:nbData],'fontsize',8); axis([1 nbData 0 1.1]);
 xlabel('t','fontsize',16); 
 ylabel('h_i','fontsize',16);
 
-
-%print('-dpng','graphs/demo_HSMM01.png'); 
+% print('-dpng','-r300','graphs/demo_HSMM01.png'); 
 pause;
 close all;
-
-% % Saving .txt files
-% model.varnames{1} = 'x1';
-% model.varnames{2} = 'x2';
-% HSMMtoText(model, 'test2');
-

@@ -1,24 +1,19 @@
 function demo_trajDistrib01
 % Stochastic sampling with Gaussian trajectory distribution 
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19chapter,
+% 	author="Calinon, S. and Lee, D.",
+% 	title="Learning Control",
+% 	booktitle="Humanoid Robotics: a Reference",
+% 	publisher="Springer",
+% 	editor="Vadakkepat, P. and Goswami, A.", 
+% 	year="2019",
+% 	pages="1261--1312",
+% 	doi="10.1007/978-94-007-6046-2_68"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -42,15 +37,15 @@ addpath('./m_fcts/');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 nbVar = 2; %Number of variables [x1,x2]
 nbData = 100; %Length of each trajectory
-nbSamples = 8; %Number of demonstrations
+nbSamples = 3; %Number of demonstrations
 nbRepros = 50; %Number of reproductions 
-nbEigs = 4; %Number of principal eigencomponents to keep
+nbEigs = 5; %Number of principal eigencomponents to keep
 
 
 %% Load handwriting data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
-load('data/2Dletters/A.mat');
+load('data/2Dletters/S.mat');
 for n=1:nbSamples
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
 	Data(:,n) = reshape(s(n).Data, nbVar*nbData, 1); 
@@ -79,7 +74,7 @@ Data2 = model.V * model.D.^.5 * randn(nbEigs,nbRepros) + repmat(model.Mu,1,nbRep
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10,10,700,500]); hold on; axis off;
+figure('position',[10,10,1200,1000]); hold on; axis off;
 for n=1:nbSamples
 	plot(Data(1:2:end,n),Data(2:2:end,n),'-','linewidth',1,'color',[.5 .5 .5]);
 end
@@ -87,9 +82,17 @@ for n=1:nbRepros
 	plot(Data2(1:2:end,n),Data2(2:2:end,n),'-','linewidth',1,'color',[0 .7 0]);
 end
 plot(model.Mu(1:2:end),model.Mu(2:2:end),'-','linewidth',2,'color',[.8 0 0]);
+for t=1:nbData
+	id = (t-1)*2+1:t*2; 
+	plotGMM(model.Mu(id), model.Sigma(id,id), [.8 0 0], .1);
+end
 axis equal; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 
+figure('position',[1220,10,1000,1000]); hold on; axis off;
+pcolor(abs(model.Sigma)); 
+colormap(flipud(gray));
+axis square; axis([1 nbData*nbVar 1 nbData*nbVar]); axis ij; shading flat;
 
 %print('-dpng','graphs/demo_trajDistrib01.png');
-%pause;
-%close all;
+pause;
+close all;

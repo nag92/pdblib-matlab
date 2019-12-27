@@ -1,26 +1,22 @@
 function model = init_GMM_timeBased(Data, model)
-% This function initializes the parameters of a Gaussian Mixture Model
-% (GMM) by splitting the data into equal bins (time-based clustering).
-% Inputs -----------------------------------------------------------------
-%   o Data:     D x N array representing N datapoints of D dimensions.
-%   o nbStates: Number K of GMM components.
-% Outputs ----------------------------------------------------------------
-%   o Priors:   1 x K array representing the prior probabilities of the
-%               K GMM components.
-%   o Mu:       D x K array representing the centers of the K GMM components.
-%   o Sigma:    D x D x K array representing the covariance matrices of the
-%               K GMM components.
+% Initialization of Gaussian Mixture Model (GMM) parameters by clustering 
+% the data into equal bins based on the first variable (time steps).
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
 % If some parts of the code were useful for your research of for a better understanding 
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
@@ -41,9 +37,11 @@ function model = init_GMM_timeBased(Data, model)
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 
-[nbVar, nbData] = size(Data);
-%diagRegularizationFactor = 1E-2; %Optional regularization term
-diagRegularizationFactor = 1E-8; %Optional regularization term
+%Parameters 
+nbVar = size(Data,1);
+if ~isfield(model,'params_diagRegFact')
+	model.params_diagRegFact = 1E-4; %Optional regularization term to avoid numerical instability
+end
 
 TimingSep = linspace(min(Data(1,:)), max(Data(1,:)), model.nbStates+1);
 
@@ -53,6 +51,6 @@ for i=1:model.nbStates
 	model.Mu(:,i) = mean(Data(:,idtmp)');
 	model.Sigma(:,:,i) = cov(Data(:,idtmp)');
 	%Optional regularization term to avoid numerical instability
-	model.Sigma(:,:,i) = model.Sigma(:,:,i) + eye(nbVar)*diagRegularizationFactor;
+	model.Sigma(:,:,i) = model.Sigma(:,:,i) + eye(nbVar) * model.params_diagRegFact;
 end
 model.Priors = model.Priors / sum(model.Priors);

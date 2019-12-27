@@ -4,24 +4,19 @@ function demo_DMP_GMR02
 % in the feature space. After learning (i.e., autonomous organization of the basis functions (position 
 % and spread), Gaussian mixture regression (GMR) is used to regenerate the nonlinear force profile. 
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @incollection{Calinon19chapter,
+% 	author="Calinon, S. and Lee, D.",
+% 	title="Learning Control",
+% 	booktitle="Humanoid Robotics: a Reference",
+% 	publisher="Springer",
+% 	editor="Vadakkepat, P. and Goswami, A.", 
+% 	year="2019",
+% 	doi="10.1007/978-94-007-7194-9_68-1",
+% 	pages="1--52"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -92,7 +87,7 @@ x = Data(1:model.nbVarPos,1);
 dx = zeros(model.nbVarPos,1);
 for t=1:nbData
 	%Compute acceleration, velocity and position	
-	ddx =  L * [xTar-x; -dx] + currF(:,t) * sIn(t); %See Eq. (4.0.1) in doc/TechnicalReport.pdf 
+	ddx = L * [xTar-x; -dx] + currF(:,t) * sIn(t); 
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;
 	r(1).Data(:,t) = x;

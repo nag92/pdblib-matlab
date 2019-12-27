@@ -1,11 +1,7 @@
 function demo_TPGP01
 % Task-parameterized Gaussian process regression (TP-GPR).
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
@@ -18,7 +14,7 @@ function demo_TPGP01
 %		pages="1--29"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -66,7 +62,7 @@ model.Priors = ones(model.nbStates,1) / model.nbStates;
 DataIn(1,:) = repmat(1:nbData,1,nbSamples); 
 for m=1:model.nbFrames
 	DataOut = squeeze(Data(:,m,:));
-	[MuTmp, SigmaTmp] = GPR(DataIn, DataOut, DataIn, [1, 1E1, 1E-1]);
+	[MuTmp, SigmaTmp] = GPR(DataIn, DataOut, DataIn, [1, 1E1, 1E-1], 1);
 	model.Mu(:,m,:) = MuTmp;
 	model.Sigma(:,:,m,:) = SigmaTmp;
 end
@@ -97,7 +93,7 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,1300,500]);
+figure('position',[20,50,2300,900]);
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
@@ -151,7 +147,5 @@ end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
 %print('-dpng','graphs/demo_TPGP01.png');
-%pause;
-%close all;
-
-
+pause;
+close all;

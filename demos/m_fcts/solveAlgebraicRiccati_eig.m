@@ -35,12 +35,17 @@ function X = solveAlgebraicRiccati_eig(A, G, Q)
 
 
 n = size(A,1);
+
+%Hamiltonian matrix (see https://en.wikipedia.org/wiki/Algebraic_Riccati_equation)
+%Z = [A -B*(R\B'); -Q -A']
 Z = [A -G; -Q -A']; 
 
+%Since Z is Hamiltonian, if it does not have any eigenvalues on the imaginary axis, then exactly 
+%half of its eigenvalues have a negative real part	
 [V,D] = eig(Z); 
 U = [];
 for j=1:2*n
-	if real(D(j,j)) < 0
+	if real(D(j,j)) < 0 %negative real part	
 		U = [U V(:,j)];
 	end
 end

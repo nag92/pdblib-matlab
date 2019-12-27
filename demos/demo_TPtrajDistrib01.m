@@ -1,11 +1,7 @@
 function demo_TPtrajDistrib01
 % Task-parameterized model with trajectory distribution and eigendecomposition
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
@@ -18,7 +14,7 @@ function demo_TPtrajDistrib01
 %		pages="1--29"
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -42,9 +38,9 @@ addpath('./m_fcts/');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model.nbFrames = 2; %Number of candidate frames of reference
 model.nbVar = 2; %Dimension of data (here: x1,x2)
-nbRepros = 5; %Number of reproductions with new situations randomly generated
 nbData = 200; %Number of datapoints in a trajectory
 nbEigs = 3; %Number of principal eigencomponents to keep
+nbRepros = 4; %Number of reproductions with new situations randomly generated
 
 
 %% Load 3rd order tensor data
@@ -131,7 +127,7 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,1300,500]);
+figure('position',[20,50,2300,900]);
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
@@ -184,6 +180,36 @@ for n=1:nbRepros
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
+% %Reproductions in same situations
+% figure('position',[20,50,500,500]); hold on; axis off;
+% for n=1:nbSamples
+% 	%Plot frames
+% 	for m=1:model.nbFrames
+% 		plot([s(n).p(m).b(1) s(n).p(m).b(1)+s(n).p(m).A(1,2)], [s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,2)], '-','linewidth',6,'color',colPegs(m,:));
+% 		plot(s(n).p(m).b(1), s(n).p(m).b(2),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+% 	end
+% 	%Plot trajectories
+% 	plot(r(n).Data(1,1), r(n).Data(2,1),'.','markersize',12,'color',clrmap(n,:));
+% 	plot(r(n).Data(1,:), r(n).Data(2,:),'-','linewidth',1.5,'color',clrmap(n,:));
+% end
+% axis square; axis(limAxes); 
+% print('-dpng','graphs/TP_trajDistrib01.png');
+% 
+% %Reproductions in new situations 
+% figure('position',[20,50,500,500]); hold on; axis off;
+% for n=1:nbRepros
+% 	%Plot frames
+% 	for m=1:model.nbFrames
+% 		plot([rnew(n).p(m).b(1) rnew(n).p(m).b(1)+rnew(n).p(m).A(1,2)], [rnew(n).p(m).b(2) rnew(n).p(m).b(2)+rnew(n).p(m).A(2,2)], '-','linewidth',6,'color',colPegs(m,:));
+% 		plot(rnew(n).p(m).b(1), rnew(n).p(m).b(2), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+% 	end
+% 	%Plot trajectories
+% 	plot(rnew(n).Data(1,1), rnew(n).Data(2,1),'.','markersize',12,'color',[.2 .2 .2]);
+% 	plot(rnew(n).Data(1,:), rnew(n).Data(2,:),'-','linewidth',1.5,'color',[.2 .2 .2]);
+% end
+% axis square; axis(limAxes); 
+% print('-dpng','graphs/TP_trajDistrib02.png');
+
 %print('-dpng','graphs/demo_TPtrajDistrib01.png');
-%pause;
-%close all;
+pause;
+close all;

@@ -1,24 +1,14 @@
 function demo_DTW01
 % Trajectory realignment through dynamic time warping (DTW).
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @misc{pbdlib,
+% 	title = {{PbDlib} robot programming by demonstration software library},
+% 	howpublished = {\url{http://www.idiap.ch/software/pbdlib/}},
+% 	note = {Accessed: 2019/04/18}
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -71,28 +61,40 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10,10,1000,500]); 
+figure('position',[10,10,1600,700]); 
 for k=1:nbVar
-	subplot(2,nbVar,(k-1)*2+1); hold on; if k==1 title('Before DTW'); end;
+	%Before DTW
+	subplot(2,nbVar+2,(k-1)*4+1); hold on; if k==1 title('Before DTW'); end;
 	for n=1:nbSamples
-		plot(s(n).Data(k,:), '-','linewidth',1,'color',[0 0 0]);
+		plot(s(n).Data(k,:), '-','linewidth',1,'color',[.6 .6 .6]);
 	end
 	xlabel('t'); ylabel(['x_' num2str(k)]);
 	axis tight; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
-	subplot(2,nbVar,(k-1)*2+2); hold on; if k==1 title('After DTW'); end;
+	%After DTW
+	subplot(2,nbVar+2,(k-1)*4+2); hold on; if k==1 title('After DTW'); end;
 	for n=1:nbSamples
 		plot(r(n).Data(k,:), '-','linewidth',1,'color',[0 0 0]);
 	end
 	xlabel('t'); ylabel(['x_' num2str(k)]);
 	axis tight; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 end
+%spatial graph
+subplot(2,nbVar+2,[3,4,7,8]); hold on; 
+for n=1:nbSamples
+	plot(s(n).Data(1,:), s(n).Data(2,:), '-','linewidth',1,'color',[.6 .6 .6]);
+	plot(s(n).Data(1,:), s(n).Data(2,:), '.','markersize',12,'color',[.6 .6 .6]);
+	plot(r(n).Data(1,:), r(n).Data(2,:), '-','linewidth',1,'color',[0 0 0]);
+	plot(r(n).Data(1,:), r(n).Data(2,:), '.','markersize',12,'color',[0 0 0]);
+end
+xlabel('t'); ylabel(['x_' num2str(k)]);
+axis tight; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 
-figure; hold on;
+figure('position',[1620,10,700,700]); hold on;
 for n=1:nbSamples-1
 	plot(r(n).wPath(1,:),r(n).wPath(2,:),'-','color',[0 0 0]);
 end
 xlabel('w_1'); ylabel('w_2');
 
 %print('-dpng','graphs/demo_DTW01.png');
-%pause;
-%close all;
+pause;
+close all;

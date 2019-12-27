@@ -7,11 +7,16 @@ function [model, GAMMA2] = EM_MPPCA(Data, model)
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
@@ -38,7 +43,7 @@ nbMaxSteps = 100; %Maximum number of iterations allowed
 maxDiffLL = 1E-4; %Likelihood increase threshold to stop the algorithm
 nbData = size(Data,2);
 
-diagRegularizationFactor = 1E-6; %Regularization term is optional, see Eq. (2.1.2) in doc/TechnicalReport.pdf
+diagRegularizationFactor = 1E-6; %Regularization term is optional
 
 %Initialization of the MPPCA parameters from eigendecomposition
 for i=1:model.nbStates
@@ -81,7 +86,7 @@ for nbIter=1:nbMaxSteps
 		model.P(:,:,i) = eye(model.nbVar) * model.o(i);
 		
 		%Reconstruct Sigma
-		model.Sigma(:,:,i) = model.L(:,:,i) * model.L(:,:,i)' + model.P(:,:,i);
+		model.Sigma(:,:,i) = real(model.L(:,:,i) * model.L(:,:,i)' + model.P(:,:,i));
 	end
 	
 	%Compute average log-likelihood
@@ -100,9 +105,9 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [Lik, GAMMA] = computeGamma(Data, model)
-Lik = zeros(model.nbStates,size(Data,2));
-for i=1:model.nbStates
-	Lik(i,:) = model.Priors(i) * gaussPDF(Data, model.Mu(:,i), model.Sigma(:,:,i));
-end
-GAMMA = Lik ./ repmat(sum(Lik,1)+realmin, model.nbStates, 1);
+	Lik = zeros(model.nbStates,size(Data,2));
+	for i=1:model.nbStates
+		Lik(i,:) = model.Priors(i) * gaussPDF(Data, model.Mu(:,i), model.Sigma(:,:,i));
+	end
+	GAMMA = Lik ./ repmat(sum(Lik,1)+realmin, model.nbStates, 1);
 end

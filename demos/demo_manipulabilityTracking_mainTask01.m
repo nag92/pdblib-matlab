@@ -1,18 +1,17 @@
 function demo_manipulabilityTracking_mainTask01
-% Matching of a desired manipulability ellipsoid as the main task (no
-% desired position) using the formulation with the manipulability Jacobien
-% (Mandel notation).
+% Matching of a desired manipulability ellipsoid as the main task (no desired position) 
+% using the formulation with the manipulability Jacobien (Mandel notation).
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please cite the related publications.
+% This demo requires the robotics toolbox RTB10 (http://petercorke.com/wordpress/toolboxes/robotics-toolbox).
+% First run 'startup_rvc' from the robotics toolbox.
 %
-% @article{Jaquier18RSS,
-%   author="Jaquier, N and Rozo, L. and Caldwell, D. G. and Calinon, S.",
-%   title="Geometry-aware Tracking of Manipulability Ellipsoids",
-%   year="2018",
-%	booktitle = "Robotics: Science and Systems ({R:SS})",
-%	address = "Pittsburgh, USA"
+% If this code is useful for your research, please cite the related publication:
+% @inproceedings{Jaquier18RSS,
+% 	author="Jaquier, N. and Rozo, L. and Caldwell, D. G. and Calinon, S.",
+% 	title="Geometry-aware Tracking of Manipulability Ellipsoids",
+% 	booktitle="Robotics: Science and Systems ({R:SS})",
+% 	year="2018",
+% 	pages="1--9"
 % }
 % 
 % Copyright (c) 2017 Idiap Research Institute, http://idiap.ch/
@@ -32,16 +31,16 @@ function demo_manipulabilityTracking_mainTask01
 % You should have received a copy of the GNU General Public License
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
-% First run 'startup_rvc' from the robotics toolbox
-
 addpath('./m_fcts/');
+disp('This demo requires the robotics toolbox RTB10 (http://petercorke.com/wordpress/toolboxes/robotics-toolbox).');
 
 
-%% Auxiliar variables
+%% Auxiliary variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 dt = 1E-2;	% Time step
 nbIter = 65; % Number of iterations
 Km = 3; % Gain for manipulability control in task space
+
 
 %% Create robot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,6 +61,7 @@ q_Me_d = [pi/16 ; pi/4 ; pi/8 ; -pi/8]; % task 1
 J_Me_d = robot.jacob0(q_Me_d); % Current Jacobian
 J_Me_d = J_Me_d(1:2,:);
 Me_d = (J_Me_d*J_Me_d');
+
 
 %% Testing Manipulability Transfer
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,8 +137,8 @@ while( it < nbIter )
 	% Updating joint position
 	qt = qt + (dq_T1)*dt;
 	it = it + 1; % Iterations++
-
 end
+
 
 %% Final plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,115 +200,105 @@ xlabel('$t$','fontsize',22,'Interpreter','latex'); ylabel('$d$','fontsize',22,'I
 
 end
 
+%%%%%%%%%%%%%%%%%%
 function Jm_red = compute_red_manipulability_Jacobian(J, taskVar)
-% Compute the force manipulability Jacobian (symbolic) in the form of a
-% matrix using Mandel notation.
+	% Compute the force manipulability Jacobian (symbolic) in the form of a
+	% matrix using Mandel notation.
+	if nargin < 2
+			taskVar = 1:6;
+	end
 
-if nargin < 2
-    taskVar = 1:6;
+	Jm = compute_manipulability_Jacobian(J);
+	Jm_red = [];
+	for i = 1:size(Jm,3)
+		Jm_red = [Jm_red, symmat2vec(Jm(taskVar,taskVar,i))];
+	end
 end
 
-Jm = compute_manipulability_Jacobian(J);
-Jm_red = [];
-for i = 1:size(Jm,3)
-	Jm_red = [Jm_red, symmat2vec(Jm(taskVar,taskVar,i))];
-end
-
-end
-
+%%%%%%%%%%%%%%%%%%
 function Jm = compute_manipulability_Jacobian(J)
-% Compute the force manipulability Jacobian (symbolic).
-
-J_grad = compute_joint_derivative_Jacobian(J);
-
-Jm = tmprod(J_grad,J,2) + tmprod(permute(J_grad,[2,1,3]),J,1);
-
-% mat_mult = kdlJacToArma(J)*reshape( arma::mat(permDerivJ.memptr(), permDerivJ.n_elem, 1, false), columns, columns*rows);
-% dJtdq_J = arma::cube(mat_mult.memptr(), rows, rows, columns);
-
+	% Compute the force manipulability Jacobian (symbolic).
+	J_grad = compute_joint_derivative_Jacobian(J);
+	Jm = tmprod(J_grad,J,2) + tmprod(permute(J_grad,[2,1,3]),J,1);
+	% mat_mult = kdlJacToArma(J)*reshape( arma::mat(permDerivJ.memptr(), permDerivJ.n_elem, 1, false), columns, columns*rows);
+	% dJtdq_J = arma::cube(mat_mult.memptr(), rows, rows, columns);
 end
 
+%%%%%%%%%%%%%%%%%%
 function J_grad = compute_joint_derivative_Jacobian(J)
-% Compute the Jacobian derivative w.r.t joint angles (hybrid Jacobian
-% representation).
-% Ref: H. Bruyninck and J. de Schutter, 1996
-
-nb_rows = size(J,1); % task space dim.
-nb_cols = size(J,2); % joint space dim.
-J_grad = zeros(nb_rows, nb_cols, nb_cols);
-for i = 1:nb_cols
-    for j = 1:nb_cols
-        J_i = J(:,i);
-        J_j = J(:,j);
-        if j < i
-            J_grad(1:3,i,j) = cross(J_j(4:6,:),J_i(1:3,:));
-            J_grad(4:6,i,j) = cross(J_j(4:6,:),J_i(4:6,:));
-        elseif j > i
-            J_grad(1:3,i,j) = -cross(J_j(1:3,:),J_i(4:6,:));
-        else
-            J_grad(1:3,i,j) = cross(J_i(4:6,:),J_i(1:3,:));
-        end
-    end
+	% Compute the Jacobian derivative w.r.t joint angles (hybrid Jacobian
+	% representation). Ref: H. Bruyninck and J. de Schutter, 1996
+	nb_rows = size(J,1); % task space dim.
+	nb_cols = size(J,2); % joint space dim.
+	J_grad = zeros(nb_rows, nb_cols, nb_cols);
+	for i = 1:nb_cols
+		for j = 1:nb_cols
+			J_i = J(:,i);
+			J_j = J(:,j);
+			if j < i
+				J_grad(1:3,i,j) = cross(J_j(4:6,:),J_i(1:3,:));
+				J_grad(4:6,i,j) = cross(J_j(4:6,:),J_i(4:6,:));
+			elseif j > i
+				J_grad(1:3,i,j) = -cross(J_j(1:3,:),J_i(4:6,:));
+			else
+				J_grad(1:3,i,j) = cross(J_i(4:6,:),J_i(1:3,:));
+			end
+		end
+	end
 end
 
-end
-
+%%%%%%%%%%%%%%%%%%
 function U = logmap(X,S)
-% Logarithm map (SPD manifold)
-
-N = size(X,3);
-
-for n = 1:N
-% 	U(:,:,n) = S^.5 * logm(S^-.5 * X(:,:,n) * S^-.5) * S^.5;
-% 	tic
-% 	U(:,:,n) = S * logm(S\X(:,:,n));
-% 	toc
-% 	tic
-  [v,d] = eig(S\X(:,:,n));
-  U(:,:,n) = S * v*diag(log(diag(d)))*v^-1;
-% 	toc
-end
+	% Logarithm map (SPD manifold)
+	N = size(X,3);
+	for n = 1:N
+	% 	U(:,:,n) = S^.5 * logm(S^-.5 * X(:,:,n) * S^-.5) * S^.5;
+	% 	tic
+	% 	U(:,:,n) = S * logm(S\X(:,:,n));
+	% 	toc
+	% 	tic
+		[v,d] = eig(S\X(:,:,n));
+		U(:,:,n) = S * v*diag(log(diag(d)))*v^-1;
+	% 	toc
+	end
 end
 
+%%%%%%%%%%%%%%%%%%
 function v = symmat2vec(M)
-% Vectorization of a symmetric matrix
-
-N = size(M,1);
-v = [];
-
-v = diag(M);
-for n = 1:N-1
-  v = [v; sqrt(2).*diag(M,n)]; % Mandel notation
-end
+	% Vectorization of a symmetric matrix
+	N = size(M,1);
+	v = diag(M);
+	for n = 1:N-1
+		v = [v; sqrt(2).*diag(M,n)]; % Mandel notation
+	end
 end
 
+%%%%%%%%%%%%%%%%%%
 function [S,iperm] = tmprod(T,U,mode)
-% Mode-n tensor-matrix product
+	% Mode-n tensor-matrix product
+	size_tens = ones(1,mode);
+	size_tens(1:ndims(T)) = size(T);
+	N = length(size_tens);
 
-size_tens = ones(1,mode);
-size_tens(1:ndims(T)) = size(T);
-N = length(size_tens);
+	% Compute the complement of the set of modes.
+	bits = ones(1,N);
+	bits(mode) = 0;
+	modec = 1:N;
+	modec = modec(logical(bits(modec)));
 
-% Compute the complement of the set of modes.
-bits = ones(1,N);
-bits(mode) = 0;
-modec = 1:N;
-modec = modec(logical(bits(modec)));
+	% Permutation of the tensor
+	perm = [mode modec];
+	size_tens = size_tens(perm);
+	S = T; 
+	if mode ~= 1
+			S = permute(S,perm); 
+	end
 
-% Permutation of the tensor
-perm = [mode modec];
-size_tens = size_tens(perm);
-S = T; 
-if mode ~= 1
-    S = permute(S,perm); 
-end
+	% n-mode product
+	size_tens(1) = size(U,1);
+	S = reshape(U*reshape(S,size(S,1),[]),size_tens);
 
-% n-mode product
-size_tens(1) = size(U,1);
-S = reshape(U*reshape(S,size(S,1),[]),size_tens);
-
-% Inverse permutation
-iperm(perm(1:N)) = 1:N;
-S = permute(S,iperm); 
-
+	% Inverse permutation
+	iperm(perm(1:N)) = 1:N;
+	S = permute(S,iperm); 
 end

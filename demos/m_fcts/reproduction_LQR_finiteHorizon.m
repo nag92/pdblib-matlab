@@ -16,15 +16,20 @@ function r = reproduction_LQR_finiteHorizon(model, r, currPos, rFactor, Pfinal)
 %   pages="3339--3344"
 % }
 %
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
-% Written by Sylvain Calinon (http://calinon.ch/), Danilo Bruno (danilo.bruno@iit.it)
+% Written by Sylvain Calinon (http://calinon.ch/) and Danilo Bruno 
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
 % 

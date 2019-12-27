@@ -1,24 +1,14 @@
 function demo_regularization02
 % Regularization of GMM parameters with the addition of a small circular covariance.
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
-% @article{Calinon16JIST,
-%   author="Calinon, S.",
-%   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-%   journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% If this code is useful for your research, please cite the related publication:
+% @misc{pbdlib,
+% 	title = {{PbDlib} robot programming by demonstration software library},
+% 	howpublished = {\url{http://www.idiap.ch/software/pbdlib/}},
+% 	note = {Accessed: 2019/04/18}
 % }
 % 
-% Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
+% Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
 % Written by Sylvain Calinon, http://calinon.ch/
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
@@ -64,7 +54,6 @@ end
 model = init_GMM_timeBased([repmat(1:nbData,1,nbSamples); Data], model);
 model.Mu = model.Mu(2:end,:);
 model.Sigma = model.Sigma(2:end,2:end,:);
-
 model = EM_GMM(Data, model);
 
 
@@ -81,13 +70,11 @@ figure('position',[10,10,700,500]); hold on; axis off;
 plot(Data(1,:),Data(2,:),'.','markersize',8,'color',[.5 .5 .5]);
 plotGMM(model.Mu, model.Sigma, [.8 0 0],.5);
 axis equal; set(gca,'Xtick',[]); set(gca,'Ytick',[]);
-
 %print('-dpng','graphs/demo_regularization02a.png');
-%pause;
 
 plotGMM(model.Mu, repmat(eye(model.nbVar)*minE,[1 1 model.nbStates]), [.8 0 0],.5);
 plotGMM(model.Mu, model.Sigma2, [0 .8 0],.3);
 
 %print('-dpng','graphs/demo_regularization02b.png');
-%pause;
-%close all;
+pause;
+close all;

@@ -1,7 +1,5 @@
 function [bmx, ALPHA, S, alpha] = hsmm_fwd_step_hsum(Data, m, bmx, ALPHA, S,varargin)
 %Forward variable iteration
-% Implementation based on Yu and Kobayashi, IEEE Trans. on Signal Processing, 2010
-%	
 %Sylvain Calinon, 2014 
 
 % Check if we need to evaluate marginal probability:
@@ -35,10 +33,10 @@ ALPHA = [repmat(S(:,end), 1, nbD-1) .* m.Pd(:,1:nbD-1) + repmat(bmx(:,end), 1, n
 %   ALPHA_SUM(i) = sum(ALPHA(i,:));
 % end
 
-r = Btmp' * sum(ALPHA,2); %Equation (3)
-bmx = [bmx, Btmp ./ r]; %Equation (2)
+r = Btmp' * sum(ALPHA,2);     %Equation (3)
+bmx = [bmx, Btmp ./ r];	      %Equation (2)
 E = bmx(:,end) .* ALPHA(:,1); %Equation (5)
-S = [S,m.Trans' * E]; %Equation (6)
+S = [S,m.Trans' * E];         %Equation (6)
 
 alpha = Btmp .* sum(ALPHA,2); %Forward variable
 alpha = alpha / sum(alpha);

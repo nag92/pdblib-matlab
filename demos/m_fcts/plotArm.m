@@ -1,4 +1,4 @@
-function h = plotArm(a, d, p, sz, facecolor, edgecolor)
+function h = plotArm(a, d, p, sz, facecolor, edgecolor, alpha)
 % Display of a planar robot arm.
 %
 % Writing code takes time. Polishing it and making it available to others takes longer! 
@@ -6,11 +6,16 @@ function h = plotArm(a, d, p, sz, facecolor, edgecolor)
 % of the algorithms, please reward the authors by citing the related publications, 
 % and consider making your own research available in this way.
 %
-% @article{Calinon15,
+% @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
 %   journal="Intelligent Service Robotics",
-%   year="2015"
+%   publisher="Springer Berlin Heidelberg",
+%   doi="10.1007/s11370-015-0187-9",
+%   year="2016",
+%   volume="9",
+%   number="1",
+%   pages="1--29"
 % }
 %
 % Copyright (c) 2015 Idiap Research Institute, http://idiap.ch/
@@ -38,14 +43,17 @@ if nargin<5
 	facecolor = [.5,.5,.5];
 end
 if nargin<6
-	edgecolor = [1,1,1];
+	edgecolor = [.99,.99,.99];
+end
+if nargin<7
+	alpha = 1;
 end
 if size(p,1)==2
 	p = [p; -1];
 end
 
-h = plotArmBasis(p, sz, facecolor, edgecolor);
+h = plotArmBasis(p, sz, facecolor, edgecolor, alpha);
 for i=1:length(a)
-	[p, hTmp] = plotArmLink(sum(a(1:i)), d(i), p, sz, facecolor, edgecolor);
+	[p, hTmp] = plotArmLink(sum(a(1:i)), d(i), p+[0;0;.1], sz, facecolor, edgecolor, alpha);
 	h = [h hTmp];
 end
