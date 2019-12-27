@@ -1,4 +1,4 @@
-# pbdlib-sandbox-matlab
+# pbdlib-matlab
 
 PbDlib is a collection of source codes for robot programming by demonstration (learning from demonstration). It includes various functionalities at the crossroad of statistical learning, dynamical systems, optimal control and Riemannian geometry.<br>
 PbDlib can be used in applications requiring task adaptation, human-robot skill transfer, safe controllers based on minimal intervention principle, as well as for probabilistic motion analysis and synthesis in multiple coordinate systems.<br>
@@ -420,85 +420,85 @@ If you find PbDLib useful for your research, please cite the related publication
 
 [demo\_GMR\_3Dviz01.m](./demos/demo_GMR_3Dviz01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_GMR_3Dviz01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_GMR_3Dviz01.png)
 
 ***
 
 [demo\_GMR\_polyFit02.m](./demos/demo_GMR_polyFit02.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_GMRpolyFit02.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_GMRpolyFit02.png)
 
 ***
 
 [demo\_HMM01.m](./demos/demo_HMM01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_HMM01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_HMM01.png)
 
 ***
 
 [demo\_MPC\_iterativeLQR01.m](./demos/demo_MPC_iterativeLQR01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_iterativeLQR01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_iterativeLQR01.png)
 
 ***
 
 [demo\_Riemannian\_SPD\_GMR01.m](./demos/demo_Riemannian_SPD_GMR01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_Riemannian_cov_GMR01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_cov_GMR01.png)
 
 ***
 
 [demo\_Riemannian\_SPD\_interp01.m](./demos/demo_Riemannian_SPD_interp01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_Riemannian_cov_interp01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_cov_interp01.png)
 
 ***
 
 [demo\_Riemannian\_SPD\_interp02.m](./demos/demo_Riemannian_SPD_interp02.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_Riemannian_cov_interp02.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_cov_interp02.png)
 
 ***
 
 [demo\_Riemannian\_SPD\_interp03.m](./demos/demo_Riemannian_SPD_interp03.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_Riemannian_cov_interp03.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_cov_interp03.png)
 
 ***
 
 [demo\_Riemannian\_S2\_GMM01.m](./demos/demo_Riemannian_S2_GMM01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_Riemannian_sphere_GMM01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_sphere_GMM01.png)
 
 ***
 
 [demo\_GMM\_semiTied01.m](./demos/demo_GMM_semiTied01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_semitiedGMM01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_semitiedGMM01.png)
 
 ***
 
 [demo\_TPbatchLQR01.m](./demos/demo_TPbatchLQR01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_TPbatchLQR01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_TPbatchLQR01.png)
 
 ***
 
 [demo\_TPGMR01.m](./demos/demo_TPGMR01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_TPGMR01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_TPGMR01.png)
 
 ***
 
 [demo\_TPproMP01.m](./demos/demo_TPproMP01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_TPproMP01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_TPproMP01.png)
 
 ***
 
 [demo\_trajHSMM01.m](./demos/demo_trajHSMM01.m)
 
-![](https://gitlab.idiap.ch/rli/pbdlib-sandbox-matlab/raw/master/images/demo_trajHSMM01.png)
+![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_trajHSMM01.png)
 
 
 ### License
