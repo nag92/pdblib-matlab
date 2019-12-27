@@ -1,8 +1,8 @@
 # pbdlib-matlab
 
-PbDlib is a collection of source codes for robot programming by demonstration (learning from demonstration). It includes various functionalities at the crossroad of statistical learning, dynamical systems, optimal control and Riemannian geometry.<br>
-PbDlib can be used in applications requiring task adaptation, human-robot skill transfer, safe controllers based on minimal intervention principle, as well as for probabilistic motion analysis and synthesis in multiple coordinate systems.<br>
-The codes are compatible with both Matlab and GNU Octave. Other versions of the library in Python and C++ are also available at http://www.idiap.ch/software/pbdlib/ (currently, the Matlab version has the most functionalities).<br> 
+<p>PbDlib is a collection of source codes for robot programming by demonstration (learning from demonstration). It includes various functionalities at the crossroad of statistical learning, dynamical systems, optimal control and Riemannian geometry.</p>
+<p>PbDlib can be used in applications requiring task adaptation, human-robot skill transfer, safe controllers based on minimal intervention principle, as well as for probabilistic motion analysis and synthesis in multiple coordinate systems.</p>
+<p>The codes are compatible with both Matlab and GNU Octave. Other versions of the library in Python and C++ are also available at http://www.idiap.ch/software/pbdlib/ (currently, the Matlab version has the most functionalities).</p>
 
 ### Usage
 
@@ -14,14 +14,14 @@ All the examples are located in the main folder, and the functions are located i
 
 | Filename | Ref. | Description |
 |----------|------|-------------|
-| [benchmark/benchmark_DS_GP_GMM01.m](./demos/benchmark_DS_GP_GMM01.m) | [[1]](#ref-1) | Benchmark of task-parameterized model based on Gaussian process regression, with trajectory model (Gaussian mixture model encoding), and DS-GMR used for reproduction |
-| [benchmark/benchmark_DS_GP_raw01.m](./demos/benchmark_DS_GP_raw01.m) | [[1]](#ref-1) | Benchmark of task-parameterized model based on Gaussian process regression, with raw trajectory, and spring-damper system used for reproduction |
-| [benchmark/benchmark_DS_PGMM01.m](./demos/benchmark_DS_PGMM01.m) | [[1]](#ref-1) | Benchmark of task-parameterized model based on parametric Gaussian mixture model, and DS-GMR used for reproduction |
-| [benchmark/benchmark_DS_TP_GMM01.m](./demos/benchmark_DS_TP_GMM01.m) | [[1]](#ref-1) | Benchmark of task-parameterized Gaussian mixture model (TP-GMM), with DS-GMR used for reproduction |
+| [benchmark/benchmark_DS_GP_GMM01.m](./demos/benchmark_DS_GP_GMM01.m) | [[1]](#ref-1) | Benchmark of task-parameterized model based on GPR, with trajectory model (GMM encoding) |
+| [benchmark/benchmark_DS_GP_raw01.m](./demos/benchmark_DS_GP_raw01.m) | [[1]](#ref-1) | Benchmark of task-parameterized model based on GPR, with raw trajectory |
+| [benchmark/benchmark_DS_PGMM01.m](./demos/benchmark_DS_PGMM01.m) | [[1]](#ref-1) | Benchmark of task-parameterized model based on parametric Gaussian mixture model |
+| [benchmark/benchmark_DS_TP_GMM01.m](./demos/benchmark_DS_TP_GMM01.m) | [[1]](#ref-1) | Benchmark of task-parameterized Gaussian mixture model (TP-GMM) |
 | [benchmark/benchmark_DS_TP_GP01.m](./demos/benchmark_DS_TP_GP01.m) | [[1]](#ref-1) | Benchmark of task-parameterized Gaussian process (nonparametric task-parameterized method) |
 | [benchmark/benchmark_DS_TP_LWR01.m](./demos/benchmark_DS_TP_LWR01.m) | [[1]](#ref-1) | Benchmark of task-parameterized locally weighted regression (nonparametric task-parameterized method) |
-| [benchmark/benchmark_DS_TP_MFA01.m](./demos/benchmark_DS_TP_MFA01.m) | [[1]](#ref-1) | Benchmark of task-parameterized mixture of factor analyzers (TP-MFA), with DS-GMR used for reproduction |
-| [benchmark/benchmark_DS_TP_trajGMM01.m](./demos/benchmark_DS_TP_trajGMM01.m) | [[1]](#ref-1) | Benchmark of task-parameterized Gaussian mixture model (TP-GMM), with DS-GMR used for reproduction |
+| [benchmark/benchmark_DS_TP_MFA01.m](./demos/benchmark_DS_TP_MFA01.m) | [[1]](#ref-1) | Benchmark of task-parameterized mixture of factor analyzers (TP-MFA) |
+| [benchmark/benchmark_DS_TP_trajGMM01.m](./demos/benchmark_DS_TP_trajGMM01.m) | [[1]](#ref-1) | Benchmark of task-parameterized Gaussian mixture model (TP-GMM) |
 | [demo_affineTransform01.m](./demos/demo_affineTransform01.m) | [[1]](#ref-1) | Miscellaneous affine transformations of raw data as pre-processing step to train a task-parameterized model |
 | [demo_AR01.m](./demos/demo_AR01.m) | [[]](#) | Multivariate autoregressive (AR) model parameters estimation with least-squares |
 | [demo_AR_HSMM01.m](./demos/demo_AR_HSMM01.m) | [[]](#) | Multivariate autoregressive (AR) model implemented as a hidden semi-Markov model with lognormal duration model |
@@ -33,12 +33,12 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_DMP01.m](./demos/demo_DMP01.m) | [[1]](#ref-1) | Dynamic movement primitive (DMP) encoding with radial basis functions |
 | [demo_DMP02.m](./demos/demo_DMP02.m) | [[1]](#ref-1) | Generalization of dynamic movement primitive (DMP) with polynomial fitting using radial basis functions |
 | [demo_DMP_batchLQR01.m](./demos/demo_DMP_batchLQR01.m) | [[1]](#ref-1) | Emulation of DMP with a spring system controlled by batch LQR |
-| [demo_DMP_GMR01.m](./demos/demo_DMP_GMR01.m) | [[1]](#ref-1) | Emulation of a standard dynamic movement primitive (DMP) model by using a Gaussian mixture model (GMM) with diagonal covariance matrix, and retrieval computed through Gaussian mixture regression (GMR) |
-| [demo_DMP_GMR02.m](./demos/demo_DMP_GMR02.m) | [[1]](#ref-1) | Enhanced dynamic movement primitive (DMP) model trained with EM by using a Gaussian mixture model (GMM) representation, with full covariance matrices coordinating the different variables in the feature space, where after learning (i.e., autonomous organization of the basis functions (position and spread), Gaussian mixture regression (GMR) is used to regenerate the nonlinear force profile |
-| [demo_DMP_GMR03.m](./demos/demo_DMP_GMR03.m) | [[1]](#ref-1) | Enhanced dynamic movement primitive (DMP) model trained with EM by using a Gaussian mixture model (GMM) representation, with full covariance matrices coordinating the different variables in the feature space, where after learning (i.e., autonomous organization of the basis functions (position and spread), Gaussian mixture regression (GMR) is used to regenerate the path of a spring-damper system, resulting in a nonlinear force profile |
-| [demo_DMP_GMR04.m](./demos/demo_DMP_GMR04.m) | [[1]](#ref-1) | Enhanced dynamic movement primitive (DMP) model trained with EM by using a Gaussian mixture model (GMM) representation, with full covariance matrices coordinating the different variables in the feature space, and by using the task-parameterized model formalism, where after learning (i.e., autonomous organization of the basis functions (position and spread), Gaussian mixture regression (GMR) is used to regenerate the path of a spring-damper system, resulting in a nonlinear force profile |
+| [demo_DMP_GMR01.m](./demos/demo_DMP_GMR01.m) | [[1]](#ref-1) | Emulation of DMP by using a GMM with diagonal covariance matrix, and retrieval computed with GMR |
+| [demo_DMP_GMR02.m](./demos/demo_DMP_GMR02.m) | [[1]](#ref-1) | Same as demo_DMP_GMR01.m with full covariance |
+| [demo_DMP_GMR03.m](./demos/demo_DMP_GMR03.m) | [[1]](#ref-1) | Same as demo_DMP_GMR02.m with GMR used to regenerate the path of a spring-damper system, resulting in a nonlinear force profile |
+| [demo_DMP_GMR04.m](./demos/demo_DMP_GMR04.m) | [[1]](#ref-1) | Same as demo_DMP_GMR03.m by using the task-parameterized model formalism |
 | [demo_DMP_GMR_illustr01.m](./demos/demo_DMP_GMR_illustr01.m) | [[1]](#ref-1) | Illustration of DMP with GMR to regenerate the nonlinear force profile | 
-| [demo_DMP_GMR_LQR01.m](./demos/demo_DMP_GMR_LQR01.m) | [[1]](#ref-1) | Same example as demo_DMP_GMR04, but with LQR used to refine the parameters of the spring-damper system based on the covariance information retrieved by GMR |
+| [demo_DMP_GMR_LQR01.m](./demos/demo_DMP_GMR_LQR01.m) | [[1]](#ref-1) | Same example as demo_DMP_GMR04.m, but with LQR |
 | [demo_DPmeans_online01.m](./demos/demo_DPmeans_online01.m) | [[6]](#ref-6) | Online clustering with DP-Means algorithm |
 | [demo_DPmeans_online02.m](./demos/demo_DPmeans_online02.m) | [[6]](#ref-6) | Online clustering with DP-Means algorithm, with stochastic samples |
 | [demo_DTW01.m](./demos/demo_DTW01.m) | [[1]](#ref-1) | Trajectory realignment through dynamic time warping (DTW) |
@@ -65,23 +65,23 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_GMM_logNormal01.m](./demos/demo_GMM_logNormal01.m) | [[]]() | Conditional probability with multivariate lognormal distribution |
 | [demo_GMM_MFA01.m](./demos/demo_GMM_MFA01.m) | [[1]](#ref-1) | Mixture of factor analyzers (MFA) |
 | [demo_GMM_MPPCA01.m](./demos/demo_GMM_MPPCA01.m) | [[1]](#ref-1) | Mixture of probabilistic principal component analyzers (MPPCA) |
-| [demo_GMM_profileGMM01.m](./demos/demo_GMM_profileGMM01.m) | [[1]](#ref-1) | Univariate velocity profile fitting with a Gaussian mixture model (GMM) and a weighted EM algorithm, with an approach sharing links with radial basis function networks (RBFN), by adapting the Gaussian basis functions with EM based on the distribution profiles instead of considering a simple clustering of the input space |
-| [demo_GMM_profileGMM_multivariate01.m](./demos/demo_GMM_profileGMM_multivariate01.m) | [[1]](#ref-1) | Multivariate velocity profile fitting with a Gaussian mixture model (GMM) and a weighted EM algorithm |
+| [demo_GMM_profileGMM01.m](./demos/demo_GMM_profileGMM01.m) | [[1]](#ref-1) | Univariate velocity profile fitting with a GMM and a weighted EM algorithm |
+| [demo_GMM_profileGMM_multivariate01.m](./demos/demo_GMM_profileGMM_multivariate01.m) | [[1]](#ref-1) | Multivariate velocity profile fitting with a GMM and a weighted EM algorithm |
 | [demo_GMM_profileLogGMM01.m](./demos/demo_GMM_profileLogGMM01.m) | [[1]](#ref-1) | Univariate velocity profile fitting with a lognormal mixture model (GMM) and a weighted EM algorithm |
-| [demo_GMM_profileLogGMM_multivariate01.m](./demos/demo_GMM_profileLogGMM_multivariate01.m) | [[1]](#ref-1) | Multivariate velocity profile fitting with a Gaussian mixture model (GMM) and a weighted EM algorithm |
+| [demo_GMM_profileLogGMM_multivariate01.m](./demos/demo_GMM_profileLogGMM_multivariate01.m) | [[1]](#ref-1) | Multivariate velocity profile fitting with a GMM and a weighted EM algorithm |
 | [demo_GMM_semiTied01.m](./demos/demo_GMM_semiTied01.m) | [[1]](#ref-1) | Semi-tied Gaussian Mixture Model by tying the covariance matrices of a GMM with a set of common basis vectors |
 | [demo_GMR01.m](./demos/demo_GMR01.m) | [[5]](#ref-5) | Gaussian mixture model (GMM) and time-based Gaussian mixture regression (GMR) used for reproduction |
 | [demo_GMR02.m](./demos/demo_GMR02.m) | [[5]](#ref-5) | GMR computed with precision matrices instead of covariances |
 | [demo_GMR03.m](./demos/demo_GMR03.m) | [[5]](#ref-5) | Chain rule with Gaussian conditioning |
 | [demo_GMR_3Dviz01.m](./demos/demo_GMR_3Dviz01.m) | [[5]](#ref-5) | 3D visualization of a Gaussian mixture model (GMM) with time-based Gaussian mixture regression (GMR) used for reproduction |
 | [demo_GMR_augmSigma01.m](./demos/demo_GMR_augmSigma01.m) | [[5]](#ref-5) | GMR with Gaussians reparamterized to have zero means and augmented covariances |
-| [demo_GMR_DS01.m](./demos/demo_GMR_DS01.m) | [[2]](#ref-2) | Gaussian mixture model (GMM), with Gaussian mixture regression(GMR) and dynamical systems used for reproduction, with decay variable used as input (as in DMP) |
+| [demo_GMR_DS01.m](./demos/demo_GMR_DS01.m) | [[2]](#ref-2) | Gaussian mixture model with GMR and dynamical systems used for reproduction, with decay variable used as input (as in DMP) |
 | [demo_GMR_polyFit01.m](./demos/demo_GMR_polyFit01.m) | [[5]](#ref-5) | Polynomial fitting with multivariate GMR |
 | [demo_GMR_probTraj01.m](./demos/demo_GMR_probTraj01.m) | [[5]](#ref-5) | Probabilistic trajectory generation with GMR obtained from normally distributed GMM centers |
-| [demo_GMR_SEDS01.m](./demos/demo_GMR_SEDS01.m) | [[2]](#ref-2) | Continuous autonomous dynamical system with state-space encoding using GMM, with GMR used for reproduction by using a constrained optimization similar to the SEDS approach |
-| [demo_GMR_SEDS_augmSigma01.m](./demos/demo_GMR_SEDS_augmSigma01.m) | [[2]](#ref-2) | Continuous autonomous dynamical system with augmented state-space encoding and constrained optimization similar to the SEDS approach |
-| [demo_GMR_SEDS_discrete01.m](./demos/demo_GMR_SEDS_discrete01.m) | [[2]](#ref-2) | Discrete autonomous dynamical system with state-space encoding using GMM, with GMR used for reproduction by using a constrained optimization similar to the SEDS approach |
-| [demo_GMR_SEDS_discrete_augmSigma01.m](./demos/demo_GMR_SEDS_discrete_augmSigma01.m) | [[2]](#ref-2) | Discrete autonomous dynamical system with augmented state-space encoding and constrained optimization similar to the SEDS approach |
+| [demo_GMR_SEDS01.m](./demos/demo_GMR_SEDS01.m) | [[2]](#ref-2) | Continuous autonomous dynamical system, with GMR using a constrained optimization similar to the SEDS approach |
+| [demo_GMR_SEDS_augmSigma01.m](./demos/demo_GMR_SEDS_augmSigma01.m) | [[2]](#ref-2) | Same as demo_GMR_SEDS01.m with an augmented state-space encoding |
+| [demo_GMR_SEDS_discrete01.m](./demos/demo_GMR_SEDS_discrete01.m) | [[2]](#ref-2) | Same as demo_GMR_SEDS01.m but with discrete autonomous dynamical system |
+| [demo_GMR_SEDS_discrete_augmSigma01.m](./demos/demo_GMR_SEDS_discrete_augmSigma01.m) | [[2]](#ref-2) | Same as demo_GMR_SEDS_augmSigma01.m but with discrete autonomous dynamical system |
 | [demo_GMR_wrapped01.m](./demos/demo_GMR_wrapped01.m) | [[5]](#ref-5) | Wrapped GMM and wrapped GMR in 2D (with only the first dimension being periodic) |
 | [demo_GPR01.m](./demos/demo_GPR01.m) | [[2]](#ref-2) | Gaussian process regression (GPR) |
 | [demo_GPR02.m](./demos/demo_GPR02.m) | [[2]](#ref-2) | GPR with stochastic samples from the prior and the posterior |
@@ -106,8 +106,8 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_HMM_Viterbi01.m](./demos/demo_HMM_Viterbi01.m) | [[2]](#ref-2) | Viterbi decoding in HMM to estimate best state sequence from observations |
 | [demo_HSMM01.m](./demos/demo_HSMM01.m) | [[2]](#ref-2) | Variable duration model implemented as a hidden semi-Markov model (HSMM), by encoding the state duration after EM |
 | [demo_HSMM02.m](./demos/demo_HSMM02.m) | [[2]](#ref-2) | Same as demo_HSMM01.m but with a log-normal duration model |
-| [demo_HSMM_adaptiveDuration01.m](./demos/demo_HSMM_adaptiveDuration01.m) | [[9]](#ref-9) | Hidden semi-Markov model with adaptive duration, used with a controller based on discrete finite-horizon LQR updated online (with position and velocity tracking) |
-| [demo_HSMM_adaptiveDuration_infHor01.m](./demos/demo_HSMM_adaptiveDuration_infHor01.m) | [[9]](#ref-9) | Hidden semi-Markov model with adaptive duration, used with a controller based on discrete infinite-horizon LQR (with position and velocity tracking) |
+| [demo_HSMM_adaptiveDuration01.m](./demos/demo_HSMM_adaptiveDuration01.m) | [[9]](#ref-9) | Hidden semi-Markov model with adaptive duration |
+| [demo_HSMM_adaptiveDuration_infHor01.m](./demos/demo_HSMM_adaptiveDuration_infHor01.m) | [[9]](#ref-9) | Same as demo_HSMM_adaptiveDuration01.m with LQR |
 | [demo_HSMM_MPC01.m](./demos/demo_HSMM_MPC01.m) | [[2]](#ref-2) | Use of HSMM (with lognormal duration model) and batch LQR (with position only) for motion synthesis |
 | [demo_HSMM_online01.m](./demos/demo_HSMM_online01.m) | [[2]](#ref-2) | Online HSMM |
 | [demo_ID01.m](./demos/demo_ID01.m) | [[1]](#ref-1) | Inverse dynamics with dynamically consistent nullspace (requires the robotics toolbox) |
@@ -115,7 +115,7 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_IK02.m](./demos/demo_IK02.m) | [[1]](#ref-1) | Inverse kinematics with two arms and nullspace control (requires the robotics toolbox) |
 | [demo_IK_nullspaceAsProduct01.m](./demos/demo_IK_nullspaceAsProduct01.m) | [[]](#) | 3-level nullspace control formulated as product of Gaussians |
 | [demo_IK_nullspace_TPGMM01.m](./demos/demo_IK_nullspace_TPGMM01.m) | [[1]](#ref-1) | IK with nullspace treated with task-parameterized GMM (bimanual tracking task, version with 4 frames) |
-| [demo_IK_pointing_TPGMM01.m](./demos/demo_IK_pointing_TPGMM01.m) | [[1]](#ref-1) | Task-parameterized GMM to encode pointing direction by considering inverse kinematics (example with one object, requires the robotics toolbox) |
+| [demo_IK_pointing_TPGMM01.m](./demos/demo_IK_pointing_TPGMM01.m) | [[1]](#ref-1) | Task-parameterized GMM to encode pointing direction by considering inverse kinematics |
 | [demo_IK_quat01.m](./demos/demo_IK_quat01.m) | [[1]](#ref-1) | Inverse kinematics for orientation data with quaternion references (version with quaternion Jacobian) |
 | [demo_IK_quat02.m](./demos/demo_IK_quat02.m) | [[1]](#ref-1) | Inverse kinematics for orientation data with quaternion references (version with standard Jacobian) |
 | [demo_IK_weighted01.m](./demos/demo_IK_weighted01.m) | [[]](#) | Inverse kinematics with nullspace control, by considering weights in joint space and in task space |
@@ -133,12 +133,12 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_LWR01.m](./demos/demo_LWR01.m) | [[5]](#ref-5) | Locally weighted regression (LWR) with radial basis functions and local polynomial fitting |
 | [demo_manipulabilityTracking_mainTask01.m](./demos/demo_manipulabilityControl_mainTask01.m) | [[10]](#ref-10) | Tracking of a desired manipulability ellipsoid as the main task |
 | [demo_manipulabilityTracking_mainTask02.m](./demos/demo_manipulabilityControl_mainTask02.m) | [[10]](#ref-10) | Tracking of a desired manipulability ellipsoid as the main task using precision matrices as gain |
-| [demo_manipulabilityTracking_secondaryTask01.m](./demos/demo_manipulabilityControl_secondTask01.m) | [[10]](#ref-10) | Tracking of a desired manipulability ellipsoid as the secondary task with position tracking as main task |
+| [demo_manipulabilityTracking_secondaryTask01.m](./demos/demo_manipulabilityControl_secondTask01.m) | [[10]](#ref-10) | Tracking of a desired manipulability ellipsoid as the secondary task |
 | [demo_manipulabilityTransfer01.m](./demos/demo_manipulabilityTransfer01.m) | [[7]](#ref-7) | Use of robot redundancy to track desired manipulability ellipsoid |
 | [demo_manipulabilityTransfer02.m](./demos/demo_manipulabilityTransfer02.m) | [[7]](#ref-7) | Learning and reproduction of manipulability ellipsoid profiles |
 | [demo_manipulabilityTransfer03.m](./demos/demo_manipulabilityTransfer03.m) | [[7]](#ref-7) | Learning and reproduction of manipulability ellipsoid profiles (numerical version) |
-| [demo_MPC01.m](./demos/demo_MPC01.m) | [[2]](#ref-2) | Batch solution of linear quadratic optimal control (unconstrained linear MPC), by relying on a Gaussian mixture model (GMM) encoding of position and velocity data (see also demo_MPC_iterativeLQR01.m) |
-| [demo_MPC02.m](./demos/demo_MPC02.m) | [[2]](#ref-2) | Same as demo_MPC01 but with a GMM encoding of only position data |
+| [demo_MPC01.m](./demos/demo_MPC01.m) | [[2]](#ref-2) | Batch LQR with viapoints and a double integrator system. |
+| [demo_MPC02.m](./demos/demo_MPC02.m) | [[2]](#ref-2) | Same as demo_MPC01.m but with a GMM encoding of only position data |
 | [demo_MPC03.m](./demos/demo_MPC03.m) | [[2]](#ref-2) | Control of a spring attached to a point with batch LQR |
 | [demo_MPC04.m](./demos/demo_MPC04.m) | [[2]](#ref-2) | Control of a spring attached to a point with batch LQR (with augmented state space) |
 | [demo_MPC_augmSigma01.m](./demos/demo_MPC_augmSigma01.m) | [[2]](#ref-2) | Batch LQR with augmented covariance to transform a tracking problem to a regulation problem |
@@ -152,9 +152,9 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_MPC_infHor04.m](./demos/demo_MPC_infHor04.m) | [[2]](#ref-2) | Discrete infinite horizon linear quadratic tracking, by relying on a GMM encoding of position and velocity data |
 | [demo_MPC_infHor_bicopter01.m](./demos/demo_MPC_infHor_bicopter01.m) | [[2]](#ref-2) | Infinite horizon LQR applied on a planar UAV with an iterative linearization of the system plant |
 | [demo_MPC_infHor_incremental01.m](./demos/demo_MPC_infHor_incremental01.m) | [[2]](ref-2) | Infinite horizon LQR with an iterative re-estimation of the system plant linear system (example with planar UAV) |
-| [demo_MPC_infHor_incremental02.m](./demos/demo_MPC_infHor_incremental02.m) | [[2]](ref-2) | Infinite horizon LQR with an iterative re-estimation of the system plant linear system (example with torque-limited pendulum) |
+| [demo_MPC_infHor_incremental02.m](./demos/demo_MPC_infHor_incremental02.m) | [[2]](ref-2) | Same as demo_MPC_infHor_incremental01.m but with pendulum) |
 | [demo_MPC_iterativeLQR01.m](./demos/demo_MPC_iterativeLQR01.m) | [[2]](#ref-2) | Iterative computation of linear quadratic tracking (with feedback and feedforward terms) |
-| [demo_MPC_iterativeLQR02.m](./demos/demo_MPC_iterativeLQR02.m) | [[2]](#ref-2) | Same as demo_MPC_iterativeLQR01.m, by relying on a GMM encoding of position and velocity data, including comparison with batch LQT |
+| [demo_MPC_iterativeLQR02.m](./demos/demo_MPC_iterativeLQR02.m) | [[2]](#ref-2) | Same as demo_MPC_iterativeLQR01.m, by relying on a GMM encoding of position and velocity data |
 | [demo_MPC_iterativeLQR03.m](./demos/demo_MPC_iterativeLQR03.m) | [[2]](#ref-2) | Same as demo_MPC_iterativeLQR01.m, by relying on a GMM encoding of only position data |
 | [demo_MPC_iterativeLQR04.m](./demos/demo_MPC_iterativeLQR04.m) | [[2]](#ref-2) | Control of a spring attached to a point with iterative linear quadratic tracking (with feedback and feedforward terms) |
 | [demo_MPC_iterativeLQR_augmSigma01.m](./demos/demo_MPC_iterativeLQR_augmSigma01.m) | [[2]](#ref-2) | Iterative LQR with augmented covariance to transform the tracking problem to a regulation problem |
@@ -189,9 +189,9 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_Riemannian_pose_GMM01.m](./demos/demo_Riemannian_pose_GMM01.m) | [[3]](#ref-3) | GMM to encode 3D position and orientation as unit quaternion by relying on Riemannian manifold |
 | [demo_Riemannian_S1_interp01.m](./demos/demo_Riemannian_S1_interp01.m) | [[]](#) | Interpolation on 1-sphere manifold (formulation with imaginary numbers) |
 | [demo_Riemannian_S1_interp02.m](./demos/demo_Riemannian_S1_interp02.m) | [[]](#) | Interpolation on 1-sphere manifold (formulation with imaginary numbers, parameterization of x as angle) |
-| [demo_Riemannian_S2_batchLQR01.m](./demos/demo_Riemannian_S2_batchLQR01.m) | [[]](#) | Linear quadratic tracking on a sphere by relying on Riemannian manifold and batch LQR recomputed in an online manner, based on GMM encoding of movement |
-| [demo_Riemannian_S2_batchLQR02.m](./demos/demo_Riemannian_S2_batchLQR02.m) | [[]](#) | LQT on a sphere by relying on Riemannian manifold (recomputed in an online manner), based on GMM encoding of movement, by using only position data (-> velocity commands) |
-| [demo_Riemannian_S2_batchLQR03.m](./demos/demo_Riemannian_S2_batchLQR03.m) | [[]](#) | LQT on a sphere by relying on Riemannian manifold (recomputed in an online manner), by using only position data (-> velocity commands) |
+| [demo_Riemannian_S2_batchLQR01.m](./demos/demo_Riemannian_S2_batchLQR01.m) | [[]](#) | LQT on a sphere by relying on Riemannian manifold, based on GMM encoding of movement |
+| [demo_Riemannian_S2_batchLQR02.m](./demos/demo_Riemannian_S2_batchLQR02.m) | [[]](#) | Same as demo_Riemannian_S2_batchLQR01.m with full reference |
+| [demo_Riemannian_S2_batchLQR03.m](./demos/demo_Riemannian_S2_batchLQR03.m) | [[]](#) | Same as demo_Riemannian_S2_batchLQR02.m by using only position data (-> velocity commands) |
 | [demo_Riemannian_S2_batchLQR_Bezier01.m](./demos/demo_Riemannian_S2_batchLQR_Bezier01.m) | [[8]](#ref-8) | Bezier interpolation on a sphere by relying on Riemannian manifold and batch LQR |
 | [demo_Riemannian_S2_GaussProd01.m](./demos/demo_Riemannian_S2_GaussProd01.m) | [[3]](#ref-3) | Product of Gaussians on a sphere by relying on Riemannian manifold |
 | [demo_Riemannian_S2_GMM01.m](./demos/demo_Riemannian_S2_GMM01.m) | [[3]](#ref-3) | GMM for data on a sphere by relying on Riemannian manifold |
@@ -210,16 +210,16 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_Riemannian_S3_interp01.m](./demos/demo_Riemannian_S3_interp01.m) | [[3]](#ref-3) | Interpolation of unit quaternions by relying on Riemannian manifold, providing the same result as SLERP interpolation |
 | [demo_Riemannian_S3_vecTransp01.m](./demos/demo_Riemannian_S3_vecTransp01.m) | [[3]](#ref-3) | Parallel transport for unit quaternions |
 | [demo_Riemannian_Sd_GaussProd01.m](./demos/demo_Riemannian_Sd_GaussProd01.m) | [[3]](#ref-3) | Product of Gaussians on a d-sphere by relying on Riemannian manifold |
-| [demo_Riemannian_Sd_GMM01.m](./demos/demo_Riemannian_Sd_GMM01.m) | [[3]](#ref-3) | GMM for data on a 1-sphere (circle) by relying on Riemannian manifold (formulation with tangent space of same dimension as manifold) |
-| [demo_Riemannian_Sd_GMM02.m](./demos/demo_Riemannian_Sd_GMM02.m) | [[3]](#ref-3) | GMM for data on a 2-sphere (ball) by relying on Riemannian manifold (formulation with tangent space of same dimension as manifold) |
+| [demo_Riemannian_Sd_GMM01.m](./demos/demo_Riemannian_Sd_GMM01.m) | [[3]](#ref-3) | GMM for data on a 1-sphere (circle) by relying on Riemannian manifold |
+| [demo_Riemannian_Sd_GMM02.m](./demos/demo_Riemannian_Sd_GMM02.m) | [[3]](#ref-3) | GMM for data on a 2-sphere (ball) by relying on Riemannian manifold |
 | [demo_Riemannian_Sd_GMMR01.m](./demos/demo_Riemannian_Sd_GMR01.m) | [[3]](#ref-3) | Retrieval of periodic motion with GMR, by considering input data on a 1-sphere and output data in Euclidean space |
 | [demo_Riemannian_Sd_GMMR02.m](./demos/demo_Riemannian_Sd_GMR02.m) | [[3]](#ref-3) | GMR with input data on a 2-sphere (ball) and output data in Euclidean space by relying on Riemannian manifold |
 | [demo_Riemannian_Sd_interp01.m](./demos/demo_Riemannian_Sd_interp01.m) | [[3]](#ref-3) | Interpolation on a n-sphere (formulation with tangent space of same dimension as manifold) |
-| [demo_Riemannian_Sd_interp02.m](./demos/demo_Riemannian_Sd_interp02.m) | [[3]](#ref-3) | Interpolation on a 3-sphere and comparison with SLERP (formulation with tangent space of same dimension as manifold) |
-| [demo_Riemannian_Sd_MPC01.m](./demos/demo_Riemannian_Sd_MPC01.m) | [[3]](#ref-3) | Linear quadratic tracking on Sn by relying on Riemannian manifold and batch LQR recomputed in an online manner, based on GMM encoding of movement |
+| [demo_Riemannian_Sd_interp02.m](./demos/demo_Riemannian_Sd_interp02.m) | [[3]](#ref-3) | Interpolation on a 3-sphere and comparison with SLERP |
+| [demo_Riemannian_Sd_MPC01.m](./demos/demo_Riemannian_Sd_MPC01.m) | [[3]](#ref-3) | LQT on Sn by relying on Riemannian manifold and batch LQR recomputed in an online manner, based on GMM encoding of movement |
 | [demo_Riemannian_Sd_MPC_infHor01.m](./demos/demo_Riemannian_Sd_MPC_infHor01.m) | [[3]](#ref-3) | Linear quadratic regulation on S3 by relying on Riemannian manifold and infinite-horizon LQR |
-| [demo_Riemannian_Sd_vecTransp01.m](./demos/demo_Riemannian_Sd_vecTransp01.m) | [[3]](#ref-3) | Parallel transport on a n-sphere (formulation with tangent space of same dimension as manifold) |
-| [demo_Riemannian_Sd_vecTransp02.m](./demos/demo_Riemannian_Sd_vecTransp02.m) | [[3]](#ref-3) | Vector transport on a n-sphere using Schild's ladder algorithm (formulation with tangent space of same dimension as manifold) |
+| [demo_Riemannian_Sd_vecTransp01.m](./demos/demo_Riemannian_Sd_vecTransp01.m) | [[3]](#ref-3) | Parallel transport on a n-sphere |
+| [demo_Riemannian_Sd_vecTransp02.m](./demos/demo_Riemannian_Sd_vecTransp02.m) | [[3]](#ref-3) | Vector transport on a n-sphere using Schild's ladder algorithm |
 | [demo_Riemannian_SE2_GMM01.m](./demos/demo_Riemannian_SE2_GMM01.m) | [[3]](#ref-3) | GMM on SE(2) manifold |
 | [demo_Riemannian_SE2_interp01.m](./demos/demo_Riemannian_SE2_interp01.m) | [[3]](#ref-3) | Interpolation on SE(2) manifold |
 | [demo_Riemannian_SOd_interp01.m](./demos/demo_Riemannian_SOd_interp01.m) | [[3]](#ref-3) | Interpolation on SO(d) manifold |
