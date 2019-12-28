@@ -55,8 +55,8 @@ nbSamples = 5; %Number of demonstrations
 %% Load data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 demos=[];
-load('data/AMARSI/Snake.mat');
-%load('data/2Dletters/S.mat');
+load('data/Snake.mat');
+% load('data/2Dletters/S.mat');
 Data=[];
 for n=1:nbSamples
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling

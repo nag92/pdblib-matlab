@@ -41,7 +41,7 @@ nbSamples = 4;
 nbLim = [1, 0, 0]; %0 for non periodic dimension
 %Maximum range value of each dimension
 rgMax = [2*pi, 0, 0]; %0 for non periodic dimension
-%List of range offsets to be tested (0 for non-periodic variable), see Eq. (2.3.2) in doc/TechnicalReport.pdf
+%List of range offsets to be tested (0 for non-periodic variable)
 for j=1:model.nbVar
 	v(j).rg = [-nbLim(j):nbLim(j)] * rgMax(j); 
 end
@@ -161,5 +161,3 @@ set(gca,'xtick',[0, pi/2, pi, 3*pi/2, 2*pi],'xticklabel',lbl,'ytick',r(:,1),'yti
 pause;
 close all;
 end
-
-

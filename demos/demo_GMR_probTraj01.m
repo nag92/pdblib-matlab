@@ -1,20 +1,8 @@
 function demo_GMR_probTraj01
 % Probabilistic trajectory generation with GMR obtained from normally distributed GMM centers
 % 
-% Noemie Jaquier and Sylvain Calinon, 2018
-%
-% If this code is useful for your research, please cite the related publication:
-% @incollection{Calinon19MM,
-%   author="Calinon, S.",
-%   title="Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series",
-%   booktitle="Mixture Models and Applications",
-%   publisher="Springer",
-%   editor="Bouguila, N. and Fan, W.", 
-%   year="2019"
-% }
-% 
 % Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
-% Written by Noemie Jaquier and Sylvain Calinon
+% Written by Noémie Jaquier and Sylvain Calinon
 % 
 % This file is part of PbDlib, http://www.idiap.ch/software/pbdlib/
 % 
@@ -41,7 +29,7 @@ model.nbVarOut = 2; %Number of variables
 model.dt = 1E-2; %Time step duration
 nbData = 100; %Length of each trajectory
 nbSamples = 10; %Number of demonstrations
-nbRepros = 11;
+nbRepros = 1;
 
 
 %% Load handwriting data
@@ -124,12 +112,12 @@ SigmaTraj = SigmaTraj0 .* H;
 rank(SigmaTraj)
 
 	
-%% Stochastic trajectory generation
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[V,D] = eig(SigmaTraj);
-for m = 1:nbRepros-1
-	traj(m).Mu = MuTraj + real(V) * real(D).^.5 * randn(size(MuTraj));
-end
+% %% Stochastic trajectory generation
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% [V,D] = eig(SigmaTraj);
+% for m = 1:nbRepros-1
+% 	traj(m).Mu = MuTraj + real(V) * real(D).^.5 * randn(size(MuTraj));
+% end
 
 
 %% Trajectory reconstruction from partial data with Gaussian conditioning
