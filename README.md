@@ -246,9 +246,9 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_TPproMP01.m](./demos/demo_TPproMP01.m) | [[1]](#ref-1) | Task-parameterized probabilistic movement primitives (TP-ProMP) |
 | [demo_TPtrajDistrib01.m](./demos/demo_TPtrajDistrib01.m) | [[1]](#ref-1) | Task-parameterized model with trajectory distribution and eigendecomposition |
 | [demo_TPtrajGMM01.m](./demos/demo_TPtrajGMM01.m) | [[1]](#ref-1) | Task-parameterized model with trajectory-GMM encoding |
-| [demo_trajDistrib01.m](./demos/demo_trajDistrib01.m) | [[1]](#ref-1) | Stochastic sampling with Gaussian trajectory distribution |
-| [demo_trajDistrib_differencingMatrix01.m](./demos/demo_trajDistrib_differencingMatrix01.m) | [[]]() | Conditioning on trajectory distribution constructed by differencing matrix, with via-point passing example |
-| [demo_trajGMM01.m](./demos/demo_trajGMM01.m) | [[2]](#2) | Trajectory synthesis using a GMM with dynamic features (trajectory GMM) |
+| [demo_trajDistrib01.m](./demos/demo_trajDistrib01.m) | [[2]](#ref-2) | Stochastic sampling with Gaussian trajectory distribution |
+| [demo_trajDistrib_differencingMatrix01.m](./demos/demo_trajDistrib_differencingMatrix01.m) | [[2]](#ref-2) | Conditioning on trajectory distribution constructed by differencing matrix, with via-point passing example |
+| [demo_trajGMM01.m](./demos/demo_trajGMM01.m) | [[2]](#ref-2) | Trajectory synthesis using a GMM with dynamic features (trajectory GMM) |
 | [demo_trajGMM02.m](./demos/demo_trajGMM02.m) | [[2]](#ref-2) | Trajectory synthesis with a GMM with dynamic features (trajectory GMM), where the GMM is learned from trajectory examples ||
 | [demo_trajHSMM01.m](./demos/demo_trajHSMM01.m) | [[2]](#ref-2) | Trajectory synthesis with an HSMM with dynamic features (trajectory-HSMM) |
 | [demo_trajHSMM_adaptiveDuration01.m](./demos/demo_trajHSMM_adaptiveDuration01.m) | [[9]](#ref-9) | Hidden semi-Markov model with adaptive duration |
@@ -266,12 +266,13 @@ Calinon, S. (2016). <strong>A Tutorial on Task-Parameterized Movement Learning a
 <br>
 (Ref. for GMM, TP-GMM, MFA, MPPCA, GPR, trajGMM)
 
-#### [2] 
-Calinon, S. and Lee, D.  (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.
+<div id="ref-2">
+<p>[2] Calinon, S. and Lee, D.  (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.
 [[pdf]](http://calinon.ch/papers/Calinon-Lee-learningControl.pdf)
 [[bib]](http://calinon.ch/papers/Calinon-Lee-learningControl.bib)
-<br>
-(Ref. for MPC, LQR, HMM, HSMM)
+</p>
+<strong>(Ref. for MPC, LQR, HMM, HSMM)</strong>
+</div>
 
 #### [3] (Ref. for Riemannian manifolds)
 Calinon, S. and Jaquier, N. (2019). <strong>Gaussians on Riemannian Manifolds for Robot Learning and Adaptive Control</strong>. arXiv:1909.05946.
