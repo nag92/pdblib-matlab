@@ -259,61 +259,84 @@ All the examples are located in the main folder, and the functions are located i
 
 If you find PbDLib useful for your research, please cite the related publications!
 
-#### [1] 
-Calinon, S. (2016). <strong>A Tutorial on Task-Parameterized Movement Learning and Retrieval</strong>. Intelligent Service Robotics (Springer), 9:1, 1-29.
+<p><a name="ref-1">
+[1] Calinon, S. (2016). <strong>A Tutorial on Task-Parameterized Movement Learning and Retrieval</strong>. Intelligent Service Robotics (Springer), 9:1, 1-29.
+</a><br>
 [[pdf]](http://calinon.ch/papers/Calinon-JIST2015.pdf)
 [[pdf]](http://calinon.ch/papers/Calinon-JIST2015.bib)
-<br>
-(Ref. for GMM, TP-GMM, MFA, MPPCA, GPR, trajGMM)
+<br><strong>(Ref. for GMM, TP-GMM, MFA, MPPCA, GPR, trajGMM)</strong>
+</p>
 
 <p><a name="ref-2">
-[2] Calinon, S. and Lee, D.  (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.</a>
+[2] Calinon, S. and Lee, D.  (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.
+</a><br>
 [[pdf]](http://calinon.ch/papers/Calinon-Lee-learningControl.pdf)
 [[bib]](http://calinon.ch/papers/Calinon-Lee-learningControl.bib)
 <br><strong>(Ref. for MPC, LQR, HMM, HSMM)</strong>
 </p>
 
 <p><a name="ref-3">
-[3] Calinon, S. and Jaquier, N. (2019). <strong>Gaussians on Riemannian Manifolds for Robot Learning and Adaptive Control</strong>. arXiv:1909.05946.</a>
+[3] Calinon, S. and Jaquier, N. (2019). <strong>Gaussians on Riemannian Manifolds for Robot Learning and Adaptive Control</strong>. arXiv:1909.05946.
+</a><br>
 [[pdf]](http://calinon.ch/papers/Calinon-arXiv2019.pdf)
 [[bib]](http://calinon.ch/papers/Calinon-arXiv2019.bib)
 <br><strong>(Ref. for Riemannian manifolds)</strong>
 </p>
 
-#### [4] (Ref. for S^+ Riemannian manifolds)
-Jaquier, N. and Calinon, S.  (2017). <strong>Gaussian Mixture Regression on Symmetric Positive Definite Matrices Manifolds: Application to Wrist Motion Estimation with sEMG</strong>. In Proc. of the IEEE/RSJ Intl Conf. on Intelligent Robots and Systems (IROS), pp. 59-64.
+<p><a name="ref-4">
+[4] Jaquier, N. and Calinon, S.  (2017). <strong>Gaussian Mixture Regression on Symmetric Positive Definite Matrices Manifolds: Application to Wrist Motion Estimation with sEMG</strong>. In Proc. of the IEEE/RSJ Intl Conf. on Intelligent Robots and Systems (IROS), pp. 59-64.
+</a><br>
 [[pdf]](http://calinon.ch/papers/Jaquier-IROS2017.pdf)
 [[bib]](http://calinon.ch/papers/Jaquier-IROS2017.bib)
+<br><strong>(Ref. for S^+ Riemannian manifolds)</strong>
+</p>
 
-#### [5] (Ref. for ergodic control, Bezier curves, LWR, GMR, probabilistic movement primitives)
-Calinon, S. (2019). <strong>Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series</strong>. Bouguila, N. and Fan, W. (eds). Mixture Models and Applications, pp. 39-57. Springer.
+<p><a name="ref-5">
+[5] Calinon, S. (2019). <strong>Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series</strong>. Bouguila, N. and Fan, W. (eds). Mixture Models and Applications, pp. 39-57. Springer.
+</a><br>
 [[pdf]](http://calinon.ch/papers/Calinon-MM2019.pdf)
 [[bib]](http://calinon.ch/papers/Calinon-MM2019.bib)
+<br><strong>(Ref. for ergodic control, Bezier curves, LWR, GMR, probabilistic movement primitives)</strong>
+</p>
 
-#### [6] (Ref. for manipulability ellipsoids)
-Jaquier, N., Rozo, L., Caldwell, D.G. and Calinon, S. (2019). <strong>Geometry-aware Manipulability Transfer</strong>. arXiv:1811.11050.
+<p><a name="ref-6"> 
+[6] Jaquier, N., Rozo, L., Caldwell, D.G. and Calinon, S. (2019). <strong>Geometry-aware Manipulability Transfer</strong>. arXiv:1811.11050.
+</a><br>
 [[pdf]](http://calinon.ch/papers/Jaquier-arXiv2018.pdf)
 [[pdf]](http://calinon.ch/papers/Jaquier-arXiv2018.bib)
+<br><strong>(Ref. for manipulability ellipsoids)</strong>
+</p>
 
-#### [7] (Ref. for DP-means)
-Bruno, D., Calinon, S. and Caldwell, D.G. (2017). <strong>Learning Autonomous Behaviours for the Body of a Flexible Surgical Robot</strong>. Autonomous Robots, 41:2, 333-347.
+<p><a name="ref-7">
+[7] Bruno, D., Calinon, S. and Caldwell, D.G. (2017). <strong>Learning Autonomous Behaviours for the Body of a Flexible Surgical Robot</strong>. Autonomous Robots, 41:2, 333-347.
+</a><br>
 [[pdf]](http://calinon.ch/papers/Bruno-AURO2017.pdf)
 [[bib]](http://calinon.ch/papers/Bruno-AURO2017.bib)
+<br><strong>(Ref. for DP-means)</strong>
+</p>
 
-#### [8] (Ref. for Bezier curves as MPC with viapoints)
-Berio, D., Calinon, S. and Fol Leymarie, F. (2017). <strong>Generating Calligraphic Trajectories with Model Predictive Control</strong>. In Proc. of the 43rd Conf. on Graphics Interface, pp. 132-139.
+<p><a name="ref-8">
+[8] Berio, D., Calinon, S. and Fol Leymarie, F. (2017). <strong>Generating Calligraphic Trajectories with Model Predictive Control</strong>. In Proc. of the 43rd Conf. on Graphics Interface, pp. 132-139.
+</a><br>
 [[pdf]](http://calinon.ch/papers/Berio-GI2017.pdf)
 [[bib]](http://calinon.ch/papers/Berio-GI2017.bib)
+<br><strong>(Ref. for Bezier curves as MPC with viapoints)</strong>
+</p>
 
-#### [9] (Ref. for HSMM with adaptive time duration)
-Rozo, L., Silvério, J., Calinon, S. and Caldwell, D.G. (2016). <strong>Learning Controllers for Reactive and Proactive Behaviors in Human-Robot Collaboration</strong>. Frontiers in Robotics and AI, 3:30, 1-11.
+<p><a name="ref-9">
+[9] Rozo, L., Silvério, J., Calinon, S. and Caldwell, D.G. (2016). <strong>Learning Controllers for Reactive and Proactive Behaviors in Human-Robot Collaboration</strong>. Frontiers in Robotics and AI, 3:30, 1-11.
+</a><br>
 [[pdf]](http://calinon.ch/papers/Rozo-Frontiers2016.pdf)
 [[bib]](http://calinon.ch/papers/Rozo-Frontiers2016.bib)
+<br><strong>(Ref. for HSMM with adaptive time duration)</strong>
+</p>
 
-#### [10] (Ref. for machine learning teaching material)
-EPFL EE613 course "Machine Learning for Engineers"
+<p><a name="ref-10">
+[10] EPFL EE613 course "Machine Learning for Engineers"
+</a><br>
 [[url]](http://calinon.ch/teaching.htm)
-
+<br><strong>(Ref. for machine learning teaching material)</strong>
+</p>
 
 ### Gallery
 
