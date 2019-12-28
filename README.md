@@ -266,14 +266,14 @@ Calinon, S. (2016). <strong>A Tutorial on Task-Parameterized Movement Learning a
 <br>
 (Ref. for GMM, TP-GMM, MFA, MPPCA, GPR, trajGMM)
 
-<a name="ref-2"><p>
+<p><a name="ref-2">
 [2] Calinon, S. and Lee, D.  (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.</a>
 [[pdf]](http://calinon.ch/papers/Calinon-Lee-learningControl.pdf)
 [[bib]](http://calinon.ch/papers/Calinon-Lee-learningControl.bib)
 <br><strong>(Ref. for MPC, LQR, HMM, HSMM)</strong>
 </p>
 
-<a name="ref-3"><p>
+<p><a name="ref-3">
 [3] Calinon, S. and Jaquier, N. (2019). <strong>Gaussians on Riemannian Manifolds for Robot Learning and Adaptive Control</strong>. arXiv:1909.05946.</a>
 [[pdf]](http://calinon.ch/papers/Calinon-arXiv2019.pdf)
 [[bib]](http://calinon.ch/papers/Calinon-arXiv2019.bib)
