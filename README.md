@@ -263,7 +263,7 @@ If you find PbDLib useful for your research, please cite the related publication
 [1] Calinon, S. (2016). <strong>A Tutorial on Task-Parameterized Movement Learning and Retrieval</strong>. Intelligent Service Robotics (Springer), 9:1, 1-29.
 </a><br>
 [[pdf]](http://calinon.ch/papers/Calinon-JIST2015.pdf)
-[[pdf]](http://calinon.ch/papers/Calinon-JIST2015.bib)
+[[bib]](http://calinon.ch/papers/Calinon-JIST2015.bib)
 <br><strong>(Ref. for GMM, TP-GMM, MFA, MPPCA, GPR, trajGMM)</strong>
 </p>
 
@@ -294,8 +294,8 @@ If you find PbDLib useful for your research, please cite the related publication
 <p><a name="ref-5">
 [5] Calinon, S. (2019). <strong>Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series</strong>. Bouguila, N. and Fan, W. (eds). Mixture Models and Applications, pp. 39-57. Springer.
 </a><br>
-[[pdf]](http://calinon.ch/papers/Calinon-MM2019.pdf)
-[[bib]](http://calinon.ch/papers/Calinon-MM2019.bib)
+[[pdf]](http://calinon.ch/papers/Calinon_MMchapter2019.pdf)
+[[bib]](http://calinon.ch/papers/Calinon_MMchapter2019.bib)
 <br><strong>(Ref. for ergodic control, Bezier curves, LWR, GMR, probabilistic movement primitives)</strong>
 </p>
 
