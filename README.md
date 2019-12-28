@@ -132,7 +132,7 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_LS_weighted01.m](./demos/demo_LS_weighted01.m) | [[1]](#ref-1) | Weighted least squares regression |
 | [demo_LWR01.m](./demos/demo_LWR01.m) | [[5]](#ref-5) | Locally weighted regression (LWR) with radial basis functions and local polynomial fitting |
 | [demo_manipulabilityTracking_mainTask01.m](./demos/demo_manipulabilityControl_mainTask01.m) | [[10]](#ref-10) | Tracking of a desired manipulability ellipsoid as the main task |
-| [demo_manipulabilityTracking_mainTask02.m](./demos/demo_manipulabilityControl_mainTask02.m) | [[10]](#ref-10) | Tracking of a desired manipulability ellipsoid as the main task using precision matrices as gain |
+| [demo_manipulabilityTracking_mainTask02.m](./demos/demo_manipulabilityControl_mainTask02.m) | [[10]](#ref-10) | Same as demo_manipulabilityControl_mainTask01.m by using precision matrices as gain |
 | [demo_manipulabilityTracking_secondaryTask01.m](./demos/demo_manipulabilityControl_secondTask01.m) | [[10]](#ref-10) | Tracking of a desired manipulability ellipsoid as the secondary task |
 | [demo_manipulabilityTransfer01.m](./demos/demo_manipulabilityTransfer01.m) | [[7]](#ref-7) | Use of robot redundancy to track desired manipulability ellipsoid |
 | [demo_manipulabilityTransfer02.m](./demos/demo_manipulabilityTransfer02.m) | [[7]](#ref-7) | Learning and reproduction of manipulability ellipsoid profiles |
@@ -229,7 +229,7 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_Riemannian_SPD_GMR02.m](./demos/demo_Riemannian_SPD_GMR02.m) | [[4]](#ref-4) | GMR with time as input and position vector as output with comparison between computation in vector and matrix forms |
 | [demo_Riemannian_SPD_GMR03.m](./demos/demo_Riemannian_SPD_GMR03.m) | [[4]](#ref-4) | GMR with vector as input and covariance data as output by relying on Riemannian manifold |
 | [demo_Riemannian_SPD_GMR_tensor01.m](./demos/demo_Riemannian_SPD_GMR_tensor01.m) | [[4]](#ref-4) | GMR with time as input and covariance data as output by relying on Riemannian manifold |
-| [demo_Riemannian_SPD_interp01.m](./demos/demo_Riemannian_SPD_interp01.m) | [[4]](#ref-4) | Covariance interpolation on Riemannian manifold (comparison with linear interpolation, with Euclidean interpolation on Cholesky decomposition, and with Wasserstein interpolation) |
+| [demo_Riemannian_SPD_interp01.m](./demos/demo_Riemannian_SPD_interp01.m) | [[4]](#ref-4) | Covariance interpolation on Riemannian manifold (comparison with linear interpolation, Euclidean interpolation on Cholesky decomposition, and Wasserstein interpolation) |
 | [demo_Riemannian_SPD_interp02.m](./demos/demo_Riemannian_SPD_interp02.m) | [[4]](#ref-4) | Covariance interpolation on Riemannian manifold from a GMM with augmented covariances |
 | [demo_Riemannian_SPD_interp03.m](./demos/demo_Riemannian_SPD_interp03.m) | [[4]](#ref-4) | Trajectory morphing through covariance interpolation on Riemannian manifold (with augmented Gaussian trajectory distribution) |
 | [demo_Riemannian_SPD_vecTransp01.m](./demos/demo_Riemannian_SPD_vecTransp01.m) | [[4]](#ref-4) | Verification of angle conservation in parallel transport on the symmetric positive definite |
@@ -278,19 +278,9 @@ If you find PbDLib useful for your research, please cite the related publication
 
 #### Ref. [2] 
 **MPC, LQR, HMM, HSMM**<br>
-[Link to publication](http://calinon.ch/papers/Calinon-Lee-learningControl.pdf)
-```
-@incollection{Calinon19chapter,
-	author="Calinon, S. and Lee, D.",
-	title="Learning Control",
-	booktitle="Humanoid Robotics: a Reference",
-	publisher="Springer",
-	editor="Vadakkepat, P. and Goswami, A.", 
-	year="2019",
-	doi="10.1007/978-94-007-7194-9_68-1",
-	pages="1--52"
-}
-```
+Calinon, S. and Lee, D.  (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.
+[[pdf]](http://calinon.ch/papers/Calinon-Lee-learningControl.pdf)
+[[bib]](http://calinon.ch/papers/Calinon-Lee-learningControl.bib)
 
 #### Ref. [3] 
 **Riemannian manifolds (S2,S3)**<br>
