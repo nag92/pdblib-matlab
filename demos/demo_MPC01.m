@@ -1,5 +1,5 @@
 function demo_MPC01
-% Minimal example of batch LQR with viapoints and a double integrator system.
+% Batch LQR with viapoints and a double integrator system.
 %
 % If this code is useful for your research, please cite the related publication:
 % @incollection{Calinon19chapter,

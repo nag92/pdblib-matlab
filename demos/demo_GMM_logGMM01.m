@@ -1,5 +1,5 @@
 function demo_GMM_logGMM01
-% Multivariate lognormal mixture model parameters estimation with EM algorithm
+% Multivariate lognormal mixture model parameters estimation with EM algorithm.
 %
 % If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
@@ -31,7 +31,6 @@ function demo_GMM_logGMM01
 % You should have received a copy of the GNU General Public License
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
-
 addpath('./m_fcts/');
 
 
@@ -41,9 +40,6 @@ model.nbStates = 2; %Number of states in the mixture
 model.nbVar = 2; %Number of variables [x1,x2]
 nbData = 500; %Number of datapoints
 
-
-figure('PaperPosition',[0 0 24 4],'position',[10,10,1000,600]); hold on;
-% for nb=1:20
 
 %% Generate data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,12 +65,8 @@ end
 
 %% Parameters estimation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% model.Mu
-% model.Sigma
 model = init_GMM_kmeans(Data, model);
 model = EM_logGMM(Data, model);
-% model.Mu
-% model.Sigma
 
 nbX = 100;
 [X0,Y0] = meshgrid(linspace(min(Data(1,:)),max(Data(1,:)),nbX), linspace(min(Data(2,:)),max(Data(2,:)),nbX));
@@ -91,16 +83,10 @@ hmix = sum(h,1);
 
 %% Plot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clf; hold on; axis off;
-for i=1:model.nbStates
-	%plot(DataIn, h(i,:), '-','color',[.7 .7 .7]);
-end
+figure('PaperPosition',[0 0 24 4],'position',[10,10,1600,900]); hold on; hold on; axis off;
 pcolor(X0,Y0,reshape(hmix,nbX,nbX)); shading flat;
-
 plot(Data(1,:), Data(2,:), '.','markersize',6,'color',[0 0 0]);
 axis([min(Data(1,:)), max(Data(1,:)), min(Data(2,:)), max(Data(2,:))]); 
-% pause
-% end %nb
 
 %print('-dpng','graphs/demo_logGMM01.png');
 pause;

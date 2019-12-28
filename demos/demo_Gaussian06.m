@@ -2,16 +2,15 @@ function demo_Gaussian06
 % Gaussian reformulated as zero-centered Gaussian with augmented covariance
 %
 % If this code is useful for your research, please cite the related publication:
-% @article{Calinon16JIST,
+% @incollection{Calinon19MM,
 % 	author="Calinon, S.",
-% 	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-% 	journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% 	title="Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series",
+% 	booktitle="Mixture Models and Applications",
+% 	publisher="Springer",
+% 	editor="Bouguila, N. and Fan, W.", 
+% 	year="2019",
+% 	pages="39--57",
+% 	doi="10.1007/978-3-030-23876-6_3"
 % }
 %
 % Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/

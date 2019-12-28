@@ -1,5 +1,5 @@
 function demo_GMM_profileGMM_multivariate01
-% Example of multivariate velocity profile fitting with a Gaussian mixture model (GMM) and a weighted EM algorithm
+% Multivariate velocity profile fitting with a Gaussian mixture model (GMM) and a weighted EM algorithm
 %
 % If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
@@ -36,25 +36,13 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model.nbStates = 4; %Number of states in the GMM
+model.nbStates = 8; %Number of states in the GMM
 model.nbVar = 2; %Number of variables [x1]
 nbData = 200; %Length of each trajectory
-nbSamples = 1; %Number of samples
 
 
 %% Load data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% demos=[];
-% load('data/2Dletters/W.mat');
-% Data=[]; w=[];
-% for n=1:nbSamples
-% 	s(n).w = spline(1:size(demos{n}.vel(1:model.nbVar,:),2), demos{n}.vel(1:model.nbVar,:), linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
-% 	Data = [Data, repmat(1:nbData,model.nbVar,1)];
-% 	w = [w, s(n).w];
-% end
-% w = w - repmat(min(w,[],2),1,nbData*nbSamples);
-% w = w ./ repmat(max(w,[],2),1,nbData*nbSamples);
-
 Data = repmat(1:nbData,model.nbVar,1);
 load('data/lognormal05.mat'); %load 'w'
 
@@ -68,24 +56,24 @@ model = EM_weighted_multivariateGMM(Data, w, model);
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10,10,1000,500]); 
+figure('position',[10,10,2000,900]); 
 for k=1:model.nbVar
 	subplot(model.nbVar,1,k); hold on; box on; 
 	mtmp.nbStates = model.nbStates; 
 	mtmp.Priors = model.Priors(k,:);
 	mtmp.Mu(1,:) = model.Mu(k,:);
 	mtmp.Sigma(1,1,:) = model.Sigma(k,k,:);
+	hf(1) = plot(1:nbData, w(k,:), '-','linewidth',2,'color',[.7 .7 .7]);
 	[~,hmix(k,:)] = plotGMM1D(mtmp, [1 nbData 0 1], [.8 0 0], .2);
-	for n=1:nbSamples
-		plot(1:nbData, w(k,(n-1)*nbData+1:n*nbData), '-','linewidth',2,'color',[.7 .7 .7]);
-	end
+	hf(2) = plot(1:nbData, hmix(k,:),'-','linewidth',2,'color',[.8 0 0]);
 	axis([1 nbData 0 1.05]); set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 	xlabel('$t$','fontsize',18,'interpreter','latex'); 
 	ylabel(['$\dot{x}_' num2str(k) '$'],'fontsize',18,'interpreter','latex');
 end
+legend(hf, {'Reference','Reconstructed'});
+%print('-dpng','graphs/demo_GMM_profileGMM_multivariate01.png');
 
-norm(hmix-w)
+disp(['Error: ' num2str(norm(hmix-w))]);
 
-%print('-dpng','graphs/demo_profileGMM_multivariate01.png');
 pause;
 close all;

@@ -1,6 +1,6 @@
 function demo_MPC_iterativeLQR03
 % Iterative computation of linear quadratic tracking (with feedback and feedforward terms),
-% by relying on a Gaussian mixture model (GMM) encoding of only position data.
+% by relying on a GMM encoding of only position data.
 %
 % If this code is useful for your research, please cite the related publication:
 % @incollection{Calinon19chapter,

@@ -95,6 +95,7 @@ for t=1:nbData
   pinvJa_mod = Ja_mod' / (Ja_mod * Ja_mod' + eye(2) .* 1E-1); 
   dqb = pinv(Jb) * rdx;
   dq =  dqb + Nb * pinvJa_mod * (ldx - Ja * dqb);	
+% 	dq =  dqb + Nb * pinv(Ja) * ldx; %Approximation
 	
 	q = q + dq*dt;
 end

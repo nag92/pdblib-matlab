@@ -2,16 +2,15 @@ function demo_Gaussian03
 % Gaussian conditioning with uncertain inputs
 %
 % If this code is useful for your research, please cite the related publication:
-% @article{Calinon16JIST,
+% @incollection{Calinon19MM,
 % 	author="Calinon, S.",
-% 	title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
-% 	journal="Intelligent Service Robotics",
-%		publisher="Springer Berlin Heidelberg",
-%		doi="10.1007/s11370-015-0187-9",
-%		year="2016",
-%		volume="9",
-%		number="1",
-%		pages="1--29"
+% 	title="Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series",
+% 	booktitle="Mixture Models and Applications",
+% 	publisher="Springer",
+% 	editor="Bouguila, N. and Fan, W.", 
+% 	year="2019",
+% 	pages="39--57",
+% 	doi="10.1007/978-3-030-23876-6_3"
 % }
 %
 % Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/
@@ -136,11 +135,11 @@ plotGaussian1D(model.Mu(2), model.Sigma(2,2), [limAxes(1) limAxes(3) 10 limAxes(
 %Plot input distribution horizontally
 plotGaussian1D(DataIn, SigmaIn, [limAxes(1) limAxes(3) limAxes(2)-limAxes(1) 10], [0 0 .8], .4, 'h');
 %Plot conditional distribution vertically
-plotGaussian1D(MuOut, SigmaOut, [limAxes(1) limAxes(3) 10 limAxes(4)-limAxes(3)], [0 0 .8], .4, 'v');
+[~,h(1,:)] = plotGaussian1D(MuOut, SigmaOut, [limAxes(1) limAxes(3) 10 limAxes(4)-limAxes(3)], [0 0 .8], .4, 'v');
 %Plot estimated output distribution from stochastic sampling
-plotGaussian1D(MuOut2, SigmaOut2, [limAxes(1) limAxes(3) 10 limAxes(4)-limAxes(3)], [0 .8 0], .4, 'v');
+[~,h(2,:)] = plotGaussian1D(MuOut2, SigmaOut2, [limAxes(1) limAxes(3) 10 limAxes(4)-limAxes(3)], [0 .8 0], .4, 'v');
 %Plot Gaussian conditioning with uncertain inputs, via sampling
-plotGaussian1D(MuOut3, SigmaOut3, [limAxes(1) limAxes(3) 10 limAxes(4)-limAxes(3)], [.5 .5 .5], .4, 'v');
+[~,h(3,:)] = plotGaussian1D(MuOut3, SigmaOut3, [limAxes(1) limAxes(3) 10 limAxes(4)-limAxes(3)], [.5 .5 .5], .4, 'v');
 
 plot(DataIn,MuOut,'.','markersize',12,'color',[.7 .3 .3]);
 plot(DataIn,limAxes(3),'.','markersize',12,'color',[.7 .3 .3]);
@@ -153,6 +152,7 @@ set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 %plot(Data(1,1:200), Data(2,1:200), 'o','markersize',4,'color',[.5 .5 .5]);
 xlabel('$x_1$','fontsize',16,'interpreter','latex');
 ylabel('$x_2$','fontsize',16,'interpreter','latex');
+legend(h(:,1), {'Proposed formulation','Product with marginal input distributions then sampling','sampling'});
 
 %print('-dpng','-r600','graphs/demo_Gaussian03.png');
 pause;

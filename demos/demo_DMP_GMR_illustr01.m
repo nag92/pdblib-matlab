@@ -93,7 +93,7 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('PaperPosition',[0 0 10 4.0],'position',[10,10,1300,450],'color',[1 1 1]); 
+figure('PaperPosition',[0 0 10 4.0],'position',[10,10,2300,900],'color',[1 1 1]); 
 clrmap = lines(model.nbStates);
 
 %Activation of the basis functions
@@ -149,7 +149,7 @@ set(gca,'xtick',[],'ytick',[sIn(end),sIn(1)],'yticklabel',{'0','1'});
 xlabel('$t$','fontsize',16,'interpreter','latex'); 
 ylabel('$s$','fontsize',16,'interpreter','latex'); 
 
-%print('-dpng','-r300','graphs/DMP_GMR01.png');
+%print('-dpng','graphs/DMP_GMR01.png');
 pause;
 close all;
 end

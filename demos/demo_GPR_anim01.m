@@ -89,7 +89,7 @@ end
 
 %% Plot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('PaperPosition',[0 0 12 4],'position',[10 10 1900 600]); 
+figure('PaperPosition',[0 0 22 4],'position',[10 10 2300 600]); 
 limAxes = [0, 1, -.5 .5];
 
 %Prior samples
@@ -168,6 +168,3 @@ function K = covFct(x1, x2, p, flag_noiseObs)
 		K = K + p(3) * eye(size(x1,2),size(x2,2)); %Consideration of noisy observation y
 	end
 end
-
-
-

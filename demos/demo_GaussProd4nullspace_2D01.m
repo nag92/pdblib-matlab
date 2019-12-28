@@ -53,14 +53,14 @@ d2 = [.05; -.2] .* 8;
 S2 = d2 * d2' + eye(2) * 1E-1;
 Q2 = inv(S2);
 
-%Working version (simple version, but requires ridge regression to be stable)
+%Version 1 (simple version, but requires ridge regression to be stable)
 J = Q1;
-pinvJw = S2 * J' / (J * S2 * J' + eye(2)*1E-8); %1E-8 needs to be added as ridge regression coefficient 
+pinvJw = S2 * J' / (J * S2 * J' + eye(2)*1E-6); %1E-6 needs to be added as ridge regression coefficient 
 % pinvJw = S2 * J' * inv(J * S2 * J' + eye(2)*1E-4); %1E-4 needs to be added as ridge regression coefficient 
 Nw = eye(2) - pinvJw * J;
 x = pinvJw * (Q1 * Mu1) + Nw * Mu2;
 
-% %Test 1 (working, as proposed by Hakan, version with Q1 and S2)
+% %Version 2 (with Q1 and S2)
 % % U1 = sqrtm(Q1);
 % % U2 = sqrtm(S2);
 % [V1,D1] = eig(Q1);
@@ -73,7 +73,7 @@ x = pinvJw * (Q1 * Mu1) + Nw * Mu2;
 % N = eye(2) - pinvJ * J;
 % x = U2 * (pinvJ * (U1' * Mu1) + N * (U2 \ Mu2));
 
-% %Test 1 (working, as proposed by Hakan, version with Q1 and Q2)
+% %Version 3 (with Q1 and Q2)
 % % U1 = sqrtm(Q1);
 % % U2 = sqrtm(Q2);
 % [V1,D1] = eig(Q1);
@@ -86,7 +86,7 @@ x = pinvJw * (Q1 * Mu1) + Nw * Mu2;
 % N = eye(2) - pinvJ * J;
 % x = inv(U2') * (pinvJ * (U1' * Mu1) + N * (U2' * Mu2));
 
-% %Test 2 (working)
+% %Version 4
 % [V2,D2] = eig(S2);
 % U2 = V2 * D2.^.5;
 % % U2 = sqrtm(S2);
@@ -95,18 +95,6 @@ x = pinvJw * (Q1 * Mu1) + Nw * Mu2;
 % pinvJ = pinv(J);
 % N = eye(2) - U2 * pinvJ * Q1;
 % x = U2 * pinvJ * (Q1 * Mu1) + N * Mu2;
-
-
-% pinvJ = pinv(J)
-% [UJ,SJ,VJ] = svd(J);
-% SJ(SJ>1E-5) = SJ(SJ>1E-5).^-1;
-% pinvJ = VJ * SJ' * UJ'
- 
-% [UJ,SJ,VJ] = svd(J);
-% sp = (sum(SJ,1)<1E-1); %Span of zero rows
-% N = VJ(:,sp) * VJ(:,sp)'
-
-
 
 
 %% Plots
@@ -118,6 +106,6 @@ plot(x(1), x(2), 'ko','markersize',8,'linewidth',2);
 axis equal; axis([-0.5 2.5 -0.6 1.6]*3);
 set(gca,'xtick',[],'ytick',[]);
 
-%print('-dpng','-r600','graphs/demo_GaussProd01.png');
+%print('-dpng','graphs/demo_GaussProd4nullspace_2D01.png');
 pause;
 close all;

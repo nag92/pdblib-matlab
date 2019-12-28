@@ -112,7 +112,7 @@ for t=1:nbData
 	plot([rng(1) rng(2) rng(2) rng(1) rng(1)], [rng(3) rng(3) rng(4) rng(4) rng(3)], 'k-','linewidth',3);
 	axis equal; axis(rng); 
 end
-% print('-dpng','-r300','graphs/GaussProd_interp01.png');
+% print('-dpng','graphs/GaussProd_interp_illustr01.png');
 
 
 % %% Anim
@@ -167,5 +167,3 @@ function U = logmap(X,S)
 		U(:,:,n) = S * V * diag(log(diag(D))) * V^-1;
 	end
 end
-
-

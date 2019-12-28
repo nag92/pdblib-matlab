@@ -1,5 +1,5 @@
 function demo_MPC_viapoints_withProd01
-% Batch LQR with viapoints computed as a product of trajectory distributions in control space.
+% Batch LQT with viapoints computed as a product of trajectory distributions in control space.
 %
 % If this code is useful for your research, please cite the related publication:
 % @incollection{Calinon19chapter,

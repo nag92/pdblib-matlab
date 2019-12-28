@@ -162,6 +162,3 @@ function K = covFct(x1, x2, p, flag_noiseObs)
 		K = K + eye(size(K)) .* p(3); %Consideration of noisy observation y
 	end
 end
-
-
-

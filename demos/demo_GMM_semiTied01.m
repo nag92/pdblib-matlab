@@ -72,6 +72,6 @@ for i=1:model.nbStates
 end
 view(-40,6); axis equal;
 
-%print('-dpng','graphs/demo_semitiedGMM01.png');
+%print('-dpng','graphs/demo_GMM_semitiedGMM01.png');
 pause;
 close all;

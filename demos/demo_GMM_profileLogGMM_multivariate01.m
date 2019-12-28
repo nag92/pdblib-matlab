@@ -1,5 +1,5 @@
 function demo_GMM_profileLogGMM_multivariate01
-%Example of multivariate velocity profile fitting with a Gaussian mixture model (GMM) and a weighted EM algorithm
+% Multivariate velocity profile fitting with a Gaussian mixture model (GMM) and a weighted EM algorithm
 %
 % If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
@@ -36,10 +36,9 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model.nbStates = 4; %Number of states in the GMM
+model.nbStates = 8; %Number of states in the GMM
 model.nbVar = 2; %Number of variables [x1]
 nbData = 200; %Length of each trajectory
-nbSamples = 1; %Number of samples
 
 
 %% Load data
@@ -78,28 +77,26 @@ hmix = hmix ./ repmat(max(hmix,[],2), [1,nbData]);
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[10,10,1000,500]); 
+figure('position',[10,10,2000,900]); 
 for k=1:model.nbVar
 	subplot(model.nbVar,1,k); hold on; box on; 
 	mtmp.nbStates = model.nbStates; 
 	mtmp.Priors = model.Priors(k,:);
 	mtmp.Mu(1,:) = model.Mu(k,:);
 	mtmp.Sigma(1,1,:) = model.Sigma(k,k,:);
-	for n=1:nbSamples
-		plot(1:nbData, w(k,(n-1)*nbData+1:n*nbData), '-','linewidth',2,'color',[.7 .7 .7]);
-	end
+	hf(1) = plot(1:nbData, w(k,:), '-','linewidth',2,'color',[.7 .7 .7]);
 	for i=1:model.nbStates
-		plot(1:nbData, squeeze(h(k,i,:)), '-','linewidth',4,'color',[1 .7 .7]);
+		plot(1:nbData, squeeze(h(k,i,:)), '-','linewidth',2,'color',[1 .7 .7]);
 	end
-	plot(1:nbData, hmix(k,:), '-','linewidth',2,'color',[.8 0 0]);
-
+	hf(2) = plot(1:nbData, hmix(k,:),'-','linewidth',2,'color',[.8 0 0]);
 	axis([1 nbData 0 1.05]); set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 	xlabel('$t$','fontsize',18,'interpreter','latex'); 
 	ylabel(['$\dot{x}_' num2str(k) '$'],'fontsize',18,'interpreter','latex');
 end
+legend(hf, {'Reference','Reconstructed'});
+%print('-dpng','graphs/demo_GMM_profileLogGMM_multivariate01.png');
 
-norm(hmix-w)
+disp(['Error: ' num2str(norm(hmix-w))]);
 
-%print('-dpng','graphs/demo_profileLogGMM_multivariate01.png');
 pause;
 close all;

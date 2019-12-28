@@ -1,5 +1,5 @@
 function demo_GMM_logNormal01
-%Conditional probability with multivariate log-normal distribution
+% Conditional probability with multivariate log-normal distribution
 %
 % If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
@@ -42,21 +42,15 @@ model0.nbStates = 1;
 model0.Priors = 1;
 model = model0;
 
-figure('position',[10 10 1300 500],'color',[1 1 1]);
-% disp('Press enter to regenerate data...');
-% for nb=1:5
-	
 	
 %% Multivariate normal distribution
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model0.Mu = zeros(model0.nbVar,1);
 %model0.Mu = rand(model0.nbVar,1)*10;
 
-%if nb<2
 V0 = rand(model0.nbVar,1);
 model0.Sigma = V0*V0' + diag(rand(model0.nbVar,1))*1E-1;
 [V,D] = eigs(model0.Sigma);
-%end
 Data0 = V*D^.5 * randn(model0.nbVar,nbData) + repmat(model0.Mu,1,nbData);
 
 
@@ -86,7 +80,8 @@ DataOut = exp(DataOut0);
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clf;
+figure('position',[10 10 2300 1200],'color',[1 1 1]);
+
 %Normal distribution
 subplot(1,2,1); hold on; grid on; title('Normal distribution');
 plot(Data0(1,:), Data0(2,:), '.','markersize',8,'color',[.7 .7 .7]);
@@ -102,10 +97,8 @@ set(gca,'xtick',model0.Mu(1),'ytick',model0.Mu(2));
 % X = R * [cos(t); sin(t)] + repmat(model0.Mu, 1, nbDrawingSeg);
 % gaussPDF(X, model0.Mu, model0.Sigma)
 
-
 %Log-normal distribution
 subplot(1,2,2); hold on; grid on; title('Log-normal distribution');
-
 nbX = 50;
 [X0,Y0] = meshgrid(linspace(min(Data(1,:)),max(Data(1,:)),nbX), linspace(min(Data(2,:)),max(Data(2,:)),nbX));
 X = reshape(X0,1,nbX^2);
@@ -129,9 +122,7 @@ plot(model.Mu(1,:), model.Mu(2,:), '.', 'markersize', 6, 'color', [.4 0 0]);
 axis equal; axis([min(Data(1,:)), max(Data(1,:)), min(Data(2,:)), max(Data(2,:))]); 
 xlabel('exp(x_1)'); ylabel('exp(x_2)');
 set(gca,'xtick',exp(model0.Mu(1)),'ytick',exp(model0.Mu(2)));
+%print('-dpng','graphs/demo_GMM_logNormal01.png');
 
-% pause;
-% end %nb
-
-%print('-dpng','graphs/demo_logNormal01.png');
+pause;
 close all;

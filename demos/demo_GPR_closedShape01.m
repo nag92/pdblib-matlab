@@ -100,6 +100,7 @@ limAxes = [0, 1, -.04 .04];
 subplot(2,3,1); hold on; title('Samples from prior','fontsize',12);
 for n=2:nbRepros/2
 	plot(r(n).Data(1,:), r(n).Data(2,:), '-','lineWidth',1,'color',[.9 .9 .9]*rand(1));
+% 	plot(r(n).Data(1,:), randn(1,nbDataRepro).*5E-2, '-','lineWidth',1,'color',[.9 .9 .9]*rand(1));
 end
 set(gca,'xtick',[],'ytick',[]); axis([0,1,-.2,.2]);
 xlabel('x_1'); ylabel('y_1');
@@ -147,8 +148,23 @@ plotGMM(r(1).Data(2:3,:), r(1).SigmaOut, [.8 .8 .8], .1);
 plot(r(1).Data(2,:), r(1).Data(3,:), '-','lineWidth',1,'color',[0 0 0]);
 plot(Data(2,:), Data(3,:), '.','markersize',18,'color',[1 0 0]);
 axis equal;
-
 % print('-dpng','graphs/GPR_closedShape05.png');
+% print('-dpng','graphs/GPR_tmp01.png');
+
+% figure; hold on; axis off; 
+% colormap(flipud(gray));
+% imagesc(abs(Kss));
+% axis tight; axis square; axis ij;
+% print('-dpng','graphs/GPR_kernel_closedShape01.png');
+
+% figure; hold on; axis off; 
+% for n=2:nbRepros/2
+% 	plot(r(n).Data(2,:), r(n).Data(3,:), '-','lineWidth',1,'color',[.9 .9 .9]*rand(1));
+% end
+% axis equal; axis tight;
+% print('-dpng','graphs/GPR_closedShape01.png');
+
+
 pause;
 close all;
 end

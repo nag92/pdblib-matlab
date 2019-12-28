@@ -1,6 +1,5 @@
 function demo_LS_IRLS_logisticRegression02
-% Logistic regression with multivariate inputs computed with iteratively reweighted least squares (IRLS) algorithm,
-% with multivariate input
+% Logistic regression with multivariate inputs computed with iteratively reweighted least squares (IRLS) algorithm.
 %
 % If this code is useful for your research, please cite the related reference:
 % @misc{pbdlib,

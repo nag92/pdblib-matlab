@@ -120,7 +120,7 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('PaperPosition',[0 0 18 4.5],'position',[10,10,1300,400]); 
+figure('position',[10,10,2300,900]); 
 clrmap = lines(model.nbStates);
 clrmap2 = lines(model2.nbStates);
 

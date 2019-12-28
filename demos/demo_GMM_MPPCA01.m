@@ -78,6 +78,6 @@ for i=1:2
 	xlabel(['x_' num2str((i-1)*2+1)]); ylabel(['x_' num2str(i*2)]);
 end
 
-%print('-dpng','graphs/demo_MPPCA01.png');
-%pause;
-%close all;
+%print('-dpng','graphs/demo_GMM_MPPCA01.png');
+pause;
+close all;

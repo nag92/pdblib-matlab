@@ -1,8 +1,8 @@
 function demo_DMP_GMR02
 % Enhanced dynamic movement primitive (DMP) model trained with EM by using a Gaussian mixture 
 % model (GMM) representation, with full covariance matrices coordinating the different variables 
-% in the feature space. After learning (i.e., autonomous organization of the basis functions (position 
-% and spread), Gaussian mixture regression (GMR) is used to regenerate the nonlinear force profile. 
+% in the feature space. After learning (i.e., autonomous organization of the basis functions 
+% (position and spread), Gaussian mixture regression (GMR) is used to regenerate the nonlinear force profile. 
 %
 % If this code is useful for your research, please cite the related publication:
 % @incollection{Calinon19chapter,

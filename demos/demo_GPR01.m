@@ -102,7 +102,13 @@ end
 set(gca,'xtick',[],'ytick',[]); axis equal; axis square;
 xlabel(['$x_1$'],'interpreter','latex','fontsize',18);
 ylabel(['$x_2$'],'interpreter','latex','fontsize',18);
-
 %print('-dpng','graphs/demo_GPR01.png');
+
+% figure; hold on; axis off; 
+% colormap(flipud(gray));
+% imagesc(abs(Kdd));
+% axis tight; axis square; axis ij;
+% print('-dpng','graphs/GPR_kernel_RBF01.png');
+
 pause;
 close all;

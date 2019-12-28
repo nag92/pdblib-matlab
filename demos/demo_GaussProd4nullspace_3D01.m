@@ -1,5 +1,5 @@
 function demo_GaussProd4nullspace_3D01
-% 3D illustration of using a product of Gaussians to compute the hierarchy of three tasks
+% 3D illustration of using a product of Gaussians to compute the hierarchy of three tasks.
 %
 % If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
@@ -123,6 +123,6 @@ plotGMM3D(Mu, S+eye(nbVar).*4E-3, [0 0 0], .4);
 axis equal; axis([-1 1 -.5 1 -.2 1]*15); axis vis3d; view(140,25); 
 %set(gca,'xtick',[],'ytick',[],'ztick',[]);
 
-% print('-dpng','-r300','graphs/GaussProd3D01.png');
+% print('-dpng','graphs/GaussProd4nullspace_3D01.png');
 pause;
 close all;

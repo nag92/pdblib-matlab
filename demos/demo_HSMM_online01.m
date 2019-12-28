@@ -32,6 +32,7 @@ function demo_HSMM_online01
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 addpath('./m_fcts/');
+disp('Draw path with the left mouse button, and exit with the right mouse button.');
 
 
 %% Parameters

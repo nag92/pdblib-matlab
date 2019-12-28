@@ -35,7 +35,7 @@ addpath('./m_fcts/');
 
 %% Parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-model.nbStates = 5; %Number of activation functions (i.e., number of states in the GMM)
+model.nbStates = 8; %Number of activation functions (i.e., number of states in the GMM)
 model.nbVar = 1; %Number of variables for the radial basis functions [s] (decay term)
 model.nbVarPos = 2; %Number of motion variables [x1,x2] 
 model.kP = 50; %Stiffness gain
@@ -80,7 +80,7 @@ model = init_GMM_timeBased(sIn, model);
 
 %Set Sigma 
 for i=1:model.nbStates
-	model.Sigma(:,:,i) = 1E-2; %Heuristic setting of covariance
+	model.Sigma(:,:,i) = 1E-3; %Heuristic setting of covariance
 end
 
 %Compute activation

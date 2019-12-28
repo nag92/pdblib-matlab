@@ -1,5 +1,5 @@
 function demo_GPR_GMR_illustr01
-% Illustration of the different notions of variance for GPR and GMR
+% Illustration of the different notions of variance for GPR and GMR.
 %
 % If this code is useful for your research, please cite the related publication:
 % @incollection{Calinon19chapter,
@@ -122,7 +122,7 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('PaperPosition',[0 0 14 6],'position',[10 10 1300 600]);
+figure('position',[10 10 2300 1200]);
 set(0,'DefaultAxesLooseInset',[0,0,0,0]);
 set(gca,'LooseInset',[0,0,0,0]);
 	

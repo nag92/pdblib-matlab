@@ -138,8 +138,9 @@ contour(Xm, Ym, reshape(r(1).Data(3,:)-2E0.*diag(S).^.5', nbDataRepro.^.5, nbDat
 plot(Data(1,1:end-5), Data(2,1:end-5), '.','markersize',18,'color',[1 0 0]);
 plot(Data(1,end-4), Data(2,end-4), '.','markersize',18,'color',[0 0 .8]);
 plot(Data(1,end-3:end), Data(2,end-3:end), '.','markersize',18,'color',[0 .7 0]);
+axis equal;
+% print('-dpng','graphs/GPR_GPIS01.png');
 
-% print('-dpng','graphs/GPR_closedShape02.png');
 pause;
 close all;
 end

@@ -1,5 +1,5 @@
 function demo_GMM_profileLogGMM01
-% Example of univariate velocity profile fitting with a lognormal mixture model and a weighted EM algorithm
+% Univariate velocity profile fitting with a lognormal mixture model and a weighted EM algorithm
 % 
 % If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
@@ -39,40 +39,19 @@ addpath('./m_fcts/');
 model.nbStates = 40; %Number of states in the GMM
 model.nbVar = 1; %Number of variables [x1]
 nbData = 1000; %Length of each trajectory
-nbSamples = 1; %Number of samples
 
 
 %% Load data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% demos=[];
-% load('data/2Dletters/W.mat');
-% Data=[]; w=[];
-% for n=1:nbSamples
-% 	s(n).w = spline(1:size(demos{n}.vel(1:model.nbVar,:),2), demos{n}.vel(1:model.nbVar,:), linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
-% 	Data = [Data, log(1:nbData)]; %log data are collected
-% 	w = [w, s(n).w];
-% end
-% w = w-min(w);
-% w = w/max(w);
-
-% Data = log(1:nbData);
-% load('data/lognormal03.mat');
-
-% s = importdata('data/2cold_vel_orig.csv');
-% Data = s.data';
-% save('data/velprofile01.mat','Data');
-% return
-
 load('data/velprofile01.mat');
 Data = spline(1:size(Data,2),Data,linspace(1,size(Data,2),nbData)); %Resample data
 tlist = Data(1,:) + 1E-8; %The first value should be non-zero
 w = Data(2,:);
-%Data = tlist;
 Data = log(tlist);
 
 %Rescale data and make it positive to represent a probability density function
-w = w-min(w);
-w = w/max(w);
+w = w - min(w);
+w = w / max(w);
 
 
 %% Parameters estimation
@@ -96,27 +75,21 @@ for i=1:model.nbStates
 end
 hmix = sum(h,1);
 
+disp(['Error: ' num2str(norm(hmix-w))]);
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('PaperPosition',[0 0 24 4],'position',[10,10,1200,200]); hold on; box on; 
+figure('position',[10,10,2300,500]); hold on; box on; 
+hf(1) = plot(tlist, w, '-','linewidth',2,'color',[.7 .7 .7]);
 for i=1:model.nbStates
-	plot(tlist, h(i,:),'-','linewidth',4,'color',[1 .7 .7]);
+	plot(tlist, h(i,:),'-','linewidth',2,'color',[1 .7 .7]);
 end
-for n=1:nbSamples
-	plot(tlist,w((n-1)*nbData+1:n*nbData), '-','linewidth',6,'color',[.7 .7 .7]);
-end
-plot(tlist, hmix,'-','linewidth',2,'color',[.8 0 0]);
+hf(2) = plot(tlist, hmix,'-','linewidth',2,'color',[.8 0 0]);
 axis([tlist(1) tlist(end) 0 1.05]); set(gca,'Xtick',[]); set(gca,'Ytick',[]);
 xlabel('$t$','fontsize',18,'interpreter','latex'); 
 ylabel('$|\dot{x}|$','fontsize',18,'interpreter','latex');
+legend(hf, {'Reference','Reconstructed'});
+%print('-dpng','graphs/demo_GMM_profileLogGMM01.png');
 
-% w=hmix;
-% save('data/lognormal04.mat','w');
-% return
-
-disp(['Error: ' num2str(norm(hmix-w))]);
-
-%print('-dpng','graphs/demo_profileLogGMM01.png');
 pause;
 close all;

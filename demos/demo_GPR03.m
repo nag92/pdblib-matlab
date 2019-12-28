@@ -83,9 +83,9 @@ end
 
 %% Plot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('PaperPosition',[0 0 12 4],'position',[10 10 1300 600]); 
+figure('PaperPosition',[0 0 22 4],'position',[10 10 2300 600]); 
 %Prior samples
-subplot(1,3,1); hold on; title('Samples from prior','fontsize',14);
+subplot(1,4,1); hold on; title('Samples from prior','fontsize',14);
 for n=2:nbRepros/2
 	plot(r(n).Data(1,:), r(n).Data(2,:), '-','lineWidth',3.5,'color',[.9 .9 .9]*rand(1));
 end
@@ -96,7 +96,7 @@ xlabel('$x^{\scriptscriptstyle\mathcal{I}}_1$','interpreter','latex','fontsize',
 ylabel('$x^{\scriptscriptstyle\mathcal{O}}_1$','interpreter','latex','fontsize',18);
 
 %Posterior samples
-subplot(1,3,2); hold on;  title('Samples from posterior','fontsize',14);
+subplot(1,4,2); hold on;  title('Samples from posterior','fontsize',14);
 for n=nbRepros/2+1:nbRepros
 	plot(r(n).Data(1,:), r(n).Data(2,:), '-','lineWidth',3.5,'color',[.9 .9 .9]*rand(1));
 end
@@ -108,7 +108,7 @@ xlabel('$x^{\scriptscriptstyle\mathcal{I}}_1$','interpreter','latex','fontsize',
 ylabel('$x^{\scriptscriptstyle\mathcal{O}}_1$','interpreter','latex','fontsize',18);
 
 %Trajectory distribution
-subplot(1,3,3); hold on;  title('Trajectory distribution','fontsize',14);
+subplot(1,4,3); hold on;  title('Trajectory distribution','fontsize',14);
 patch([r(1).Data(1,:), r(1).Data(1,end:-1:1)], ...
 	[r(1).Data(2,:)+squeeze(r(1).SigmaOut.^.5)', r(1).Data(2,end:-1:1)-squeeze(r(1).SigmaOut(:,:,end:-1:1).^.5)'], ...
 	[.8 .8 .8],'edgecolor','none');
@@ -120,6 +120,20 @@ set(gca,'xtick',[],'ytick',[]); axis([0, 1, -0.7 0.7]);
 xlabel('$x^{\scriptscriptstyle\mathcal{I}}_1$','interpreter','latex','fontsize',18);
 ylabel('$x^{\scriptscriptstyle\mathcal{O}}_1$','interpreter','latex','fontsize',18);
 
+%Plot covariance
+subplot(1,4,4); hold on; axis off; title('Covariance','fontsize',14);
+colormap(flipud(gray));
+imagesc(abs(Kdd));
+axis tight; axis square; axis ij;
 %print('-dpng','-r300','graphs/GPR03.png');
+
+% figure; hold on; axis off; 
+% colormap(flipud(gray));
+% imagesc(abs(Kdd));
+% axis tight; axis square; axis ij;
+% print('-dpng','graphs/GPR_kernel_periodic01.png');
+
 pause;
 close all;
+
+
