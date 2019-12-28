@@ -303,7 +303,7 @@ If you find PbDLib useful for your research, please cite the related publication
 [6] Jaquier, N., Rozo, L., Caldwell, D.G. and Calinon, S. (2019). <strong>Geometry-aware Manipulability Transfer</strong>. arXiv:1811.11050.
 </a><br>
 [[pdf]](http://calinon.ch/papers/Jaquier-arXiv2018.pdf)
-[[pdf]](http://calinon.ch/papers/Jaquier-arXiv2018.bib)
+[[bib]](http://calinon.ch/papers/Jaquier-arXiv2018.bib)
 <br><strong>(Ref. for manipulability ellipsoids)</strong>
 </p>
 
