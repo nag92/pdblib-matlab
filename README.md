@@ -266,18 +266,19 @@ Calinon, S. (2016). <strong>A Tutorial on Task-Parameterized Movement Learning a
 <br>
 (Ref. for GMM, TP-GMM, MFA, MPPCA, GPR, trajGMM)
 
-<a name="ref-2">
-<p>[2] Calinon, S. and Lee, D.  (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.
+<a name="ref-2"><p>
+[2] Calinon, S. and Lee, D.  (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.</a>
 [[pdf]](http://calinon.ch/papers/Calinon-Lee-learningControl.pdf)
 [[bib]](http://calinon.ch/papers/Calinon-Lee-learningControl.bib)
 <br><strong>(Ref. for MPC, LQR, HMM, HSMM)</strong>
 </p>
-</a>
 
-#### [3] (Ref. for Riemannian manifolds)
-Calinon, S. and Jaquier, N. (2019). <strong>Gaussians on Riemannian Manifolds for Robot Learning and Adaptive Control</strong>. arXiv:1909.05946.
+<a name="ref-3"><p>
+[3] Calinon, S. and Jaquier, N. (2019). <strong>Gaussians on Riemannian Manifolds for Robot Learning and Adaptive Control</strong>. arXiv:1909.05946.</a>
 [[pdf]](http://calinon.ch/papers/Calinon-arXiv2019.pdf)
 [[bib]](http://calinon.ch/papers/Calinon-arXiv2019.bib)
+<br><strong>(Ref. for Riemannian manifolds)</strong>
+</p>
 
 #### [4] (Ref. for S^+ Riemannian manifolds)
 Jaquier, N. and Calinon, S.  (2017). <strong>Gaussian Mixture Regression on Symmetric Positive Definite Matrices Manifolds: Application to Wrist Motion Estimation with sEMG</strong>. In Proc. of the IEEE/RSJ Intl Conf. on Intelligent Robots and Systems (IROS), pp. 59-64.
