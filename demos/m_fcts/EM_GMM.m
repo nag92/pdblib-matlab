@@ -1,11 +1,7 @@
 function [model, GAMMA2, LL] = EM_GMM(Data, model)
 % Training of a Gaussian mixture model (GMM) with an expectation-maximization (EM) algorithm.
 %
-% Writing code takes time. Polishing it and making it available to others takes longer! 
-% If some parts of the code were useful for your research of for a better understanding 
-% of the algorithms, please reward the authors by citing the related publications, 
-% and consider making your own research available in this way.
-%
+% If this code is useful for your research, please cite the related publication:
 % @article{Calinon16JIST,
 %   author="Calinon, S.",
 %   title="A Tutorial on Task-Parameterized Movement Learning and Retrieval",
