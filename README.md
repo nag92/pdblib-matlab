@@ -10,7 +10,7 @@ Examples starting with `demo_` can be run as examples. The corresponding publica
 
 ### List of examples
 
-All the examples are located in the main folder, and the functions are located in the `m_fcts` folder.
+All the examples are located in the `demos` folder, and the functions are located in the `m_fcts` folder.
 
 | Filename | Ref. | Description |
 |----------|------|-------------|
@@ -121,6 +121,7 @@ All the examples are located in the main folder, and the functions are located i
 | [demo_IK_weighted01.m](./demos/demo_IK_weighted01.m) | [[10]](#ref-10) | Inverse kinematics with nullspace control, by considering weights in joint space and in task space |
 | [demo_ILC01.m](./demos/demo_ILC01.m) | [[10]](#ref-10) | Iterative correction of errors for a recurring movement with ILC |
 | [demo_IPRA01.m](./demos/demo_IPRA01.m) | [[10]](#ref-10) | Gaussian mixture model (GMM) learned with iterative pairwise replacement algorithm (IPRA) |
+| [demo_Kalman01.m](./demos/demo_Kalman01.m) | [[10]](#10) | Kalman filter computed as a feedback term or as a product of Gaussians |
 | [demo_kernelPCA01.m](./demos/demo_kernelPCA01.m) | [[10]](#ref-10) | Kernel PCA, with comparison to PCA |
 | [demo_LS01.m](./demos/demo_LS01.m) | [[10]](#ref-10) | Multivariate ordinary least squares |
 | [demo_LS_IRLS01.m](./demos/demo_LS_IRLS01.m) | [[10]](#ref-10) | Iteratively reweighted least squares |
@@ -257,7 +258,7 @@ All the examples are located in the main folder, and the functions are located i
 
 ### References
 
-If you find PbDLib useful for your research, please cite the related publications!
+If you find PbDlib useful for your research, please cite the related publications!
 
 <p><a name="ref-1">
 [1] Calinon, S. (2016). <strong>A Tutorial on Task-Parameterized Movement Learning and Retrieval</strong>. Intelligent Service Robotics (Springer), 9:1, 1-29.
@@ -268,7 +269,7 @@ If you find PbDLib useful for your research, please cite the related publication
 </p>
 
 <p><a name="ref-2">
-[2] Calinon, S. and Lee, D.  (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.
+[2] Calinon, S. and Lee, D. (2019). <strong>Learning Control</strong>. Vadakkepat, P. and Goswami, A. (eds.). Humanoid Robotics: a Reference, pp. 1261-1312. Springer.
 </a><br>
 [[pdf]](http://calinon.ch/papers/Calinon-Lee-learningControl.pdf)
 [[bib]](http://calinon.ch/papers/Calinon-Lee-learningControl.bib)
@@ -284,7 +285,7 @@ If you find PbDLib useful for your research, please cite the related publication
 </p>
 
 <p><a name="ref-4">
-[4] Jaquier, N. and Calinon, S.  (2017). <strong>Gaussian Mixture Regression on Symmetric Positive Definite Matrices Manifolds: Application to Wrist Motion Estimation with sEMG</strong>. In Proc. of the IEEE/RSJ Intl Conf. on Intelligent Robots and Systems (IROS), pp. 59-64.
+[4] Jaquier, N. and Calinon, S. (2017). <strong>Gaussian Mixture Regression on Symmetric Positive Definite Matrices Manifolds: Application to Wrist Motion Estimation with sEMG</strong>. In Proc. of the IEEE/RSJ Intl Conf. on Intelligent Robots and Systems (IROS), pp. 59-64.
 </a><br>
 [[pdf]](http://calinon.ch/papers/Jaquier-IROS2017.pdf)
 [[bib]](http://calinon.ch/papers/Jaquier-IROS2017.bib)
