@@ -2,9 +2,6 @@ function demo_Riemannian_Sd_MPC_infHor01
 % Linear quadratic regulation on S^d by relying on Riemannian manifold and infinite-horizon LQR.
 % (formulation with tangent space of the same dimension as the dimension of the manifold)
 %
-% This demo requires the robotics toolbox RTB10 (http://petercorke.com/wordpress/toolboxes/robotics-toolbox).
-% First run 'startup_rvc' from the robotics toolbox.
-%
 % If this code is useful for your research, please cite the related publication:
 % @article{Calinon19,
 % 	author="Calinon, S. and Jaquier, N.",
@@ -32,7 +29,6 @@ function demo_Riemannian_Sd_MPC_infHor01
 % along with PbDlib. If not, see <http://www.gnu.org/licenses/>.
 
 addpath('./m_fcts/');
-disp('This demo requires the robotics toolbox RTB10 (http://petercorke.com/wordpress/toolboxes/robotics-toolbox).');
 
 
 %% Parameters
@@ -58,9 +54,7 @@ xTar = xTar / norm(xTar);
 %[Ar,~] = qr(randn(model.nbVarPos));
 % uCov = Ar * diag([1E0,1E0,1E6]) * Ar' * 1E-3;
 % S0 = diag([1E0,1E0,1E6]) * 1E-3;
-% q = Quaternion(xTar); 
-% uCov = q.R * S0 * q.R
-%uCov = q.R' * S0 * q.R
+% uCov = quat2rotm(xTar') * S0 * quat2rotm(xTar')'
 uCov = eye(model.nbVarPos) * 1E-2;
 
 
@@ -151,18 +145,13 @@ figure('PaperPosition',[0 0 6 8],'position',[670,10,650,650],'name','timeline da
 colormap([.9 .9 .9]);
 [X,Y,Z] = sphere(20);
 mesh(X,Y,Z,'facealpha',.3,'edgealpha',.3);
-q = UnitQuaternion(xTar);
-
-Rq = quat2rotm(double(q));
-plot3Dframe(Rq, zeros(3,1), eye(3)*.3);
+plot3Dframe(quat2rotm(xTar'), zeros(3,1), eye(3)*.3);
 view(3); axis equal; axis tight; axis vis3d;  
 h=[];
 for n=1:min(nbRepros,1)
 	for t=1:nbData
 		delete(h);
-		q = UnitQuaternion(r(n).x(:,t));
-		Rq = quat2rotm(double(q));
-		h = plot3Dframe(Rq, zeros(3,1));
+		h = plot3Dframe(quat2rotm(r(n).x(:,t)'), zeros(3,1));
 		drawnow;
 		if t==1
 			%pause;

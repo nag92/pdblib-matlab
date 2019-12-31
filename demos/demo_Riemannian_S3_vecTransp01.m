@@ -119,9 +119,6 @@ function Exp = expfct(u)
 	Exp = real([cos(normv) ; u(1,:).*sin(normv)./normv ; u(2,:).*sin(normv)./normv ; u(3,:).*sin(normv)./normv]);
 	Exp(:,normv < 1e-16) = repmat([1;0;0;0],1,sum(normv < 1e-16));
 end
-% v1 = cos(norm(u)/2);
-%	v2 = sin(norm(u)/2) * u/norm(u);
-%	q = Quaternion([v1 v2]);
 	
 function Log = logfct(x)
 % 	scale = acos(x(3,:)) ./ sqrt(1-x(3,:).^2);

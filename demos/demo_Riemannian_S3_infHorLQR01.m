@@ -55,9 +55,7 @@ xTar = xTar / norm(xTar);
 % uCov = Ar * diag([1E0,1E0,1E6]) * Ar' * 1E-3;
 
 % S0 = diag([1E0,1E0,1E6]) * 1E-3;
-% q = Quaternion(xTar); 
-% uCov = q.R * S0 * q.R'
-%uCov = q.R' * S0 * q.R
+% uCov = quat2rotm(xTar') * S0 * quat2rotm(xTar')'
 uCov = diag([1,1,1]) * 1E-3;
 
 % %Eigendecomposition 
@@ -160,17 +158,15 @@ figure('PaperPosition',[0 0 6 8],'position',[670,10,650,650],'name','timeline da
 colormap([.9 .9 .9]);
 [X,Y,Z] = sphere(20);
 mesh(X,Y,Z,'facealpha',.3,'edgealpha',.3);
-q = Quaternion(xTar);
+Rq = quat2rotm(xTar');
 
-Rq = quat2rotm(double(q));
 plot3Dframe(Rq, zeros(3,1), eye(3)*.3);
 view(3); axis equal; axis tight; axis vis3d;  
 h=[];
 for n=1:min(nbRepros,1)
 	for t=1:nbData
 		delete(h);
-		q = Quaternion(r(n).x(:,t));
-		Rq = quat2rotm(double(q));
+		Rq = quat2rotm(r(n).x(:,t)');
 		h = plot3Dframe(Rq, zeros(3,1));
 		drawnow;
 		if t==1

@@ -33,7 +33,7 @@ addpath('./m_fcts/');
 nbData = 200; %Length of each trajectory
 wMax = 50; %Warping time window 
 nbSamples = 5; %Number of demonstrations
-nbVar = 2; %Number of dimensions (max 2 for AMARSI data)
+nbVar = 2; %Number of dimensions (max 2 for 2Dletters dataset)
 
 
 %% Load handwriting data
