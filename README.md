@@ -341,87 +341,15 @@ If you find PbDlib useful for your research, please cite the related publication
 
 ### Gallery
 
-[demo\_GMM\_semiTied01.m](./demos/demo_GMM_semiTied01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_GMM_semiTied01.png)
-
-***
-
-[demo\_GMR\_3Dviz01.m](./demos/demo_GMR_3Dviz01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_GMR_3Dviz01.png)
-
-***
-
-[demo\_GMR\_polyFit01.m](./demos/demo_GMR_polyFit01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_GMR_polyFit01.png)
-
-***
-
-[demo\_HMM01.m](./demos/demo_HMM01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_HMM01.png)
-
-***
-
-[demo\_MPC\_iterativeLQR01.m](./demos/demo_MPC_iterativeLQR01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_MPC_iterativeLQR01.png)
-
-***
-
-[demo\_Riemannian\_SPD\_GMR01.m](./demos/demo_Riemannian_SPD_GMR01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_SPD_GMR01.png)
-
-***
-
-[demo\_Riemannian\_SPD\_interp01.m](./demos/demo_Riemannian_SPD_interp01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_SPD_interp01.png)
-
-***
-
-[demo\_Riemannian\_SPD\_interp02.m](./demos/demo_Riemannian_SPD_interp02.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_SPD_interp02.png)
-
-***
-
-[demo\_Riemannian\_SPD\_interp03.m](./demos/demo_Riemannian_SPD_interp03.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_SPD_interp03.png)
-
-***
-
-[demo\_Riemannian\_S2\_GMM01.m](./demos/demo_Riemannian_S2_GMM01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_S2_GMM01.png)
-
-***
-
-[demo\_TPMPC01.m](./demos/demo_TPMPC01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_TPMPC01.png)
-
-***
-
-[demo\_TPGMR01.m](./demos/demo_TPGMR01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_TPGMR01.png)
-
-***
-
-[demo\_TPproMP01.m](./demos/demo_TPproMP01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_TPproMP01.png)
-
-***
-
-[demo\_trajHSMM01.m](./demos/demo_trajHSMM01.m)
-
-![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_trajHSMM01.png)
+|                         |                         |
+|-------------------------|-------------------------|
+| ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_GMM_semiTied01.png) <br> [demo\_GMM\_semiTied01.m](./demos/demo_GMM_semiTied01.m) | ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_GMR_3Dviz01.png) <br> [demo\_GMR\_3Dviz01.m](./demos/demo_GMR_3Dviz01.m) |
+| ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_GMR_polyFit01.png) <br> [demo\_GMR\_polyFit01.m](./demos/demo_GMR_polyFit01.m) | ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_HMM01.png) <br> [demo\_HMM01.m](./demos/demo_HMM01.m) |
+| ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_MPC_iterativeLQR01.png) <br> [demo\_MPC\_iterativeLQR01.m](./demos/demo_MPC_iterativeLQR01.m) | ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_SPD_GMR01.png) <br> [demo\_Riemannian\_SPD\_GMR01.m](./demos/demo_Riemannian_SPD_GMR01.m) |
+| ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_SPD_interp01.png) <br> [demo\_Riemannian\_SPD\_interp01.m](./demos/demo_Riemannian_SPD_interp01.m) | ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_SPD_interp02.png) <br> [demo\_Riemannian\_SPD\_interp02.m](./demos/demo_Riemannian_SPD_interp02.m) |
+| ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_SPD_interp03.png) <br> [demo\_Riemannian\_SPD\_interp03.m](./demos/demo_Riemannian_SPD_interp03.m) | ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_Riemannian_S2_GMM01.png) <br> [demo\_Riemannian\_S2\_GMM01.m](./demos/demo_Riemannian_S2_GMM01.m) |
+| ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_TPMPC01.png) <br> [demo\_TPMPC01.m](./demos/demo_TPMPC01.m) | ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_TPGMR01.png) <br> [demo\_TPGMR01.m](./demos/demo_TPGMR01.m) |
+| ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_TPproMP01.png) <br> [demo\_TPproMP01.m](./demos/demo_TPproMP01.m) | ![](https://gitlab.idiap.ch/rli/pbdlib-matlab/raw/master/images/demo_trajHSMM01.png) <br> [demo\_trajHSMM01.m](./demos/demo_trajHSMM01.m) |
 
 
 ### License
