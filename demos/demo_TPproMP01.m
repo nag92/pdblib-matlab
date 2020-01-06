@@ -148,20 +148,19 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,2300,500]);
+figure('position',[10,10,2300,500]);
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
 limAxes = [-1.2 0.8 -1.1 0.9];
-colPegs = [[.9,.5,.9];[.5,.9,.5]];
+colPegs = [0.2863 0.0392 0.2392; 0.9137 0.4980 0.0078];
 
 %DEMO
 subplot(1,model.nbFrames+3,1); hold on; box on; title('Demonstrations');
 for n=1:nbSamples
 	%Plot frames
 	for m=1:model.nbFrames
-		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+		plotPegs(s(n).p(m), colPegs(m,:));
 	end
 	%Plot demonstrations
 	plot(s(n).Data(2,1), s(n).Data(3,1),'.','markersize',15,'color',clrmap(n,:));
@@ -174,8 +173,7 @@ subplot(1,model.nbFrames+3,2); hold on; box on; title('Reproductions');
 for n=1:nbSamples
 	%Plot frames
 	for m=1:model.nbFrames
-		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+		plotPegs(s(n).p(m), colPegs(m,:));
 	end
 	%Plot Gaussians
 	plotGMM(s(n).Mu(2:3,:), s(n).Sigma(2:3,2:3,:), [.5 .5 .5], .3);
@@ -189,8 +187,7 @@ subplot(1,model.nbFrames+3,3); hold on; box on; title('New reproductions');
 for n=1:nbRepros
 	%Plot frames
 	for m=1:model.nbFrames
-		plot([rnew(n).p(m).b(2) rnew(n).p(m).b(2)+rnew(n).p(m).A(2,3)], [rnew(n).p(m).b(3) rnew(n).p(m).b(3)+rnew(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-		plot(rnew(n).p(m).b(2), rnew(n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+		plotPegs(rnew(n).p(m), colPegs(m,:));
 	end
 	%Plot trajectories
 	plot(rnew(n).MuTraj(2), rnew(n).MuTraj(3), '.','markersize',12,'color',clrmap(n,:));
@@ -198,7 +195,9 @@ for n=1:nbRepros
 end
 axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 
-%FRAMES
+%MODEL
+p0.A = eye(3);
+p0.b = zeros(3,1);
 for m=1:model.nbFrames
 	subplot(1,model.nbFrames+3,3+m); hold on; grid on; box on; title(['Frame ' num2str(m)]);
 	for n=1:nbSamples
@@ -206,7 +205,8 @@ for m=1:model.nbFrames
 		plot(squeeze(Data(2,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), squeeze(Data(3,m,(n-1)*s(1).nbData+1:n*s(1).nbData)), '-','linewidth',1.5,'color',clrmap(n,:));
 	end
 	plotGMM(squeeze(model.Mu2(2:end,m,:)), squeeze(model.Sigma2(2:end,2:end,m,:)), [.5 .5 .5], .3);
-	axis square; set(gca,'xtick',[0],'ytick',[0]);
+	plotPegs(p0, colPegs(m,:));
+	axis equal; axis([-4.5 4.5 -1 8]); set(gca,'xtick',[0],'ytick',[0]);
 end
 
 % %Reproductions in same situations
@@ -242,3 +242,20 @@ end
 % print('-dpng','graphs/demo_TPproMP01.png');
 pause;
 close all;
+end
+
+%Function to plot pegs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function h = plotPegs(p, colPegs, fa)
+	if ~exist('colPegs')
+		colPegs = [0.2863    0.0392    0.2392; 0.9137    0.4980    0.0078];
+	end
+	if ~exist('fa')
+		fa = .6;
+	end
+	pegMesh = [-4 -3.5; -4 10; -1.5 10; -1.5 -1; 1.5 -1; 1.5 10; 4 10; 4 -3.5; -4 -3.5]' *1E-1;
+	for m=1:length(p)
+		dispMesh = p(m).A(2:3,2:3) * pegMesh + repmat(p(m).b(2:3),1,size(pegMesh,2));
+		h(m) = patch(dispMesh(1,:),dispMesh(2,:),colPegs(m,:),'linewidth',1,'edgecolor','none','facealpha',fa);
+	end
+end

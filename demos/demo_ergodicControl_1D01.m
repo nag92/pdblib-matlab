@@ -4,12 +4,14 @@ function demo_ergodicControl_1D01
 %
 % If this code is useful for your research, please cite the related publication:
 % @incollection{Calinon19MM,
-%   author="Calinon, S.",
-%   title="Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series",
-%   booktitle="Mixture Models and Applications",
-%   publisher="Springer",
-%   editor="Bouguila, N. and Fan, W.", 
-%   year="2019"
+% 	author="Calinon, S.",
+% 	title="Mixture Models for the Analysis, Edition, and Synthesis of Continuous Time Series",
+% 	booktitle="Mixture Models and Applications",
+% 	publisher="Springer",
+% 	editor="Bouguila, N. and Fan, W.", 
+% 	year="2019",
+% 	pages="39--57",
+% 	doi="10.1007/978-3-030-23876-6_3"
 % }
 %
 % Copyright (c) 2019 Idiap Research Institute, http://idiap.ch/

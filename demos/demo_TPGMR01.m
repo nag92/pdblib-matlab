@@ -159,20 +159,19 @@ end
 
 %% Plots
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure('position',[20,50,2300,900]);
+figure('position',[10,10,2300,900]);
 xx = round(linspace(1,64,nbSamples));
 clrmap = colormap('jet');
 clrmap = min(clrmap(xx,:),.95);
 limAxes = [-1.2 0.8 -1.1 0.9];
-colPegs = [[.9,.5,.9];[.5,.9,.5]];
+colPegs = [0.2863 0.0392 0.2392; 0.9137 0.4980 0.0078];
 
 %DEMOS
 subplot(1,3,1); hold on; box on; title('Demonstrations');
 for n=1:nbSamples
 	%Plot frames
 	for m=1:model.nbFrames
-		plot([s(n).p(m).b(2) s(n).p(m).b(2)+s(n).p(m).A(2,3)], [s(n).p(m).b(3) s(n).p(m).b(3)+s(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-		plot(s(n).p(m).b(2), s(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+		plotPegs(s(n).p(m), colPegs(m,:));
 	end
 	%Plot trajectories
 	plot(s(n).Data(2,1), s(n).Data(3,1),'.','markersize',12,'color',clrmap(n,:));
@@ -185,8 +184,7 @@ subplot(1,3,2); hold on; box on; title('Reproductions with GMR');
 for n=1:nbSamples
 	%Plot frames
 	for m=1:model.nbFrames
-		plot([r(n).p(m).b(2) r(n).p(m).b(2)+r(n).p(m).A(2,3)], [r(n).p(m).b(3) r(n).p(m).b(3)+r(n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-		plot(r(n).p(m).b(2), r(n).p(m).b(3),'.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+		plotPegs(r(n).p(m), colPegs(m,:));
 	end
 end
 for n=1:nbSamples
@@ -205,8 +203,7 @@ subplot(1,3,3); hold on; box on; title('New reproductions with GMR');
 for n=1:nbRepros
 	%Plot frames
 	for m=1:model.nbFrames
-		plot([r(nbSamples+n).p(m).b(2) r(nbSamples+n).p(m).b(2)+r(nbSamples+n).p(m).A(2,3)], [r(nbSamples+n).p(m).b(3) r(nbSamples+n).p(m).b(3)+r(nbSamples+n).p(m).A(3,3)], '-','linewidth',6,'color',colPegs(m,:));
-		plot(r(nbSamples+n).p(m).b(2), r(nbSamples+n).p(m).b(3), '.','markersize',30,'color',colPegs(m,:)-[.05,.05,.05]);
+		plotPegs(r(nbSamples+n).p(m), colPegs(m,:));
 	end
 end
 for n=1:nbRepros
@@ -256,3 +253,20 @@ axis(limAxes); axis square; set(gca,'xtick',[],'ytick',[]);
 % print('-dpng','graphs/demo_TPGMR01.png');
 pause;
 close all;
+end
+
+%Function to plot pegs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function h = plotPegs(p, colPegs, fa)
+	if ~exist('colPegs')
+		colPegs = [0.2863    0.0392    0.2392; 0.9137    0.4980    0.0078];
+	end
+	if ~exist('fa')
+		fa = .6;
+	end
+	pegMesh = [-4 -3.5; -4 10; -1.5 10; -1.5 -1; 1.5 -1; 1.5 10; 4 10; 4 -3.5; -4 -3.5]' *1E-1;
+	for m=1:length(p)
+		dispMesh = p(m).A(2:3,2:3) * pegMesh + repmat(p(m).b(2:3),1,size(pegMesh,2));
+		h(m) = patch(dispMesh(1,:),dispMesh(2,:),colPegs(m,:),'linewidth',1,'edgecolor','none','facealpha',fa);
+	end
+end
