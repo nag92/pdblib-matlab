@@ -57,7 +57,7 @@ disp('Load 3rd order tensor data...');
 % in the different frames. It is a 3rd order tensor of dimension D x P x N, with D=3 the dimension of a
 % datapoint, P=2 the number of candidate frames, and N=TM the number of datapoints in a trajectory (T=200)
 % multiplied by the number of demonstrations (M=5).
-load('data/DataLQR01.mat');
+load('./../data/DataLQR01.mat');
 
 
 %% Transformation of 'Data' to learn the path of the spring-damper system
@@ -150,7 +150,7 @@ end
 %% Reproduction with GPR and DS-GMR for new task parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('New reproductions with DS-GMR...');
-load('data/taskParams.mat'); %Load new task parameters (new situation)
+load('./../data/taskParams.mat'); %Load new task parameters (new situation)
 for n=1:nbRepros
 	rnew(n).p = taskParams(n).p;
 	%Query point vector (position and orientation of the two objects)
