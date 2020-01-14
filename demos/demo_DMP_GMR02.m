@@ -66,13 +66,13 @@ for n=1:nbSamples
 	%Demonstration data as [x;dx;ddx]
 	s(n).Data = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData)); %Resampling
 	x = spline(1:size(demos{n}.pos,2), demos{n}.pos, linspace(1,size(demos{n}.pos,2),nbData));
-    v = [0, diff(x(1,:),1)/model.dt; 0, diff(x(2,:),1)/model.dt]
-    a = [0,0, diff(x(1,:),2)/model.dt^2; 0, 0, diff(x(2,:),2)/model.dt^2]
+    v = [0, diff(x(1,:),1)/model.dt; 0, diff(x(2,:),1)/model.dt];
+    a = [0,0, diff(x(1,:),2)/model.dt^2; 0, 0, diff(x(2,:),2)/model.dt^2];
     s(n).Data = [s(n).Data; v]; %Velocity computation
 	s(n).Data = [s(n).Data; a]; %Acceleration computation
 	Data = [Data s(n).Data]; %Concatenation of the multiple demonstrations
 	%Training data as [s;F]
-	DataDMP = [DataDMP [sIn; ...
+	DataDMP = [DataDMP [sIn;...
 		(s(n).Data(accId,:) - (repmat(xTar,1,nbData)-s(n).Data(posId,:))*model.kP + s(n).Data(velId,:)*model.kV) ./ repmat(sIn,model.nbVarPos,1)]];
 end
 
@@ -89,7 +89,9 @@ currF = GMR(model, sIn, 1, 2:model.nbVar);
 x = Data(1:model.nbVarPos,1);
 dx = zeros(model.nbVarPos,1);
 for t=1:nbData
-	%Compute acceleration, velocity and position	
+	%Compute acceleration, velocity and position
+    currF(:,t) * sIn(t);
+     L * [xTar-x; -dx]
 	ddx = L * [xTar-x; -dx] + currF(:,t) * sIn(t); 
 	dx = dx + ddx * model.dt;
 	x = x + dx * model.dt;

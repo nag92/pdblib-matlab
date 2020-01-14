@@ -54,21 +54,25 @@ while 1
 	%E-step %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	for i=1:nbStates
 		%Compute distances
+        pw = (Data-repmat(Mu(:,i),1,nbData)).^2;
+        pw2 = sum(pw,1)
 		distTmp(:,i) = sum((Data-repmat(Mu(:,i),1,nbData)).^2, 1);
 	end
 	[vTmp,idList] = min(distTmp,[],2);
 	cumdist = sum(vTmp);
 	%M-step %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
 	for i=1:nbStates
 		%Update the centers
 		Mu(:,i) = mean(Data(:,idList==i),2);
-	end
+    end
+    cumdist - cumdist_old
 	%Stopping criterion %%%%%%%%%%%%%%%%%%%%
 	if abs(cumdist-cumdist_old) < cumdist_threshold
 		break;
 	end
 	cumdist_old = cumdist;
-	nbStep = nbStep+1;
+	nbStep = nbStep+1
 	if nbStep>maxIter
 		disp(['Maximum number of kmeans iterations, ' num2str(maxIter) 'is reached']);
 		break;

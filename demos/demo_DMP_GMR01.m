@@ -76,7 +76,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 model = init_GMM_timeBased(DataDMP, model);
 %model = init_GMM_logBased(DataDMP, model); %Log-spread in s <-> equal spread in t
-%model = init_GMM_kmeans(DataDMP, model);
+model = init_GMM_kmeans(DataDMP, model);
 %Set Sigma as diagonal matrices (i.e., inpedendent systems synchronized by the s variable)
 for i=1:model.nbStates
 	%model.Sigma(:,:,i) = diag(diag(model.Sigma(:,:,i))) * 5E-1; 
